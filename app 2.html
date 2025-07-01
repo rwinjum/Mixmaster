@@ -1,0 +1,56 @@
+<div class="dj-header-gradient">
+  <div class="dj-header">
+    <div class="dj-icon-title">
+      <span class="dj-music-icon" aria-hidden="true">&#127925;</span>
+      <span class="dj-title">DJ playlist organizer</span>
+    </div>
+    <div class="dj-subtitle">Reorganize your Spotify playlists using the &quot;group of three&quot; DJ rule</div>
+  </div>
+
+  <div class="dj-upload-section">
+    <h2><span class="dj-upload-arrow">&#11014;&#65039;</span> Upload playlist</h2>
+    <div class="dj-upload-row">
+      <label class="dj-upload-box" id="csv-label">
+        <input type="file" accept=".csv" style="display:none" id="csvfile" />
+        <div class="dj-upload-file-box" id="dj-upload-box-content">
+          <span class="dj-file-icon" aria-hidden="true">&#128196;</span>
+          <span class="dj-upload-text" id="dj-upload-file-label">Click to upload your Spotify CSV file</span>
+        </div>
+      </label>
+      <button class="dj-btn-sample" id="btnSample">Try sample data</button>
+    </div>
+    <div id="uploaded-file-tip" class="dj-upload-tip">✓ <span id="dj-song-count">0</span> songs loaded</div>
+  </div>
+
+  <div id="dj-reorder-section" class="dj-reorder-section" style="display:block;">
+    <h2 class="dj-reorder-title"><span class="dj-reorder-icon">&#128256;</span> Reorder options</h2>
+    <div class="dj-reorder-list">
+      <label class="dj-reorder-option" id="opt-genre">
+        <input type="checkbox" name="dj-group-rule" value="genre" checked>
+        <div class="dj-reorder-label-main">By genre</div>
+        <div class="dj-reorder-label-sub">Group similar music styles together</div>
+      </label>
+      <label class="dj-reorder-option" id="opt-era">
+        <input type="checkbox" name="dj-group-rule" value="era">
+        <div class="dj-reorder-label-main">By era</div>
+        <div class="dj-reorder-label-sub">Group songs from same time period</div>
+      </label>
+      <label class="dj-reorder-option" id="opt-pace">
+        <input type="checkbox" name="dj-group-rule" value="pace">
+        <div class="dj-reorder-label-main">By pace</div>
+        <div class="dj-reorder-label-sub">Group by energy and tempo</div>
+      </label>
+      <label class="dj-reorder-option" id="opt-genreera">
+        <input type="checkbox" name="dj-group-rule" value="genre+era">
+        <div class="dj-reorder-label-main">By genre + era</div>
+        <div class="dj-reorder-label-sub">Group by both music style and time period</div>
+      </label>
+      <label class="dj-reorder-option" id="opt-paceera">
+        <input type="checkbox" name="dj-group-rule" value="pace+era">
+        <div class="dj-reorder-label-main">By pace + era</div>
+        <div class="dj-reorder-label-sub">Group by both energy and time period</div>
+      </label>
+    </div>
+    <button class="dj-btn-organize" id="btnOrganize"><span class="dj-organize-icon">&#9654;</span> Organize playlist</button>
+  </div>
+</div>

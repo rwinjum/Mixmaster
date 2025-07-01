@@ -1,0 +1,1903 @@
+{
+    "name": "DJ Organized Playlist - 6/29/2025",
+    "description": "Organized using the Group of Three DJ rule with genre, era, pace grouping and no same artist in a row",
+    "groups": 79,
+    "tracks": [
+      {
+        "groupNumber": 1,
+        "positionInGroup": 1,
+        "trackName": "No New Tale to Tell",
+        "artistName": "Love and Rockets",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 1,
+        "positionInGroup": 2,
+        "trackName": "You Just Haven't Earned It Yet Baby",
+        "artistName": "The Smiths",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 1,
+        "positionInGroup": 3,
+        "trackName": "52 Girls",
+        "artistName": "The B-52's",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 2,
+        "positionInGroup": 1,
+        "trackName": "I Only Said",
+        "artistName": "my bloody valentine",
+        "groupRule": "genre",
+        "groupValue": "Shoegaze"
+      },
+      {
+        "groupNumber": 2,
+        "positionInGroup": 2,
+        "trackName": "The Two Of Us",
+        "artistName": "The Jesus and Mary Chain",
+        "groupRule": "genre",
+        "groupValue": "Shoegaze"
+      },
+      {
+        "groupNumber": 2,
+        "positionInGroup": 3,
+        "trackName": "April Skies",
+        "artistName": "The Jesus and Mary Chain",
+        "groupRule": "genre",
+        "groupValue": "Shoegaze"
+      },
+      {
+        "groupNumber": 3,
+        "positionInGroup": 1,
+        "trackName": "Victoria",
+        "artistName": "The Fall",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 3,
+        "positionInGroup": 2,
+        "trackName": "Ignite",
+        "artistName": "The Damned",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 3,
+        "positionInGroup": 3,
+        "trackName": "That's Entertainment",
+        "artistName": "The Jam",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 4,
+        "positionInGroup": 1,
+        "trackName": "Chop Suey!",
+        "artistName": "System Of A Down",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 4,
+        "positionInGroup": 2,
+        "trackName": "Cancelled",
+        "artistName": "Mötley Crüe",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 4,
+        "positionInGroup": 3,
+        "trackName": "The Day That Never Comes",
+        "artistName": "Metallica",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 5,
+        "positionInGroup": 1,
+        "trackName": "Almost With You - 2002 Remastered",
+        "artistName": "The Church",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 5,
+        "positionInGroup": 2,
+        "trackName": "So Far Gone",
+        "artistName": "Teenage Fanclub",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 5,
+        "positionInGroup": 3,
+        "trackName": "Swingin Party - 2008 Remaster",
+        "artistName": "The Replacements",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 6,
+        "positionInGroup": 1,
+        "trackName": "Company Culture",
+        "artistName": "Lambrini Girls",
+        "groupRule": "genre",
+        "groupValue": "Riot grrrl"
+      },
+      {
+        "groupNumber": 6,
+        "positionInGroup": 2,
+        "trackName": "The Ick",
+        "artistName": "Panic Shack",
+        "groupRule": "genre",
+        "groupValue": "Riot grrrl"
+      },
+      {
+        "groupNumber": 6,
+        "positionInGroup": 3,
+        "trackName": "Bright Yellow Gun",
+        "artistName": "Throwing Muses",
+        "groupRule": "genre",
+        "groupValue": "Riot grrrl"
+      },
+      {
+        "groupNumber": 7,
+        "positionInGroup": 1,
+        "trackName": "Roxanne",
+        "artistName": "The Police",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 7,
+        "positionInGroup": 2,
+        "trackName": "Suspicious Minds",
+        "artistName": "Fine Young Cannibals",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 7,
+        "positionInGroup": 3,
+        "trackName": "Helpless Automaton",
+        "artistName": "Men At Work",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 8,
+        "positionInGroup": 1,
+        "trackName": "Mary Jane's Last Dance",
+        "artistName": "Tom Petty and the Heartbreakers",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 8,
+        "positionInGroup": 2,
+        "trackName": "1979 - Remastered 2012",
+        "artistName": "The Smashing Pumpkins",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 8,
+        "positionInGroup": 3,
+        "trackName": "Unbelievers",
+        "artistName": "Vampire Weekend",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 9,
+        "positionInGroup": 1,
+        "trackName": "Can't Believe It's Me",
+        "artistName": "Galaxie 500",
+        "groupRule": "pace",
+        "groupValue": "Low"
+      },
+      {
+        "groupNumber": 9,
+        "positionInGroup": 2,
+        "trackName": "U Should Not Be Doing That",
+        "artistName": "Amyl and The Sniffers",
+        "groupRule": "pace",
+        "groupValue": "Low"
+      },
+      {
+        "groupNumber": 9,
+        "positionInGroup": 3,
+        "trackName": "One Big Holiday",
+        "artistName": "My Morning Jacket",
+        "groupRule": "pace",
+        "groupValue": "Low"
+      },
+      {
+        "groupNumber": 10,
+        "positionInGroup": 1,
+        "trackName": "Bargain",
+        "artistName": "The Who",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 10,
+        "positionInGroup": 2,
+        "trackName": "Dirty Blvd.",
+        "artistName": "Lou Reed",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 10,
+        "positionInGroup": 3,
+        "trackName": "Foxey Lady",
+        "artistName": "Jimi Hendrix",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 11,
+        "positionInGroup": 1,
+        "trackName": "Pretty Noose",
+        "artistName": "Soundgarden",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 11,
+        "positionInGroup": 2,
+        "trackName": "Dirty Little Thing",
+        "artistName": "Velvet Revolver",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 11,
+        "positionInGroup": 3,
+        "trackName": "Sour Girl",
+        "artistName": "Stone Temple Pilots",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 12,
+        "positionInGroup": 1,
+        "trackName": "Ramble On - 1990 Remaster",
+        "artistName": "Led Zeppelin",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 12,
+        "positionInGroup": 2,
+        "trackName": "Baby Strange",
+        "artistName": "T. Rex",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 12,
+        "positionInGroup": 3,
+        "trackName": "One of These Nights - 2013 Remaster",
+        "artistName": "Eagles",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 13,
+        "positionInGroup": 1,
+        "trackName": "Natural's Not In It",
+        "artistName": "Gang Of Four",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 13,
+        "positionInGroup": 2,
+        "trackName": "Spoilt Victorian Child",
+        "artistName": "The Fall",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 13,
+        "positionInGroup": 3,
+        "trackName": "Mountain Energei",
+        "artistName": "The Fall",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 14,
+        "positionInGroup": 1,
+        "trackName": "Back Where You Belong",
+        "artistName": "38 Special",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 14,
+        "positionInGroup": 2,
+        "trackName": "CYR",
+        "artistName": "The Smashing Pumpkins",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 14,
+        "positionInGroup": 3,
+        "trackName": "Walk On the Wild Side",
+        "artistName": "Lou Reed",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 15,
+        "positionInGroup": 1,
+        "trackName": "Send Me An Angel",
+        "artistName": "Real Life",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 15,
+        "positionInGroup": 2,
+        "trackName": "I Still Believe (Great Design)",
+        "artistName": "The Call",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 15,
+        "positionInGroup": 3,
+        "trackName": "One Hundred Years - 2005 Remaster",
+        "artistName": "The Cure",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 16,
+        "positionInGroup": 1,
+        "trackName": "Nothin' But A Good Time",
+        "artistName": "Poison",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 16,
+        "positionInGroup": 2,
+        "trackName": "Turn The Page",
+        "artistName": "Metallica",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 16,
+        "positionInGroup": 3,
+        "trackName": "Same Ol' Situation (S.O.S.)",
+        "artistName": "Mötley Crüe",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 17,
+        "positionInGroup": 1,
+        "trackName": "Walk on By",
+        "artistName": "The Stranglers",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 17,
+        "positionInGroup": 2,
+        "trackName": "Interzone - 2019 Digital Master",
+        "artistName": "Joy Division",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 17,
+        "positionInGroup": 3,
+        "trackName": "Lost in the Supermarket - Remastered",
+        "artistName": "The Clash",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 18,
+        "positionInGroup": 1,
+        "trackName": "Show Me",
+        "artistName": "Pretenders",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 18,
+        "positionInGroup": 2,
+        "trackName": "The Headmaster Ritual (Live)",
+        "artistName": "Johnny Marr",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 18,
+        "positionInGroup": 3,
+        "trackName": "Synchronicity I - Remastered 2003",
+        "artistName": "The Police",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 19,
+        "positionInGroup": 1,
+        "trackName": "You Got Me Searching",
+        "artistName": "Jack White",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 19,
+        "positionInGroup": 2,
+        "trackName": "Lucky Man - 2012 Remaster",
+        "artistName": "Emerson Lake & Palmer",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 19,
+        "positionInGroup": 3,
+        "trackName": "Christine’s Tune",
+        "artistName": "The Flying Burrito Brothers",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 20,
+        "positionInGroup": 1,
+        "trackName": "Sing About Me I'm Dying Of Thirst",
+        "artistName": "Kendrick Lamar",
+        "groupRule": "genre",
+        "groupValue": "Hip Hop/Rap"
+      },
+      {
+        "groupNumber": 20,
+        "positionInGroup": 2,
+        "trackName": "It's Tricky",
+        "artistName": "Run–D.M.C.",
+        "groupRule": "genre",
+        "groupValue": "Hip Hop/Rap"
+      },
+      {
+        "groupNumber": 20,
+        "positionInGroup": 3,
+        "trackName": "We Dem Boyz",
+        "artistName": "Wiz Khalifa",
+        "groupRule": "genre",
+        "groupValue": "Hip Hop/Rap"
+      },
+      {
+        "groupNumber": 21,
+        "positionInGroup": 1,
+        "trackName": "Voodoo Lady",
+        "artistName": "Ween",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 21,
+        "positionInGroup": 2,
+        "trackName": "Step On - 2007 Remaster",
+        "artistName": "Happy Mondays",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 21,
+        "positionInGroup": 3,
+        "trackName": "Holland 1945",
+        "artistName": "Neutral Milk Hotel",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 22,
+        "positionInGroup": 1,
+        "trackName": "Cherub Rock - 2011 Remaster",
+        "artistName": "The Smashing Pumpkins",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 22,
+        "positionInGroup": 2,
+        "trackName": "Move Me on Down the Line (2005 Remaster)",
+        "artistName": "ZZ Top",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 22,
+        "positionInGroup": 3,
+        "trackName": "A Certain Romance",
+        "artistName": "Arctic Monkeys",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 23,
+        "positionInGroup": 1,
+        "trackName": "High Hopes",
+        "artistName": "Pink Floyd",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 23,
+        "positionInGroup": 2,
+        "trackName": "Waiting for an Alibi",
+        "artistName": "Thin Lizzy",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 23,
+        "positionInGroup": 3,
+        "trackName": "I Sat by the Ocean",
+        "artistName": "Queens of the Stone Age",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 24,
+        "positionInGroup": 1,
+        "trackName": "Sabbra Cadabra - 2013 Remaster",
+        "artistName": "Black Sabbath",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 24,
+        "positionInGroup": 2,
+        "trackName": "One (Remastered)",
+        "artistName": "Metallica",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 24,
+        "positionInGroup": 3,
+        "trackName": "D.O.A. - 2015 Remaster",
+        "artistName": "Van Halen",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 25,
+        "positionInGroup": 1,
+        "trackName": "Used To Be - 50th Anniversary Edition",
+        "artistName": "Rory Gallagher",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 25,
+        "positionInGroup": 2,
+        "trackName": "Dead End Friends",
+        "artistName": "Them Crooked Vultures",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 25,
+        "positionInGroup": 3,
+        "trackName": "Last Night On Earth",
+        "artistName": "U2",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 26,
+        "positionInGroup": 1,
+        "trackName": "Lay It On The Line",
+        "artistName": "Triumph",
+        "groupRule": "era",
+        "groupValue": "2010s"
+      },
+      {
+        "groupNumber": 26,
+        "positionInGroup": 2,
+        "trackName": "Halfway There",
+        "artistName": "Soundgarden",
+        "groupRule": "era",
+        "groupValue": "2010s"
+      },
+      {
+        "groupNumber": 26,
+        "positionInGroup": 3,
+        "trackName": "Apocalypse Dreams",
+        "artistName": "Tame Impala",
+        "groupRule": "era",
+        "groupValue": "2010s"
+      },
+      {
+        "groupNumber": 27,
+        "positionInGroup": 1,
+        "trackName": "Runnit Back",
+        "artistName": "LL COOL J",
+        "groupRule": "genre",
+        "groupValue": "Hip Hop/Rap"
+      },
+      {
+        "groupNumber": 27,
+        "positionInGroup": 2,
+        "trackName": "Know Your Enemy",
+        "artistName": "Rage Against The Machine",
+        "groupRule": "genre",
+        "groupValue": "Hip Hop/Rap"
+      },
+      {
+        "groupNumber": 27,
+        "positionInGroup": 3,
+        "trackName": "Run's House - Single Version",
+        "artistName": "Run–D.M.C.",
+        "groupRule": "genre",
+        "groupValue": "Hip Hop/Rap"
+      },
+      {
+        "groupNumber": 28,
+        "positionInGroup": 1,
+        "trackName": "Birth Ritual",
+        "artistName": "Soundgarden",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 28,
+        "positionInGroup": 2,
+        "trackName": "Nearly Forgot My Broken Heart",
+        "artistName": "Chris Cornell",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 28,
+        "positionInGroup": 3,
+        "trackName": "Vasoline - 2019 Remaster",
+        "artistName": "Stone Temple Pilots",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 29,
+        "positionInGroup": 1,
+        "trackName": "Slow Turning",
+        "artistName": "John Hiatt",
+        "groupRule": "era",
+        "groupValue": "80s"
+      },
+      {
+        "groupNumber": 29,
+        "positionInGroup": 2,
+        "trackName": "Mirror in the Bathroom - 2012 Remaster",
+        "artistName": "The English Beat",
+        "groupRule": "era",
+        "groupValue": "80s"
+      },
+      {
+        "groupNumber": 29,
+        "positionInGroup": 3,
+        "trackName": "Everything Counts",
+        "artistName": "Depeche Mode",
+        "groupRule": "era",
+        "groupValue": "80s"
+      },
+      {
+        "groupNumber": 30,
+        "positionInGroup": 1,
+        "trackName": "Kickstart My Heart",
+        "artistName": "Mötley Crüe",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 30,
+        "positionInGroup": 2,
+        "trackName": "Toxicity",
+        "artistName": "System Of A Down",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 30,
+        "positionInGroup": 3,
+        "trackName": "Eruption - 2015 Remaster",
+        "artistName": "Van Halen",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 31,
+        "positionInGroup": 1,
+        "trackName": "Talk Dirty To Me",
+        "artistName": "Poison",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 31,
+        "positionInGroup": 2,
+        "trackName": "One",
+        "artistName": "Metallica",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 31,
+        "positionInGroup": 3,
+        "trackName": "Breaking the Law",
+        "artistName": "Judas Priest",
+        "groupRule": "genre",
+        "groupValue": "Metal"
+      },
+      {
+        "groupNumber": 32,
+        "positionInGroup": 1,
+        "trackName": "The Ocean - Remaster",
+        "artistName": "Led Zeppelin",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 32,
+        "positionInGroup": 2,
+        "trackName": "Ride Captain Ride",
+        "artistName": "Blues Image",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 32,
+        "positionInGroup": 3,
+        "trackName": "Let Down",
+        "artistName": "Radiohead",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 33,
+        "positionInGroup": 1,
+        "trackName": "All Out Attack",
+        "artistName": "Johnny Marr",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 33,
+        "positionInGroup": 2,
+        "trackName": "Bruised Lung",
+        "artistName": "Superchunk",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 33,
+        "positionInGroup": 3,
+        "trackName": "Hallelujah - Club Mix",
+        "artistName": "Happy Mondays",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 34,
+        "positionInGroup": 1,
+        "trackName": "Body Electric",
+        "artistName": "Sisters of Mercy",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 34,
+        "positionInGroup": 2,
+        "trackName": "How Long",
+        "artistName": "Ace",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 34,
+        "positionInGroup": 3,
+        "trackName": "Lonesome Loser - Remastered 2022",
+        "artistName": "Little River Band",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 35,
+        "positionInGroup": 1,
+        "trackName": "Regulate",
+        "artistName": "Warren G",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 35,
+        "positionInGroup": 2,
+        "trackName": "The Ghost Inside",
+        "artistName": "Broken Bells",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 35,
+        "positionInGroup": 3,
+        "trackName": "Angel",
+        "artistName": "Massive Attack",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 36,
+        "positionInGroup": 1,
+        "trackName": "Biafra",
+        "artistName": "Derrick Harriott",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 36,
+        "positionInGroup": 2,
+        "trackName": "Whole Lotta Love (feat. Chris Cornell)",
+        "artistName": "Santana",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 36,
+        "positionInGroup": 3,
+        "trackName": "The Memory Remains",
+        "artistName": "Metallica",
+        "groupRule": "era",
+        "groupValue": "Classic"
+      },
+      {
+        "groupNumber": 37,
+        "positionInGroup": 1,
+        "trackName": "Hit the North - Part 1",
+        "artistName": "The Fall",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 37,
+        "positionInGroup": 2,
+        "trackName": "I Against I",
+        "artistName": "Bad Brains",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 37,
+        "positionInGroup": 3,
+        "trackName": "No More Heroes - 1996 Remaster",
+        "artistName": "The Stranglers",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 38,
+        "positionInGroup": 1,
+        "trackName": "New London boy",
+        "artistName": "Pet Shop Boys",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 38,
+        "positionInGroup": 2,
+        "trackName": "Pure Morning",
+        "artistName": "Placebo",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 38,
+        "positionInGroup": 3,
+        "trackName": "Bye Bye Love",
+        "artistName": "The Cars",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 39,
+        "positionInGroup": 1,
+        "trackName": "My God Is the Sun",
+        "artistName": "Queens of the Stone Age",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 39,
+        "positionInGroup": 2,
+        "trackName": "Subterranean Homesick Blues",
+        "artistName": "Bob Dylan",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 39,
+        "positionInGroup": 3,
+        "trackName": "I Will Follow",
+        "artistName": "U2",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 40,
+        "positionInGroup": 1,
+        "trackName": "Doctor Worm",
+        "artistName": "They Might Be Giants",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 40,
+        "positionInGroup": 2,
+        "trackName": "Nervous Breakthrough",
+        "artistName": "Luscious Jackson",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 40,
+        "positionInGroup": 3,
+        "trackName": "Fix Me Now",
+        "artistName": "Garbage",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 41,
+        "positionInGroup": 1,
+        "trackName": "Teutonic Wine",
+        "artistName": "The Dandy Warhols",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 41,
+        "positionInGroup": 2,
+        "trackName": "Conversation Lags",
+        "artistName": "Wussy",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 41,
+        "positionInGroup": 3,
+        "trackName": "Omegaman",
+        "artistName": "The Police",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 42,
+        "positionInGroup": 1,
+        "trackName": "Mistadobalina",
+        "artistName": "Del The Funky Homosapien",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 42,
+        "positionInGroup": 2,
+        "trackName": "She Drives Me Crazy",
+        "artistName": "Fine Young Cannibals",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 42,
+        "positionInGroup": 3,
+        "trackName": "Molly's Chambers",
+        "artistName": "Kings of Leon",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 43,
+        "positionInGroup": 1,
+        "trackName": "Ripple",
+        "artistName": "Good Neighbours",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 43,
+        "positionInGroup": 2,
+        "trackName": "Red Right Hand",
+        "artistName": "Nick Cave & The Bad Seeds",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 43,
+        "positionInGroup": 3,
+        "trackName": "Waste A Moment",
+        "artistName": "Kings of Leon",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 44,
+        "positionInGroup": 1,
+        "trackName": "Chicago",
+        "artistName": "Sufjan Stevens",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 44,
+        "positionInGroup": 2,
+        "trackName": "Alcoholiday",
+        "artistName": "Teenage Fanclub",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 44,
+        "positionInGroup": 3,
+        "trackName": "Shake It Up - 2017 Remaster",
+        "artistName": "The Cars",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 45,
+        "positionInGroup": 1,
+        "trackName": "Stayin' Alive - 12 Mix",
+        "artistName": "Happy Mondays",
+        "groupRule": "genre",
+        "groupValue": "Madchester"
+      },
+      {
+        "groupNumber": 45,
+        "positionInGroup": 2,
+        "trackName": "I Wanna Be Adored - Remastered 2009",
+        "artistName": "The Stone Roses",
+        "groupRule": "genre",
+        "groupValue": "Madchester"
+      },
+      {
+        "groupNumber": 45,
+        "positionInGroup": 3,
+        "trackName": "Saturn 5",
+        "artistName": "Inspiral Carpets",
+        "groupRule": "genre",
+        "groupValue": "Madchester"
+      },
+      {
+        "groupNumber": 46,
+        "positionInGroup": 1,
+        "trackName": "Use It",
+        "artistName": "The New Pornographers",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 46,
+        "positionInGroup": 2,
+        "trackName": "Yuri-G",
+        "artistName": "PJ Harvey",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 46,
+        "positionInGroup": 3,
+        "trackName": "I Want You to Want Me",
+        "artistName": "Cheap Trick",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 47,
+        "positionInGroup": 1,
+        "trackName": "L.A.",
+        "artistName": "The Fall",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 47,
+        "positionInGroup": 2,
+        "trackName": "(White Man) in Hammersmith Palais",
+        "artistName": "The Clash",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 47,
+        "positionInGroup": 3,
+        "trackName": "American Music",
+        "artistName": "Violent Femmes",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 48,
+        "positionInGroup": 1,
+        "trackName": "Your Woman",
+        "artistName": "White Town",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 48,
+        "positionInGroup": 2,
+        "trackName": "I'd Do Anything For Love (But I Won't Do That)",
+        "artistName": "Meat Loaf",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 48,
+        "positionInGroup": 3,
+        "trackName": "Airborne",
+        "artistName": "Wussy",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 49,
+        "positionInGroup": 1,
+        "trackName": "Love Action (I Believe In Love)",
+        "artistName": "The Human League",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 49,
+        "positionInGroup": 2,
+        "trackName": "Lips Like Sugar",
+        "artistName": "Echo & the Bunnymen",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 49,
+        "positionInGroup": 3,
+        "trackName": "Run - 2015 Remaster",
+        "artistName": "New Order",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 50,
+        "positionInGroup": 1,
+        "trackName": "Just Because",
+        "artistName": "Jane's Addiction",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 50,
+        "positionInGroup": 2,
+        "trackName": "I'm No Angel",
+        "artistName": "Gregg Allman",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 50,
+        "positionInGroup": 3,
+        "trackName": "Naive",
+        "artistName": "The Kooks",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 51,
+        "positionInGroup": 1,
+        "trackName": "One Way Out - Live At The Final Fillmore East Concert 1971",
+        "artistName": "Allman Brothers Band",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 51,
+        "positionInGroup": 2,
+        "trackName": "Debaser",
+        "artistName": "Pixies",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 51,
+        "positionInGroup": 3,
+        "trackName": "Sighommi",
+        "artistName": "The Smashing Pumpkins",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 52,
+        "positionInGroup": 1,
+        "trackName": "Mirror Man",
+        "artistName": "The Human League",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 52,
+        "positionInGroup": 2,
+        "trackName": "Ripeness - Alternative Version",
+        "artistName": "Echo & the Bunnymen",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 52,
+        "positionInGroup": 3,
+        "trackName": "Space Age Love Song",
+        "artistName": "A Flock Of Seagulls",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 53,
+        "positionInGroup": 1,
+        "trackName": "Close to the Edge (I. The Solid Time of Change II. Total Mass Retain III. I Get up I Get Down IV. Seasons of Man)",
+        "artistName": "Yes",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 53,
+        "positionInGroup": 2,
+        "trackName": "Barely Legal",
+        "artistName": "The Strokes",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 53,
+        "positionInGroup": 3,
+        "trackName": "The Evil Has Landed",
+        "artistName": "Queens of the Stone Age",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 54,
+        "positionInGroup": 1,
+        "trackName": "12:51",
+        "artistName": "The Strokes",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 54,
+        "positionInGroup": 2,
+        "trackName": "Ride Like the Wind",
+        "artistName": "Christopher Cross",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 54,
+        "positionInGroup": 3,
+        "trackName": "Highway Star - Remastered 2012",
+        "artistName": "Deep Purple",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 55,
+        "positionInGroup": 1,
+        "trackName": "You Only Live Once",
+        "artistName": "The Strokes",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 55,
+        "positionInGroup": 2,
+        "trackName": "Hey Tonight",
+        "artistName": "Creedence Clearwater Revival",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 55,
+        "positionInGroup": 3,
+        "trackName": "Incinerate",
+        "artistName": "Sonic Youth",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 56,
+        "positionInGroup": 1,
+        "trackName": "Mayonaise - 2011 Remaster",
+        "artistName": "The Smashing Pumpkins",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 56,
+        "positionInGroup": 2,
+        "trackName": "Wish You Were Here",
+        "artistName": "Pink Floyd",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 56,
+        "positionInGroup": 3,
+        "trackName": "Don't Do Me Like That",
+        "artistName": "Tom Petty and the Heartbreakers",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 57,
+        "positionInGroup": 1,
+        "trackName": "The Book of Love",
+        "artistName": "The Magnetic Fields",
+        "groupRule": "genre",
+        "groupValue": "Folk"
+      },
+      {
+        "groupNumber": 57,
+        "positionInGroup": 2,
+        "trackName": "Turpin Hero",
+        "artistName": "Ewan MacColl",
+        "groupRule": "genre",
+        "groupValue": "Folk"
+      },
+      {
+        "groupNumber": 57,
+        "positionInGroup": 3,
+        "trackName": "The Motorcycle Song",
+        "artistName": "Arlo Guthrie",
+        "groupRule": "genre",
+        "groupValue": "Folk"
+      },
+      {
+        "groupNumber": 58,
+        "positionInGroup": 1,
+        "trackName": "Age of Consent - 2015 Remaster",
+        "artistName": "New Order",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 58,
+        "positionInGroup": 2,
+        "trackName": "Enjoy the Silence",
+        "artistName": "Depeche Mode",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 58,
+        "positionInGroup": 3,
+        "trackName": "The Globe",
+        "artistName": "Big Audio Dynamite",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 59,
+        "positionInGroup": 1,
+        "trackName": "Fresh",
+        "artistName": "Kool & The Gang",
+        "groupRule": "era",
+        "groupValue": "80s"
+      },
+      {
+        "groupNumber": 59,
+        "positionInGroup": 2,
+        "trackName": "Garbageman",
+        "artistName": "The Cramps",
+        "groupRule": "era",
+        "groupValue": "80s"
+      },
+      {
+        "groupNumber": 59,
+        "positionInGroup": 3,
+        "trackName": "Urgent",
+        "artistName": "Foreigner",
+        "groupRule": "era",
+        "groupValue": "80s"
+      },
+      {
+        "groupNumber": 60,
+        "positionInGroup": 1,
+        "trackName": "Entering - Remastered",
+        "artistName": "Soundgarden",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 60,
+        "positionInGroup": 2,
+        "trackName": "Unglued",
+        "artistName": "Stone Temple Pilots",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 60,
+        "positionInGroup": 3,
+        "trackName": "Rearviewmirror - Remastered",
+        "artistName": "Pearl Jam",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 61,
+        "positionInGroup": 1,
+        "trackName": "Burden In My Hand",
+        "artistName": "Soundgarden",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 61,
+        "positionInGroup": 2,
+        "trackName": "Porch",
+        "artistName": "Pearl Jam",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 61,
+        "positionInGroup": 3,
+        "trackName": "Swallow My Pride",
+        "artistName": "Green River",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 62,
+        "positionInGroup": 1,
+        "trackName": "Rocket Queen",
+        "artistName": "Guns N' Roses",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 62,
+        "positionInGroup": 2,
+        "trackName": "Harness Your Hopes - B-side",
+        "artistName": "Pavement",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 62,
+        "positionInGroup": 3,
+        "trackName": "Trans-Europe Express - 2009 Remaster",
+        "artistName": "Kraftwerk",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 63,
+        "positionInGroup": 1,
+        "trackName": "You Only Live Once",
+        "artistName": "The Strokes",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 63,
+        "positionInGroup": 2,
+        "trackName": "Bad Penny",
+        "artistName": "Rory Gallagher",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 63,
+        "positionInGroup": 3,
+        "trackName": "Whipping Post",
+        "artistName": "Allman Brothers Band",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 64,
+        "positionInGroup": 1,
+        "trackName": "Theme From Sparta F.C.",
+        "artistName": "The Fall",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 64,
+        "positionInGroup": 2,
+        "trackName": "Blister In The Sun",
+        "artistName": "Violent Femmes",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 64,
+        "positionInGroup": 3,
+        "trackName": "Boys in the Better Land",
+        "artistName": "Fontaines D.C.",
+        "groupRule": "genre",
+        "groupValue": "Punk"
+      },
+      {
+        "groupNumber": 65,
+        "positionInGroup": 1,
+        "trackName": "Sweet Disaster",
+        "artistName": "DREAMERS",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 65,
+        "positionInGroup": 2,
+        "trackName": "Who Can It Be Now?",
+        "artistName": "Men At Work",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 65,
+        "positionInGroup": 3,
+        "trackName": "Heart And Soul",
+        "artistName": "Huey Lewis & The News",
+        "groupRule": "genre",
+        "groupValue": "Pop"
+      },
+      {
+        "groupNumber": 66,
+        "positionInGroup": 1,
+        "trackName": "Washington D.C.",
+        "artistName": "The Magnetic Fields",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 66,
+        "positionInGroup": 2,
+        "trackName": "Don't Sweat The Technique",
+        "artistName": "Eric B. & Rakim",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 66,
+        "positionInGroup": 3,
+        "trackName": "Two Worlds Collide",
+        "artistName": "Inspiral Carpets",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 67,
+        "positionInGroup": 1,
+        "trackName": "Bankrupt On Selling",
+        "artistName": "Modest Mouse",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 67,
+        "positionInGroup": 2,
+        "trackName": "Don't Believe A Word",
+        "artistName": "Thin Lizzy",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 67,
+        "positionInGroup": 3,
+        "trackName": "New Fang",
+        "artistName": "Them Crooked Vultures",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 68,
+        "positionInGroup": 1,
+        "trackName": "I Started Something I Couldn't Finish - 2011 Remaster",
+        "artistName": "The Smiths",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 68,
+        "positionInGroup": 2,
+        "trackName": "Thieves like Us - 2020 Digital Master",
+        "artistName": "New Order",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 68,
+        "positionInGroup": 3,
+        "trackName": "Primary - 2005 Remaster",
+        "artistName": "The Cure",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 69,
+        "positionInGroup": 1,
+        "trackName": "Fell On Black Days",
+        "artistName": "Soundgarden",
+        "groupRule": "pace",
+        "groupValue": "Low"
+      },
+      {
+        "groupNumber": 69,
+        "positionInGroup": 2,
+        "trackName": "No One Knows",
+        "artistName": "Queens of the Stone Age",
+        "groupRule": "pace",
+        "groupValue": "Low"
+      },
+      {
+        "groupNumber": 69,
+        "positionInGroup": 3,
+        "trackName": "Smalltown Boy",
+        "artistName": "Bronski Beat",
+        "groupRule": "pace",
+        "groupValue": "Low"
+      },
+      {
+        "groupNumber": 70,
+        "positionInGroup": 1,
+        "trackName": "There Is a Light That Never Goes Out - 2011 Remaster",
+        "artistName": "The Smiths",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 70,
+        "positionInGroup": 2,
+        "trackName": "Personal Jesus - Single Version",
+        "artistName": "Depeche Mode",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 70,
+        "positionInGroup": 3,
+        "trackName": "Pulled Up - 2005 Remaster",
+        "artistName": "Talking Heads",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 71,
+        "positionInGroup": 1,
+        "trackName": "Head Down",
+        "artistName": "Soundgarden",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 71,
+        "positionInGroup": 2,
+        "trackName": "Lost in Music",
+        "artistName": "The Fall",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 71,
+        "positionInGroup": 3,
+        "trackName": "Insane in the Brain",
+        "artistName": "Cypress Hill",
+        "groupRule": "era",
+        "groupValue": "90s"
+      },
+      {
+        "groupNumber": 72,
+        "positionInGroup": 1,
+        "trackName": "Wind Of Change",
+        "artistName": "Scorpions",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 72,
+        "positionInGroup": 2,
+        "trackName": "Love Is The Drug",
+        "artistName": "Roxy Music",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 72,
+        "positionInGroup": 3,
+        "trackName": "Cut Your Hair",
+        "artistName": "Pavement",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 73,
+        "positionInGroup": 1,
+        "trackName": "She Sells Sanctuary - Long Version",
+        "artistName": "The Cult",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 73,
+        "positionInGroup": 2,
+        "trackName": "The Lost Art Of Keeping A Secret",
+        "artistName": "Queens of the Stone Age",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 73,
+        "positionInGroup": 3,
+        "trackName": "A Certain Romance",
+        "artistName": "Arctic Monkeys",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 74,
+        "positionInGroup": 1,
+        "trackName": "The First Part",
+        "artistName": "Superchunk",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 74,
+        "positionInGroup": 2,
+        "trackName": "God Knows It's True",
+        "artistName": "Teenage Fanclub",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 74,
+        "positionInGroup": 3,
+        "trackName": "House We Used to Live In",
+        "artistName": "The Smithereens",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 75,
+        "positionInGroup": 1,
+        "trackName": "Smokestack Lightning",
+        "artistName": "Soundgarden",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 75,
+        "positionInGroup": 2,
+        "trackName": "Sex Type Thing - 2017 Remaster",
+        "artistName": "Stone Temple Pilots",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 75,
+        "positionInGroup": 3,
+        "trackName": "Going to Town",
+        "artistName": "The Afghan Whigs",
+        "groupRule": "genre",
+        "groupValue": "Grunge"
+      },
+      {
+        "groupNumber": 76,
+        "positionInGroup": 1,
+        "trackName": "What Difference Does It Make? - 2011 Remaster",
+        "artistName": "The Smiths",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 76,
+        "positionInGroup": 2,
+        "trackName": "A Forest - 2006 Remaster",
+        "artistName": "The Cure",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 76,
+        "positionInGroup": 3,
+        "trackName": "Nothing Lasts Forever",
+        "artistName": "Echo & the Bunnymen",
+        "groupRule": "genre",
+        "groupValue": "New Wave"
+      },
+      {
+        "groupNumber": 77,
+        "positionInGroup": 1,
+        "trackName": "Subdivisions",
+        "artistName": "Rush",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 77,
+        "positionInGroup": 2,
+        "trackName": "The Way You Used To Do",
+        "artistName": "Queens of the Stone Age",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 77,
+        "positionInGroup": 3,
+        "trackName": "Cuts You Up",
+        "artistName": "Peter Murphy",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 78,
+        "positionInGroup": 1,
+        "trackName": "A Girl Like You",
+        "artistName": "The Smithereens",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 78,
+        "positionInGroup": 2,
+        "trackName": "Streets of Your Town - Remastered",
+        "artistName": "The Go-Betweens",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 78,
+        "positionInGroup": 3,
+        "trackName": "I Will Dare",
+        "artistName": "The Replacements",
+        "groupRule": "genre",
+        "groupValue": "Pop/Dance"
+      },
+      {
+        "groupNumber": 79,
+        "positionInGroup": 1,
+        "trackName": "Wild Flower",
+        "artistName": "The Cult",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 79,
+        "positionInGroup": 2,
+        "trackName": "The Refugee - Remastered 2008",
+        "artistName": "U2",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      },
+      {
+        "groupNumber": 79,
+        "positionInGroup": 3,
+        "trackName": "The Three Sunrises",
+        "artistName": "U2",
+        "groupRule": "genre",
+        "groupValue": "Rock/Alternative"
+      }
+    ]
+  }

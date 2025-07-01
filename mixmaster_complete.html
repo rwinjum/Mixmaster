@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIXMASTER - DJ Playlist Organizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-orb:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: #ff6b6b;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .bg-orb:nth-child(2) {
+            width: 250px;
+            height: 250px;
+            background: #4ecdc4;
+            top: 50%;
+            right: -125px;
+            animation-delay: 2s;
+        }
+
+        .bg-orb:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            background: #45b7d1;
+            bottom: -100px;
+            left: 50%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vinyl-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            position: relative;
+            animation: spin 3s linear infinite;
+        }
+
+        .vinyl-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: #000;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .main-title {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 0.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Section Styles */
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        /* Upload Section */
+        .upload-area {
+            display: flex;
+            gap: 2rem;
+            align-items: stretch;
+        }
+
+        .upload-zone {
+            flex: 1;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .upload-zone.dragover {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .upload-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 200px;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+        }
+
+        .upload-status {
+            background: rgba(0, 184, 148, 0.2);
+            border: 1px solid rgba(0, 184, 148, 0.5);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .status-count {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #00b894;
+        }
+
+        /* Rules Section */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .rule-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .rule-option:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .rule-option.selected {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.2);
+        }
+
+        .rule-emoji {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rule-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .rule-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .artist-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .artist-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .artist-option.selected {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .organize-btn {
+            width: 100%;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .organize-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.3);
+        }
+
+        .organize-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Results Section */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .group-count {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Group Styles */
+        .groups-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .group {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .group-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .group-number {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #4ecdc4;
+        }
+
+        .group-rule {
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid rgba(78, 205, 196, 0.5);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .group-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .control-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Song Cards */
+        .songs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .song-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .song-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .song-number {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .song-menu-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .song-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .song-info {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding-right: 2rem;
+        }
+
+        .song-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .song-artist {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.3rem;
+        }
+
+        .song-album {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .song-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: rgba(20, 20, 20, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+            min-width: 200px;
+            z-index: 10000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+            animation: menuFadeIn 0.2s ease-out;
+        }
+
+        @keyframes menuFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .context-menu-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            color: white;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .context-menu-item:hover:not([style*="cursor: not-allowed"]) {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0.5rem 0;
+        }
+
+        .context-menu-header {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-shrink: 0;
+            background: rgba(20, 20, 20, 0.98);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .upload-area {
+                flex-direction: column;
+            }
+
+            .rules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .export-buttons {
+                justify-content: center;
+            }
+
+            .songs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid, .form-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* File input */
+        #fileInput {
+            display: none;
+        }
+
+        /* Loading animations */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="vinyl-icon"></div>
+                <div>
+                    <h1 class="main-title">MIXMASTER</h1>
+                    <div class="subtitle">AI-POWERED PLAYLIST ORGANIZER</div>
+                </div>
+            </div>
+            <p class="description">
+                Transform your Spotify playlists using the legendary "group of three" DJ rule. 
+                Create seamless transitions that keep the energy flowing.
+            </p>
+        </header>
+
+        <!-- Upload Section -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">📁</div>
+                <h2 class="section-title">Upload your beats</h2>
+            </div>
+            <div class="upload-area">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">🎵</div>
+                    <div class="upload-text">Drop your Spotify CSV here</div>
+                    <div class="upload-subtext">or click to browse your files</div>
+                    <input type="file" id="fileInput" accept=".csv">
+                </div>
+                <div class="upload-sidebar">
+                    <button class="btn btn-primary" id="sampleBtn">
+                        ⚡ Try sample beats
+                    </button>
+                    <div class="upload-status hidden" id="uploadStatus">
+                        <div class="status-count" id="songCount">0 tracks loaded</div>
+                        <div>Ready to organize</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rules Section -->
+        <section class="section hidden" id="rulesSection">
+            <div class="section-header">
+                <div class="section-icon">🎯</div>
+                <h2 class="section-title">Mixing rules</h2>
+            </div>
+            <div class="rules-grid">
+                <div class="rule-option" data-rule="genre">
+                    <span class="rule-emoji">🎵</span>
+                    <div class="rule-title">By genre</div>
+                    <div class="rule-desc">Group similar music styles together</div>
+                </div>
+                <div class="rule-option" data-rule="era">
+                    <span class="rule-emoji">📅</span>
+                    <div class="rule-title">By era</div>
+                    <div class="rule-desc">Group songs from same time period</div>
+                </div>
+                <div class="rule-option" data-rule="pace">
+                    <span class="rule-emoji">⚡</span>
+                    <div class="rule-title">By pace</div>
+                    <div class="rule-desc">Group by energy and tempo</div>
+                </div>
+                <div class="rule-option" data-rule="genre+era">
+                    <span class="rule-emoji">🎯</span>
+                    <div class="rule-title">By genre + era</div>
+                    <div class="rule-desc">Group by both style and time period</div>
+                </div>
+                <div class="rule-option" data-rule="pace+era">
+                    <span class="rule-emoji">🔥</span>
+                    <div class="rule-title">By pace + era</div>
+                    <div class="rule-desc">Group by both energy and time period</div>
+                </div>
+            </div>
+
+            <div class="artist-option" id="artistOption">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                        <span id="artistCheckmark" class="hidden">✓</span>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">🎭 Avoid same artist in a row</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Prevent consecutive songs by the same artist for better variety</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="organize-btn" id="organizeBtn" disabled>
+                🚀 Start the mix (0 rules selected)
+            </button>
+        </section>
+
+        <!-- Results Section -->
+        <section class="section hidden" id="resultsSection">
+            <div class="results-header">
+                <div class="results-title">
+                    <div class="section-icon">🎧</div>
+                    <h2 class="section-title">Your organized playlist</h2>
+                    <div class="group-count" id="groupCount">0 groups</div>
+                </div>
+                <div class="export-buttons">
+                    <button class="btn btn-secondary btn-small" id="remixBtn">
+                        🔄 Remix
+                    </button>
+                    <button class="btn btn-secondary btn-small" id="exportCsvBtn">
+                        📥 Export CSV
+                    </button>
+                    <button class="btn btn-secondary btn-small" id="exportDetailedBtn">
+                        📋 Detailed export
+                    </button>
+                    <button class="btn btn-secondary btn-small" id="exportSpotifyBtn">
+                        💾 Export to Spotify
+                    </button>
+                </div>
+            </div>
+            <div class="groups-container" id="groupsContainer">
+                <!-- Groups will be dynamically rendered here -->
+            </div>
+        </section>
+
+        <!-- Instructions -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">🧠</div>
+                <h2 class="section-title">How the magic works</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div>
+                    <h3 style="color: #4ecdc4; font-weight: 700; margin-bottom: 1rem;">🎯 The "group of three" rule</h3>
+                    <div style="color: rgba(255,255,255,0.8); line-height: 1.6;">
+                        <div>• Songs are grouped into sets of 3 based on musical similarity</div>
+                        <div>• Groups can be organized by genre, era, pace, or combinations</div>
+                        <div>• AI suggests alternatives when exact matches aren't available</div>
+                        <div>• Smart transitions keep energy flowing throughout your set</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color: #ff6b6b; font-weight: 700; margin-bottom: 1rem;">🚀 Enhanced suggestions</h3>
+                    <div style="color: rgba(255,255,255,0.8); line-height: 1.6;">
+                        <div>• <strong style="color: #4ecdc4;">Existing suggestions:</strong> From your playlist and AI knowledge</div>
+                        <div>• <strong style="color: #45b7d1;">Internet AI suggestions:</strong> Fresh recommendations from the web</div>
+                        <div>• Smart transitions analyze tempo, key, and energy compatibility</div>
+                        <div>• Color-coded suggestions show different recommendation sources</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Application State
+        let loadedSongs = [];
+        let organizedGroups = [];
+        let selectedRules = [];
+        let avoidSameArtist = true;
+        let isProcessing = false;
+
+        // Sample data
+        const sampleSongs = [
+            {
+                id: 1,
+                title: "Bohemian Rhapsody",
+                artist: "Queen",
+                album: "A Night At The Opera",
+                genre: "Rock/Alternative",
+                era: "70s",
+                pace: "Medium",
+                tempo: 144,
+                keyName: "Bb",
+                key: 10,
+                energy: 0.6,
+                valence: 0.5,
+                danceability: 0.4,
+                durationFormatted: "5:55"
+            },
+            {
+                id: 2,
+                title: "Billie Jean",
+                artist: "Michael Jackson",
+                album: "Thriller",
+                genre: "Pop/Dance",
+                era: "80s",
+                pace: "High",
+                tempo: 117,
+                keyName: "F#",
+                key: 6,
+                energy: 0.8,
+                valence: 0.7,
+                danceability: 0.9,
+                durationFormatted: "4:54"
+            },
+            {
+                id: 3,
+                title: "Hey Ya!",
+                artist: "OutKast",
+                album: "Speakerboxxx/The Love Below",
+                genre: "Hip Hop/Rap",
+                era: "2000s",
+                pace: "High",
+                tempo: 160,
+                keyName: "G",
+                key: 7,
+                energy: 0.8,
+                valence: 0.9,
+                danceability: 0.9,
+                durationFormatted: "3:55"
+            },
+            {
+                id: 4,
+                title: "Stairway To Heaven",
+                artist: "Led Zeppelin",
+                album: "Led Zeppelin IV",
+                genre: "Rock/Alternative",
+                era: "70s",
+                pace: "Medium",
+                tempo: 82,
+                keyName: "A",
+                key: 9,
+                energy: 0.7,
+                valence: 0.6,
+                danceability: 0.3,
+                durationFormatted: "8:02"
+            },
+            {
+                id: 5,
+                title: "Beat It",
+                artist: "Michael Jackson",
+                album: "Thriller",
+                genre: "Pop/Dance",
+                era: "80s",
+                pace: "High",
+                tempo: 138,
+                keyName: "E",
+                key: 4,
+                energy: 0.9,
+                valence: 0.6,
+                danceability: 0.8,
+                durationFormatted: "4:18"
+            },
+            {
+                id: 6,
+                title: "Smells Like Teen Spirit",
+                artist: "Nirvana",
+                album: "Nevermind",
+                genre: "Rock/Alternative",
+                era: "90s",
+                pace: "High",
+                tempo: 116,
+                keyName: "F",
+                key: 5,
+                energy: 0.9,
+                valence: 0.4,
+                danceability: 0.5,
+                durationFormatted: "5:01"
+            },
+            {
+                id: 7,
+                title: "Sweet Child O' Mine",
+                artist: "Guns N' Roses",
+                album: "Appetite for Destruction",
+                genre: "Rock/Alternative",
+                era: "80s",
+                pace: "High",
+                tempo: 125,
+                keyName: "D",
+                key: 2,
+                energy: 0.8,
+                valence: 0.7,
+                danceability: 0.4,
+                durationFormatted: "5:03"
+            },
+            {
+                id: 8,
+                title: "I Want It That Way",
+                artist: "Backstreet Boys",
+                album: "Millennium",
+                genre: "Pop/Dance",
+                era: "90s",
+                pace: "Medium",
+                tempo: 100,
+                keyName: "A",
+                key: 9,
+                energy: 0.6,
+                valence: 0.8,
+                danceability: 0.7,
+                durationFormatted: "3:33"
+            },
+            {
+                id: 9,
+                title: "Lose Yourself",
+                artist: "Eminem",
+                album: "8 Mile Soundtrack",
+                genre: "Hip Hop/Rap",
+                era: "2000s",
+                pace: "High",
+                tempo: 86,
+                keyName: "B",
+                key: 11,
+                energy: 0.8,
+                valence: 0.5,
+                danceability: 0.6,
+                durationFormatted: "5:26"
+            }
+        ];
+
+        // Utility Functions
+        function toSentenceCase(text) {
+            if (!text) return '';
+            return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+        }
+
+        function getEraFromDate(dateString) {
+            if (!dateString) return '2000s';
+            const year = parseInt(dateString.split('-')[0]);
+            if (year >= 2020) return '2020s';
+            if (year >= 2010) return '2010s';
+            if (year >= 2000) return '2000s';
+            if (year >= 1990) return '90s';
+            if (year >= 1980) return '80s';
+            if (year >= 1970) return '70s';
+            if (year >= 1960) return '60s';
+            return 'Classic';
+        }
+
+        function getPrimaryGenre(genresString) {
+            if (!genresString || genresString === '""' || genresString === '') return 'Pop';
+            const genres = genresString.toLowerCase().replace(/"/g, '');
+            
+            if (genres.includes('rock') || genres.includes('alternative') || genres.includes('indie')) return 'Rock/Alternative';
+            if (genres.includes('pop') || genres.includes('dance')) return 'Pop/Dance';
+            if (genres.includes('hip hop') || genres.includes('rap')) return 'Hip Hop/Rap';
+            if (genres.includes('electronic') || genres.includes('house') || genres.includes('techno')) return 'Electronic';
+            if (genres.includes('r&b') || genres.includes('soul') || genres.includes('funk')) return 'R&B/Soul';
+            if (genres.includes('country')) return 'Country';
+            if (genres.includes('jazz')) return 'Jazz';
+            if (genres.includes('classical')) return 'Classical';
+            
+            return 'Pop';
+        }
+
+        function getPaceFromFeatures(energy, tempo, danceability) {
+            const energyScore = energy || 0.5;
+            const tempoScore = Math.min(1, (tempo || 120) / 140);
+            const danceScore = danceability || 0.5;
+            
+            const overallPace = (energyScore + tempoScore + danceScore) / 3;
+            
+            if (overallPace > 0.7) return 'High';
+            if (overallPace > 0.4) return 'Medium';
+            return 'Low';
+        }
+
+        function getKeyName(keyNum) {
+            const keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            return keys[keyNum] || 'C';
+        }
+
+        function formatDuration(ms) {
+            const minutes = Math.floor(ms / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // CSV Parsing Function
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            
+            const parsedSongs = lines.slice(1).filter(line => line.trim()).map((line, index) => {
+                const values = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                values.push(current.trim());
+                
+                const song = { id: index + 1 };
+                
+                const rawTitle = values[headers.indexOf('Track Name')] || '';
+                const rawArtist = values[headers.indexOf('Artist Name(s)')] || '';
+                const rawAlbum = values[headers.indexOf('Album Name')] || '';
+                
+                song.title = toSentenceCase(rawTitle);
+                song.artist = toSentenceCase(rawArtist);
+                song.album = toSentenceCase(rawAlbum);
+                song.genres = values[headers.indexOf('Genres')] || '';
+                song.releaseDate = values[headers.indexOf('Release Date')] || '';
+                song.duration = parseInt(values[headers.indexOf('Duration (ms)')]) || 0;
+                song.energy = parseFloat(values[headers.indexOf('Energy')]) || 0;
+                song.tempo = parseFloat(values[headers.indexOf('Tempo')]) || 120;
+                song.danceability = parseFloat(values[headers.indexOf('Danceability')]) || 0;
+                song.key = parseInt(values[headers.indexOf('Key')]) || 0;
+                song.valence = parseFloat(values[headers.indexOf('Valence')]) || 0;
+                
+                song.era = getEraFromDate(song.releaseDate);
+                song.genre = getPrimaryGenre(song.genres);
+                song.pace = getPaceFromFeatures(song.energy, song.tempo, song.danceability);
+                song.keyName = getKeyName(song.key);
+                song.durationFormatted = formatDuration(song.duration);
+                
+                return song;
+            });
+            
+            return parsedSongs.filter(song => song.title && song.artist);
+        }
+
+        // Similarity calculation function
+        function calculateSimilarity(song1, song2, rule) {
+            let score = 0;
+            
+            // Handle combined rules
+            if (rule === 'genre+era') {
+                if (song1.genre === song2.genre && song1.era === song2.era) {
+                    score += 0.6;
+                } else if (song1.genre === song2.genre) {
+                    score += 0.3;
+                } else if (song1.era === song2.era) {
+                    score += 0.2;
+                }
+            } else if (rule === 'pace+era') {
+                if (song1.pace === song2.pace && song1.era === song2.era) {
+                    score += 0.6;
+                } else if (song1.pace === song2.pace) {
+                    score += 0.3;
+                } else if (song1.era === song2.era) {
+                    score += 0.2;
+                }
+            } else {
+                // Single rule
+                if (song1[rule] && song2[rule] && song1[rule] === song2[rule]) {
+                    score += 0.4;
+                }
+            }
+            
+            // Additional similarity factors
+            if (song1.artist === song2.artist) {
+                score += 0.2;
+            }
+            
+            const tempo1 = parseFloat(song1.tempo) || 120;
+            const tempo2 = parseFloat(song2.tempo) || 120;
+            if (Math.abs(tempo1 - tempo2) < 20) {
+                score += 0.2;
+            }
+            
+            return score;
+        }
+
+        // Grouping Algorithm
+        function groupSongsByRules(songs, rules, avoidSameArtist) {
+            const groups = [];
+            const used = new Set();
+            const shuffledSongs = [...songs].sort(() => Math.random() - 0.5);
+            const remainingSongs = [...shuffledSongs];
+            
+            while (remainingSongs.length > 0 && used.size < songs.length) {
+                let bestGroup = null;
+                let bestRule = null;
+                
+                for (const rule of rules) {
+                    for (let i = 0; i < remainingSongs.length; i++) {
+                        const song = remainingSongs[i];
+                        if (used.has(song.id)) continue;
+                        
+                        const group = [song];
+                        const candidates = remainingSongs.filter(s => {
+                            if (used.has(s.id) || s.id === song.id) return false;
+                            
+                            // Handle combined rules
+                            if (rule === 'genre+era') {
+                                if (s.genre !== song.genre || s.era !== song.era) return false;
+                            } else if (rule === 'pace+era') {
+                                if (s.pace !== song.pace || s.era !== song.era) return false;
+                            } else {
+                                // Single rule
+                                if (s[rule] !== song[rule]) return false;
+                            }
+                            
+                            if (avoidSameArtist) {
+                                const wouldCreateSameArtistInRow = group.some(groupSong => 
+                                    groupSong.artist === s.artist
+                                );
+                                if (wouldCreateSameArtistInRow) return false;
+                            }
+                            
+                            return true;
+                        });
+                        
+                        const selectedCandidates = candidates.slice(0, 2);
+                        const potentialGroup = [song, ...selectedCandidates];
+                        
+                        if (potentialGroup.length > (bestGroup?.length || 0)) {
+                            bestGroup = potentialGroup;
+                            bestRule = rule;
+                        }
+                        
+                        if (potentialGroup.length === 3) {
+                            break;
+                        }
+                    }
+                    
+                    if (bestGroup?.length === 3) {
+                        break;
+                    }
+                }
+                
+                if (bestGroup && bestGroup.length > 0) {
+                    bestGroup.forEach(song => {
+                        used.add(song.id);
+                        const index = remainingSongs.findIndex(s => s.id === song.id);
+                        if (index > -1) {
+                            remainingSongs.splice(index, 1);
+                        }
+                    });
+                    
+                    // Generate rule value for display
+                    let ruleValue;
+                    if (bestRule === 'genre+era') {
+                        ruleValue = `${bestGroup[0].genre} + ${bestGroup[0].era}`;
+                    } else if (bestRule === 'pace+era') {
+                        ruleValue = `${bestGroup[0].pace} + ${bestGroup[0].era}`;
+                    } else {
+                        ruleValue = bestGroup[0][bestRule];
+                    }
+                    
+                    groups.push({
+                        id: groups.length + 1,
+                        songs: bestGroup,
+                        rule: bestRule,
+                        ruleValue: ruleValue
+                    });
+                } else {
+                    break;
+                }
+            }
+            
+            return groups;
+        }
+
+        function getExistingSuggestions(baseSong, rule, availableSongs, currentGroup) {
+            if (!availableSongs || availableSongs.length === 0) {
+                return [];
+            }
+            
+            let filteredSongs = availableSongs.filter(song => {
+                // Don't suggest the same song
+                if (song.id === baseSong.id) return false;
+                
+                // Check if song is already in current group
+                if (currentGroup.some(groupSong => groupSong.id === song.id)) return false;
+                
+                // Check rule compatibility
+                let ruleMatch = false;
+                if (rule === 'genre+era') {
+                    ruleMatch = song.genre === baseSong.genre && song.era === baseSong.era;
+                } else if (rule === 'pace+era') {
+                    ruleMatch = song.pace === baseSong.pace && song.era === baseSong.era;
+                } else {
+                    // Single rule
+                    ruleMatch = song[rule] === baseSong[rule];
+                }
+                
+                if (!ruleMatch) return false;
+                
+                if (avoidSameArtist) {
+                    const wouldCreateSameArtistInRow = currentGroup.some(groupSong => 
+                        groupSong.artist === song.artist
+                    );
+                    if (wouldCreateSameArtistInRow || song.artist === baseSong.artist) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            
+            const songsWithSimilarity = filteredSongs.map(song => ({
+                ...song,
+                similarity: calculateSimilarity(baseSong, song, rule),
+                source: 'playlist',
+                reasoning: `Perfect match from your playlist with similar ${rule} characteristics and compatible mixing elements`
+            }));
+            
+            const suggestions = songsWithSimilarity
+                .filter(song => song.similarity > 0)
+                .sort((a, b) => b.similarity - a.similarity)
+                .slice(0, 3);
+            
+            return suggestions;
+        }
+
+        // UI Update Functions
+        function updateSongCount() {
+            const countElement = document.getElementById('songCount');
+            const statusElement = document.getElementById('uploadStatus');
+            const rulesSection = document.getElementById('rulesSection');
+            
+            if (loadedSongs.length > 0) {
+                countElement.textContent = `${loadedSongs.length} tracks loaded`;
+                statusElement.classList.remove('hidden');
+                rulesSection.classList.remove('hidden');
+            } else {
+                statusElement.classList.add('hidden');
+                rulesSection.classList.add('hidden');
+            }
+        }
+
+        function updateRuleSelection() {
+            const rules = document.querySelectorAll('.rule-option');
+            const organizeBtn = document.getElementById('organizeBtn');
+            
+            rules.forEach(rule => {
+                const ruleValue = rule.dataset.rule;
+                if (selectedRules.includes(ruleValue)) {
+                    rule.classList.add('selected');
+                } else {
+                    rule.classList.remove('selected');
+                }
+            });
+            
+            const count = selectedRules.length;
+            organizeBtn.innerHTML = `🚀 Start the mix (${count} rule${count !== 1 ? 's' : ''} selected)`;
+            organizeBtn.disabled = count === 0 || isProcessing || loadedSongs.length === 0;
+        }
+
+        function updateArtistOption() {
+            const artistOption = document.getElementById('artistOption');
+            const checkmark = document.getElementById('artistCheckmark');
+            
+            if (avoidSameArtist) {
+                artistOption.classList.add('selected');
+                checkmark.classList.remove('hidden');
+            } else {
+                artistOption.classList.remove('selected');
+                checkmark.classList.add('hidden');
+            }
+        }
+
+        function renderGroups() {
+            const container = document.getElementById('groupsContainer');
+            const resultsSection = document.getElementById('resultsSection');
+            const groupCount = document.getElementById('groupCount');
+            
+            if (organizedGroups.length === 0) {
+                resultsSection.classList.add('hidden');
+                return;
+            }
+            
+            resultsSection.classList.remove('hidden');
+            groupCount.textContent = `${organizedGroups.length} groups`;
+            container.innerHTML = '';
+            
+            let overallSongNumber = 1; // Track overall song position
+            
+            organizedGroups.forEach((group, groupIndex) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'group';
+                
+                // Create the group header
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'group-header';
+                groupHeader.innerHTML = `
+                    <div class="group-info">
+                        <div class="group-number">Group ${groupIndex + 1}</div>
+                        <div class="group-rule">${group.rule}: ${group.ruleValue}</div>
+                    </div>
+                    <div class="group-controls">
+                        <button class="control-btn" ${groupIndex === 0 ? 'disabled' : ''} onclick="moveGroup(${groupIndex}, 'up')" title="Move group up">
+                            ▲
+                        </button>
+                        <button class="control-btn" ${groupIndex === organizedGroups.length - 1 ? 'disabled' : ''} onclick="moveGroup(${groupIndex}, 'down')" title="Move group down">
+                            ▼
+                        </button>
+                    </div>
+                `;
+                groupDiv.appendChild(groupHeader);
+                
+                // Create songs grid
+                const songsGrid = document.createElement('div');
+                songsGrid.className = 'songs-grid';
+                
+                group.songs.forEach((song, songIndex) => {
+                    const currentSongNumber = overallSongNumber++;
+                    
+                    const songCard = document.createElement('div');
+                    songCard.className = 'song-card';
+                    
+                    songCard.innerHTML = `
+                        <div class="song-number">${currentSongNumber}</div>
+                        <div class="song-info">
+                            <div class="song-title">${song.title}</div>
+                            <div class="song-artist">${song.artist}</div>
+                            ${song.album ? `<div class="song-album">— ${song.album}</div>` : ''}
+                        </div>
+                        <div class="song-details">
+                            <div>${song.genre}</div>
+                            <div>${song.era}</div>
+                            <div>${song.pace} pace</div>
+                            <div>${Math.round(song.tempo)} BPM</div>
+                            ${song.keyName ? `<div>${song.keyName} key</div>` : '<div></div>'}
+                            ${song.durationFormatted ? `<div>${song.durationFormatted}</div>` : '<div></div>'}
+                        </div>
+                    `;
+                    
+                    // Create menu button separately and add event listener
+                    const menuButton = document.createElement('button');
+                    menuButton.className = 'song-menu-btn';
+                    menuButton.textContent = '⋮';
+                    menuButton.style.position = 'absolute';
+                    menuButton.style.top = '1rem';
+                    menuButton.style.right = '1rem';
+                    menuButton.style.width = '28px';
+                    menuButton.style.height = '28px';
+                    menuButton.style.background = 'rgba(255, 255, 255, 0.1)';
+                    menuButton.style.border = 'none';
+                    menuButton.style.borderRadius = '6px';
+                    menuButton.style.cursor = 'pointer';
+                    menuButton.style.display = 'flex';
+                    menuButton.style.alignItems = 'center';
+                    menuButton.style.justifyContent = 'center';
+                    menuButton.style.color = 'white';
+                    menuButton.style.transition = 'all 0.3s ease';
+                    
+                    // Add event listener to menu button
+                    menuButton.addEventListener('click', function(event) {
+                        console.log('🔥 NEW MENU BUTTON CLICKED!');
+                        showSongMenu(event, groupIndex, songIndex); // <-- Use the context menu function instead of testSongReplacement
+                    });
+                    
+                    songCard.appendChild(menuButton);
+                    songsGrid.appendChild(songCard);
+                });
+                
+                groupDiv.appendChild(songsGrid);
+                container.appendChild(groupDiv);
+            });
+        }
+
+        // Context Menu Functions
+        function showSongMenu(event, groupIndex, songIndex) {
+            console.log('=== SONG MENU CLICKED ===');
+            console.log('Group Index:', groupIndex, 'Song Index:', songIndex);
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Remove existing context menu
+            const existingMenu = document.querySelector('.context-menu');
+            if (existingMenu) {
+                existingMenu.remove();
+            }
+            
+            const menu = document.createElement('div');
+            menu.className = 'context-menu';
+            menu.innerHTML = `
+                <div class="context-menu-header">Song Actions</div>
+                <button class="context-menu-item" onclick="console.log('Edit clicked'); editSong(${groupIndex}, ${songIndex}); closeContextMenu()">
+                    ✏️ Edit song
+                </button>
+                <button class="context-menu-item" onclick="console.log('Move up clicked'); moveSong(${groupIndex}, ${songIndex}, 'up'); closeContextMenu()" ${songIndex === 0 ? 'style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                    ⬆️ Move up
+                </button>
+                <button class="context-menu-item" onclick="console.log('Move down clicked'); moveSong(${groupIndex}, ${songIndex}, 'down'); closeContextMenu()" ${songIndex === organizedGroups[groupIndex].songs.length - 1 ? 'style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                    ⬇️ Move down
+                </button>
+                <div class="context-menu-separator"></div>
+                <button class="context-menu-item" onclick="console.log('Find suggestions clicked for group ${groupIndex}, song ${songIndex}'); window.findSuggestions(${groupIndex}, ${songIndex}); closeContextMenu()">
+                    🔍 Find suggestions
+                </button>
+                <button class="context-menu-item" onclick="console.log('Remove clicked'); removeSong(${groupIndex}, ${songIndex}); closeContextMenu()">
+                    🗑️ Remove song
+                </button>
+            `;
+            
+            document.body.appendChild(menu);
+            
+            // Get button position
+            const rect = event.target.getBoundingClientRect();
+            const menuRect = menu.getBoundingClientRect();
+            
+            // Calculate position (prefer bottom-right, but adjust if off-screen)
+            let left = rect.left;
+            let top = rect.bottom + 5;
+            
+            // Adjust if menu goes off right edge
+            if (left + menuRect.width > window.innerWidth) {
+                left = rect.right - menuRect.width;
+            }
+            
+            // Adjust if menu goes off bottom edge
+            if (top + menuRect.height > window.innerHeight) {
+                top = rect.top - menuRect.height - 5;
+            }
+            
+            // Ensure menu stays on screen
+            left = Math.max(5, Math.min(left, window.innerWidth - menuRect.width - 5));
+            top = Math.max(5, Math.min(top, window.innerHeight - menuRect.height - 5));
+            
+            menu.style.left = `${left}px`;
+            menu.style.top = `${top}px`;
+            
+            console.log('Context menu positioned at:', left, top);
+            
+            // Close menu when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', closeContextMenu, { once: true });
+                document.addEventListener('scroll', closeContextMenu, { once: true });
+            }, 100);
+        }
+
+        function closeContextMenu() {
+            const menu = document.querySelector('.context-menu');
+            if (menu) {
+                menu.remove();
+            }
+        }
+
+        // Modal Functions
+        function createModal(title, content, footer = '') {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title">${title}</h3>
+                        <button class="modal-close" onclick="closeModal(this)">×</button>
+                    </div>
+                    <div class="modal-body">${content}</div>
+                    ${footer ? `<div class="modal-footer">${footer}</div>` : ''}
+                </div>
+            `;
+            
+            // Close on overlay click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal.querySelector('.modal-close'));
+                }
+            });
+            
+            document.body.appendChild(modal);
+            return modal;
+        }
+
+        function closeModal(closeBtn) {
+            const modal = closeBtn.closest('.modal-overlay');
+            modal.remove();
+        }
+
+        // Song Management Functions
+        function editSong(groupIndex, songIndex) {
+            const song = organizedGroups[groupIndex].songs[songIndex];
+            const content = `
+                <div class="form-group">
+                    <label class="form-label">Song title</label>
+                    <input type="text" class="form-input" id="editTitle" value="${song.title}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Artist name</label>
+                    <input type="text" class="form-input" id="editArtist" value="${song.artist}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Album name</label>
+                    <input type="text" class="form-input" id="editAlbum" value="${song.album || ''}">
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Genre</label>
+                        <select class="form-select" id="editGenre">
+                            <option value="Pop/Dance" ${song.genre === 'Pop/Dance' ? 'selected' : ''}>Pop/Dance</option>
+                            <option value="Rock/Alternative" ${song.genre === 'Rock/Alternative' ? 'selected' : ''}>Rock/Alternative</option>
+                            <option value="Hip Hop/Rap" ${song.genre === 'Hip Hop/Rap' ? 'selected' : ''}>Hip Hop/Rap</option>
+                            <option value="Electronic" ${song.genre === 'Electronic' ? 'selected' : ''}>Electronic</option>
+                            <option value="R&B/Soul" ${song.genre === 'R&B/Soul' ? 'selected' : ''}>R&B/Soul</option>
+                            <option value="Country" ${song.genre === 'Country' ? 'selected' : ''}>Country</option>
+                            <option value="Jazz" ${song.genre === 'Jazz' ? 'selected' : ''}>Jazz</option>
+                            <option value="Classical" ${song.genre === 'Classical' ? 'selected' : ''}>Classical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Era</label>
+                        <select class="form-select" id="editEra">
+                            <option value="2020s" ${song.era === '2020s' ? 'selected' : ''}>2020s</option>
+                            <option value="2010s" ${song.era === '2010s' ? 'selected' : ''}>2010s</option>
+                            <option value="2000s" ${song.era === '2000s' ? 'selected' : ''}>2000s</option>
+                            <option value="90s" ${song.era === '90s' ? 'selected' : ''}>90s</option>
+                            <option value="80s" ${song.era === '80s' ? 'selected' : ''}>80s</option>
+                            <option value="70s" ${song.era === '70s' ? 'selected' : ''}>70s</option>
+                            <option value="60s" ${song.era === '60s' ? 'selected' : ''}>60s</option>
+                            <option value="Classic" ${song.era === 'Classic' ? 'selected' : ''}>Classic</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Pace</label>
+                        <select class="form-select" id="editPace">
+                            <option value="High" ${song.pace === 'High' ? 'selected' : ''}>High</option>
+                            <option value="Medium" ${song.pace === 'Medium' ? 'selected' : ''}>Medium</option>
+                            <option value="Low" ${song.pace === 'Low' ? 'selected' : ''}>Low</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tempo (BPM)</label>
+                        <input type="number" class="form-input" id="editTempo" value="${song.tempo}" min="60" max="200">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Key</label>
+                        <select class="form-select" id="editKey">
+                            ${['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'].map((key, index) => 
+                                `<option value="${index}" ${song.key === index ? 'selected' : ''}>${key}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSongEdit(${groupIndex}, ${songIndex})">Save Changes</button>
+            `;
+            
+            createModal('Edit Song', content, footer);
+        }
+
+        function saveSongEdit(groupIndex, songIndex) {
+            const song = organizedGroups[groupIndex].songs[songIndex];
+            
+            song.title = document.getElementById('editTitle').value;
+            song.artist = document.getElementById('editArtist').value;
+            song.album = document.getElementById('editAlbum').value;
+            song.genre = document.getElementById('editGenre').value;
+            song.era = document.getElementById('editEra').value;
+            song.pace = document.getElementById('editPace').value;
+            song.tempo = parseFloat(document.getElementById('editTempo').value);
+            song.key = parseInt(document.getElementById('editKey').value);
+            song.keyName = getKeyName(song.key);
+            
+            renderGroups();
+            closeModal(document.querySelector('.modal-close'));
+        }
+
+        function moveSong(groupIndex, songIndex, direction) {
+            const group = organizedGroups[groupIndex];
+            const song = group.songs[songIndex];
+            
+            if (direction === 'up' && songIndex > 0) {
+                group.songs[songIndex] = group.songs[songIndex - 1];
+                group.songs[songIndex - 1] = song;
+            } else if (direction === 'down' && songIndex < group.songs.length - 1) {
+                group.songs[songIndex] = group.songs[songIndex + 1];
+                group.songs[songIndex + 1] = song;
+            }
+            
+            renderGroups();
+        }
+
+        function removeSong(groupIndex, songIndex) {
+            organizedGroups[groupIndex].songs.splice(songIndex, 1);
+            
+            // Remove empty groups
+            if (organizedGroups[groupIndex].songs.length === 0) {
+                organizedGroups.splice(groupIndex, 1);
+            }
+            
+            renderGroups();
+        }
+
+        function moveGroup(groupIndex, direction) {
+            if (direction === 'up' && groupIndex > 0) {
+                const temp = organizedGroups[groupIndex];
+                organizedGroups[groupIndex] = organizedGroups[groupIndex - 1];
+                organizedGroups[groupIndex - 1] = temp;
+            } else if (direction === 'down' && groupIndex < organizedGroups.length - 1) {
+                const temp = organizedGroups[groupIndex];
+                organizedGroups[groupIndex] = organizedGroups[groupIndex + 1];
+                organizedGroups[groupIndex + 1] = temp;
+            }
+            
+            renderGroups();
+        }
+
+        function findSuggestions(groupIndex, songIndex) {
+            const group = organizedGroups[groupIndex];
+            const baseSong = group.songs[songIndex];
+            
+            // Create a simplified suggestion modal
+            const content = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎵</div>
+                    <h3 style="margin-bottom: 1rem;">Looking for suggestions...</h3>
+                    <p style="color: rgba(255,255,255,0.7);">
+                        Finding songs similar to "${baseSong.title}" by ${baseSong.artist}
+                    </p>
+                    <div style="margin-top: 2rem;">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            `;
+            
+            const modal = createModal('Song Suggestions', content);
+            
+            
+            // Pass groupIndex and songIndex to showSuggestionResults
+            setTimeout(() => {
+                showSuggestionResults(modal, baseSong, group, groupIndex, songIndex);
+            }, 1500);
+        }
+
+        function showSuggestionResults(modal, baseSong, group, groupIndex, songIndex) {
+            const suggestions = generateMockSuggestions(baseSong, group);
+
+            const content = `
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Suggestions for "${baseSong.title}"</h4>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem;">
+                        Based on ${group.rule}: ${group.ruleValue}
+                    </p>
+                </div>
+                <div class="suggestions-list">
+${suggestions.map((suggestion, index) => {
+    // Ensure source is set for playlist-based suggestions
+    let sourceText = '';
+    if (suggestion.source === 'playlist') sourceText = 'Another song already in the playlist';
+    else if (suggestion.source === 'internet') sourceText = 'Internet AI';
+    else if (suggestion.source === 'ai') sourceText = 'AI Generated';
+    else if (
+        loadedSongs.some(song => song.title === suggestion.title && song.artist === suggestion.artist)
+    ) sourceText = 'Another song already in the playlist';
+    else sourceText = 'Unknown source';
+
+    return `
+        <div class="suggestion-card ${suggestion.source}" style="margin-bottom: 0;">
+            <div class="suggestion-content">
+                <div class="suggestion-info">
+                    <div class="song-title-section">
+                        <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #ffffff; font-weight: 700; line-height: 1.2; display: block; width: 100%;">${suggestion.title}</h3>
+                        <p style="color: rgba(255,255,255,0.85); margin-bottom: 0.3rem; font-size: 1.1rem; font-weight: 500;">${suggestion.artist}</p>
+                        ${suggestion.album ? `<p style="color: rgba(255,255,255,0.6); margin-bottom: 0; font-size: 0.95rem; font-style: italic;">Album: ${suggestion.album}</p>` : ''}
+                    </div>
+                    <div class="suggestion-details">
+                        <div><span style="font-weight: 500;">Genre:</span> <span>${suggestion.genre}</span></div>
+                        <div><span style="font-weight: 500;">Era:</span> <span>${suggestion.era}</span></div>
+                        <div><span style="font-weight: 500;">Pace:</span> <span>${suggestion.pace}</span></div>
+                        <div><span style="font-weight: 500;">Tempo:</span> <span>${Math.round(suggestion.tempo)} BPM</span></div>
+                        <div><span style="font-weight: 500;">Key:</span> <span>${suggestion.keyName}</span></div>
+                        <div><span style="font-weight: 500;">Duration:</span> <span>${suggestion.durationFormatted}</span></div>
+                    </div>
+                    <div class="suggestion-reasoning ${suggestion.source}" style="margin-bottom: 0.5rem;">
+                        <span style="font-weight: 500;">Why this works:</span> ${suggestion.reasoning || `Great match for ${group.rule} grouping with similar ${group.ruleValue} characteristics.`}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 0.5rem; font-weight: 500;">
+                        <span style="font-weight: 500;">Source:</span> ${sourceText}
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-small"
+                    style="margin-top: 0.5rem; width: 100%;"
+                    onclick="addSuggestionToGroup(${groupIndex}, ${songIndex}, '${encodeURIComponent(JSON.stringify(suggestion))}'); closeModal(this)">
+                    Use this song
+                </button>
+            </div>
+        </div>
+        ${index < suggestions.length - 1 ? '<hr style="border: none; border-top: 1px solid #444; margin: 18px 0 18px 0;" />' : ''}
+    `;
+}).join('')}
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="closeModal(this)">Close</button>
+            `;
+            
+            modal.querySelector('.modal-body').innerHTML = content;
+
+            // Add footer if it doesn't exist
+            if (!modal.querySelector('.modal-footer')) {
+                const modalContent = modal.querySelector('.modal');
+                modalContent.innerHTML += `<div class="modal-footer">${footer}</div>`;
+            } else {
+                modal.querySelector('.modal-footer').innerHTML = footer;
+            }
+        }
+
+        function generateMockSuggestions(baseSong, group) {
+            const suggestions = [];
+            let id = -1000;
+        
+            // 1. Playlist-based suggestions (from user's loadedSongs)
+            const playlistSuggestions = loadedSongs.filter(song =>
+                song.id !== baseSong.id &&
+                !group.songs.some(groupSong => groupSong.id === song.id) &&
+                (
+                    // Match by group rule
+                    (group.rule === 'genre' && song.genre === baseSong.genre) ||
+                    (group.rule === 'era' && song.era === baseSong.era) ||
+                    (group.rule === 'pace' && song.pace === baseSong.pace) ||
+                    (group.rule === 'genre+era' && song.genre === baseSong.genre && song.era === baseSong.era) ||
+                    (group.rule === 'pace+era' && song.pace === baseSong.pace && song.era === baseSong.era)
+                )
+            );
+            suggestions.push(...playlistSuggestions.slice(0, 2));
+        
+            // 2. Internet/AI suggestion (dynamic, based on baseSong)
+            suggestions.push({
+                id: id--,
+                title: baseSong.genre === "Rock/Alternative"
+                    ? "Mr. Brightside"
+                    : baseSong.genre === "Pop/Dance"
+                    ? "Blinding Lights"
+                    : baseSong.genre === "Hip Hop/Rap"
+                    ? "HUMBLE."
+                    : `${baseSong.genre.split('/')[0]} Hit (${baseSong.era})`,
+                artist: baseSong.genre === "Rock/Alternative"
+                    ? "The Killers"
+                    : baseSong.genre === "Pop/Dance"
+                    ? "The Weeknd"
+                    : baseSong.genre === "Hip Hop/Rap"
+                    ? "Kendrick Lamar"
+                    : "AI Artist",
+                album: baseSong.genre === "Rock/Alternative"
+                    ? "Hot Fuss"
+                    : baseSong.genre === "Pop/Dance"
+                    ? "After Hours"
+                    : baseSong.genre === "Hip Hop/Rap"
+                    ? "DAMN."
+                    : "AI Album",
+                genre: baseSong.genre,
+                era: baseSong.era,
+                pace: baseSong.pace,
+                tempo: baseSong.tempo + Math.floor(Math.random() * 10 - 5),
+                keyName: baseSong.keyName,
+                key: baseSong.key,
+                durationFormatted: "3:30",
+                reasoning: `Popular ${baseSong.genre} track with similar energy and vibe.`,
+                source: 'internet'
+            });
+        
+            // 3. AI-generated suggestion (always unique)
+            suggestions.push({
+                id: id--,
+                title: `${baseSong.genre.split('/')[0]} Flow ${Math.floor(Math.random() * 100)}`,
+                artist: "AI Generated",
+                album: "Seamless Flows",
+                genre: baseSong.genre,
+                era: baseSong.era,
+                pace: baseSong.pace,
+                tempo: baseSong.tempo + (Math.random() * 10 - 5),
+                keyName: baseSong.keyName,
+                key: baseSong.key,
+                durationFormatted: "3:30",
+                reasoning: "AI-crafted transition piece designed for seamless mixing with matching musical characteristics",
+                source: 'ai'
+            });
+        
+            return suggestions.slice(0, 3); // Return max 3 suggestions
+        }
+
+        function getExistingSuggestions(baseSong, rule, availableSongs, currentGroup) {
+            if (!availableSongs || availableSongs.length === 0) {
+                return [];
+            }
+            
+            let filteredSongs = availableSongs.filter(song => {
+                // Don't suggest the same song
+                if (song.id === baseSong.id) return false;
+                
+                // Check if song is already in current group
+                if (currentGroup.some(groupSong => groupSong.id === song.id)) return false;
+                
+                // Check rule compatibility
+                let ruleMatch = false;
+                if (rule === 'genre+era') {
+                    ruleMatch = song.genre === baseSong.genre && song.era === baseSong.era;
+                } else if (rule === 'pace+era') {
+                    ruleMatch = song.pace === baseSong.pace && song.era === baseSong.era;
+                } else {
+                    // Single rule
+                    ruleMatch = song[rule] === baseSong[rule];
+                }
+                
+                if (!ruleMatch) return false;
+                
+                if (avoidSameArtist) {
+                    const wouldCreateSameArtistInRow = currentGroup.some(groupSong => 
+                        groupSong.artist === song.artist
+                    );
+                    if (wouldCreateSameArtistInRow || song.artist === baseSong.artist) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            
+            const songsWithSimilarity = filteredSongs.map(song => ({
+                ...song,
+                similarity: calculateSimilarity(baseSong, song, rule),
+                source: 'playlist',
+                reasoning: `Perfect match from your playlist with similar ${rule} characteristics and compatible mixing elements`
+            }));
+            
+            const suggestions = songsWithSimilarity
+                .filter(song => song.similarity > 0)
+                .sort((a, b) => b.similarity - a.similarity)
+                .slice(0, 3);
+            
+            return suggestions;
+        }
+
+        function addSuggestionToGroup(groupIndex, songIndex, suggestionStr) {
+            const suggestion = JSON.parse(decodeURIComponent(suggestionStr));
+            if (
+                organizedGroups[groupIndex] &&
+                organizedGroups[groupIndex].songs[songIndex]
+            ) {
+                organizedGroups[groupIndex].songs[songIndex] = suggestion;
+                renderGroups();
+            }
+        }
+
+        // Export Functions
+        function exportToCSV() {
+            const headers = ['Group', 'Position', 'Title', 'Artist', 'Album', 'Genre', 'Era', 'Pace', 'Tempo', 'Key', 'Duration'];
+            const rows = [headers];
+            
+            organizedGroups.forEach((group, groupIndex) => {
+                group.songs.forEach((song, songIndex) => {
+                    rows.push([
+                        `Group ${groupIndex + 1}`,
+                        songIndex + 1,
+                        song.title,
+                        song.artist,
+                        song.album || '',
+                        song.genre,
+                        song.era,
+                        song.pace,
+                        Math.round(song.tempo),
+                        song.keyName,
+                        song.durationFormatted
+                    ]);
+                });
+            });
+            
+            const csvContent = rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            downloadFile(csvContent, 'mixmaster-playlist.csv', 'text/csv');
+        }
+
+        function exportDetailed() {
+            const content = `# MIXMASTER Playlist Export\n\nGenerated: ${new Date().toLocaleDateString()}\nTotal Groups: ${organizedGroups.length}\nTotal Songs: ${organizedGroups.reduce((sum, group) => sum + group.songs.length, 0)}\n\n` +
+                organizedGroups.map((group, groupIndex) => {
+                    return `## Group ${groupIndex + 1}: ${group.ruleValue}\n**Rule:** ${group.rule}\n\n` +
+                        group.songs.map((song, songIndex) => {
+                            return `${songIndex + 1}. **${song.title}** by ${song.artist}\n   - Album: ${song.album || 'Unknown'}\n   - ${song.genre} • ${song.era} • ${song.pace} pace\n   - ${Math.round(song.tempo)} BPM • ${song.keyName} key • ${song.durationFormatted}\n`;
+                        }).join('\n');
+                }).join('\n\n');
+            
+            downloadFile(content, 'mixmaster-detailed.md', 'text/markdown');
+        }
+
+        function exportToSpotify() {
+            const content = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎵</div>
+                    <h3 style="margin-bottom: 1rem;">Export to Spotify</h3>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 2rem;">
+                        This feature would integrate with Spotify's API to create a new playlist with your organized tracks.
+                    </p>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">
+                        Note: This is a demo version. In a full implementation, you would need to authenticate with Spotify and use their Web API to create playlists.
+                    </p>
+                </div>
+            `;
+            
+            createModal('Spotify Export', content, `
+                <button class="btn btn-secondary" onclick="closeModal(this)">Close</button>
+                <button class="btn btn-primary" onclick="closeModal(this)">Learn More</button>
+            `);
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // File Upload Handlers
+        function handleFileUpload(file) {
+            if (!file || !file.name.endsWith('.csv')) {
+                alert('Please upload a CSV file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csvData = e.target.result;
+                    loadedSongs = parseCSV(csvData);
+                    updateSongCount();
+                    updateRuleSelection();
+                } catch (error) {
+                    alert('Error parsing CSV file. Please check the format.');
+                    console.error('CSV parsing error:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function loadSampleData() {
+            loadedSongs = [...sampleSongs];
+            updateSongCount();
+            updateRuleSelection();
+        }
+
+        function organizePlaylist() {
+            if (selectedRules.length === 0 || loadedSongs.length === 0) return;
+            
+            isProcessing = true;
+            const organizeBtn = document.getElementById('organizeBtn');
+            organizeBtn.innerHTML = '🎵 Creating your mix... <div class="spinner"></div>';
+            organizeBtn.classList.add('loading');
+            
+            // Simulate processing time
+            setTimeout(() => {
+                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                renderGroups();
+                
+                isProcessing = false;
+                organizeBtn.classList.remove('loading');
+                updateRuleSelection();
+            }, 2000);
+        }
+
+        function remixPlaylist() {
+            if (loadedSongs.length === 0 || selectedRules.length === 0) return;
+            
+            const remixBtn = document.getElementById('remixBtn');
+            remixBtn.innerHTML = '🔄 Remixing...';
+            remixBtn.disabled = true;
+            
+            setTimeout(() => {
+                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                renderGroups();
+                
+                remixBtn.innerHTML = '🔄 Remix';
+                remixBtn.disabled = false;
+            }, 1500);
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadZone = document.getElementById('uploadZone');
+            const fileInput = document.getElementById('fileInput');
+            const sampleBtn = document.getElementById('sampleBtn');
+            const organizeBtn = document.getElementById('organizeBtn');
+            const artistOption = document.getElementById('artistOption');
+            const remixBtn = document.getElementById('remixBtn');
+            const exportCsvBtn = document.getElementById('exportCsvBtn');
+            const exportDetailedBtn = document.getElementById('exportDetailedBtn');
+            const exportSpotifyBtn = document.getElementById('exportSpotifyBtn');
+
+            // Upload zone handlers
+            uploadZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+
+            // Drag and drop handlers
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+            
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('dragover');
+            });
+            
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
+
+            // Button handlers
+            sampleBtn.addEventListener('click', loadSampleData);
+            organizeBtn.addEventListener('click', organizePlaylist);
+            remixBtn.addEventListener('click', remixPlaylist);
+            exportCsvBtn.addEventListener('click', exportToCSV);
+            exportDetailedBtn.addEventListener('click', exportDetailed);
+            exportSpotifyBtn.addEventListener('click', exportToSpotify);
+
+            // Rule selection handlers
+            document.querySelectorAll('.rule-option').forEach(rule => {
+                rule.addEventListener('click', () => {
+                    const ruleValue = rule.dataset.rule;
+                    if (selectedRules.includes(ruleValue)) {
+                        selectedRules = selectedRules.filter(r => r !== ruleValue);
+                    } else {
+                        selectedRules.push(ruleValue);
+                    }
+                    updateRuleSelection();
+                });
+            });
+
+            // Artist option handler
+            artistOption.addEventListener('click', () => {
+                avoidSameArtist = !avoidSameArtist;
+                updateArtistOption();
+            });
+
+            // Initialize UI
+            updateArtistOption();
+            updateRuleSelection();
+        });
+    </script>
+</body>
+</html>
