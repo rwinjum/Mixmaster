@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple Flask proxy server for Gemini API to bypass CORS issues
+Flask proxy server for Claude (Anthropic) API to bypass CORS issues
 """
 
 from flask import Flask, request, jsonify
@@ -9,18 +9,17 @@ import os
 
 app = Flask(__name__)
 
-# Gemini API configuration
-GEMINI_API_KEY = 'AQ.Ab8RN6JHOAnaHpXtVJWPiNCIQc-unRsji2W9V750csk2Fx7jDw'
-# Try the newer API v1 endpoint with gemini-2.0-flash
-GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent'
+# Anthropic API configuration
+ANTHROPIC_API_KEY = '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'
+ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages'
 
 # Enable CORS
 from flask_cors import CORS
 CORS(app)
 
-@app.route('/api/gemini', methods=['POST'])
-def gemini_proxy():
-    """Proxy endpoint for Gemini API calls"""
+@app.route('/api/claude', methods=['POST'])
+def claude_proxy():
+    """Proxy endpoint for Anthropic Claude API calls"""
     try:
         data = request.get_json()
         prompt = data.get('prompt')
@@ -28,37 +27,42 @@ def gemini_proxy():
         if not prompt:
             return jsonify({'error': 'No prompt provided'}), 400
         
-        # Call Gemini API
+        # Call Claude API
         response = requests.post(
-            f'{GEMINI_API_URL}?key={GEMINI_API_KEY}',
-            headers={'Content-Type': 'application/json'},
+            ANTHROPIC_API_URL,
+            headers={
+                'Content-Type': 'application/json',
+                'x-api-key': ANTHROPIC_API_KEY,
+                'anthropic-version': '2023-06-01'
+            },
             json={
-                'contents': [{
-                    'parts': [{
-                        'text': prompt
-                    }]
+                'model': 'claude-3-5-sonnet-20241022',
+                'max_tokens': 1024,
+                'messages': [{
+                    'role': 'user',
+                    'content': prompt
                 }]
             },
             timeout=30
         )
         
-        # Handle quota exceeded gracefully
+        # Handle rate limiting gracefully
         if response.status_code == 429:
             return jsonify({
                 'error': 'Rate limit exceeded',
-                'message': 'Free tier quota exceeded. AI features are temporarily unavailable.',
+                'message': 'API rate limit exceeded. Please try again later.',
                 'success': False
             }), 429
         
         if response.status_code != 200:
             return jsonify({
-                'error': f'Gemini API error: {response.status_code}',
+                'error': f'Claude API error: {response.status_code}',
                 'details': response.text,
                 'success': False
             }), response.status_code
         
         data = response.json()
-        result_text = data['candidates'][0]['content']['parts'][0]['text']
+        result_text = data['content'][0]['text']
         
         return jsonify({
             'success': True,
@@ -77,16 +81,9 @@ def gemini_proxy():
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""
-    return jsonify({'status': 'ok', 'service': 'Gemini Proxy'})
+    return jsonify({'status': 'ok', 'service': 'Claude Proxy', 'provider': 'Anthropic'})
 
 if __name__ == '__main__':
-    # Check if flask_cors is installed
-    try:
-        import flask_cors
-    except ImportError:
-        print("Installing flask-cors...")
-        os.system('pip install flask-cors')
-    
-    print("🚀 Starting Gemini Proxy Server on http://localhost:5000")
-    print(f"📡 Proxying to: {GEMINI_API_URL}")
+    print("🚀 Starting Claude (Anthropic) Proxy Server on http://localhost:5000")
+    print(f"📡 Proxying to: {ANTHROPIC_API_URL}")
     app.run(debug=False, host='localhost', port=5000)

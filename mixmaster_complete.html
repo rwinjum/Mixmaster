@@ -971,9 +971,9 @@
     </div>
 
     <script>
-        // Gemini API Configuration
-        const GEMINI_API_KEY = 'AQ.Ab8RN6JHOAnaHpXtVJWPiNCIQc-unRsji2W9V750csk2Fx7jDw';
-        const PROXY_URL = 'http://localhost:5000/api/gemini';
+        // Claude (Anthropic) API Configuration
+        const ANTHROPIC_API_KEY = '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';
+        const PROXY_URL = 'http://localhost:5000/api/claude';
 
         // Application State
         let loadedSongs = [];
@@ -982,10 +982,10 @@
         let avoidSameArtist = true;
         let isProcessing = false;
 
-        // Gemini API Functions
-        async function callGemini(prompt) {
+        // Claude API Functions
+        async function callClaude(prompt) {
             try {
-                // Try to use local proxy first
+                // Use local proxy to call Claude API
                 const response = await fetch(PROXY_URL, {
                     method: 'POST',
                     headers: {
@@ -1008,7 +1008,7 @@
                     return null;
                 }
             } catch (error) {
-                console.error('Gemini API error:', error);
+                console.error('Claude API error:', error);
                 // Return null to use fallback messages
                 return null;
             }
@@ -1025,7 +1025,7 @@ Songs: ${songDescriptions}
 
 Focus on: musical flow, energy progression, and crowd energy.`;
 
-            return await callGemini(prompt);
+            return await callClaude(prompt);
         }
 
         async function getAISuggestions(baseSong, rule, availableSongs, count = 3) {
@@ -1043,7 +1043,7 @@ ${songList}
 
 Return ONLY the song titles, one per line, no other text.`;
 
-            const response = await callGemini(prompt);
+            const response = await callClaude(prompt);
             if (!response) return [];
 
             const recommendations = response.split('\n')
@@ -1070,7 +1070,7 @@ Song 2: "${song2.title}" by ${song2.artist}
 
 Provide a JSON response with: {"score": 1-10, "analysis": "brief explanation"}`;
 
-            const response = await callGemini(prompt);
+            const response = await callClaude(prompt);
             if (!response) return {score: 5, analysis: 'Good match'};
 
             try {
@@ -1093,7 +1093,7 @@ Suggest 3 new songs that would enhance this mix using the "${mixStyle}" mixing r
 
 Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": "why it fits"}, ...]`;
 
-            const response = await callGemini(prompt);
+            const response = await callClaude(prompt);
             if (!response) return [];
 
             try {
