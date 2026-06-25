@@ -1519,17 +1519,28 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                                 if (s[rule] !== song[rule]) return false;
                             }
                             
-                            if (avoidSameArtist) {
-                                const wouldCreateSameArtistInRow = group.some(groupSong => 
-                                    groupSong.artist === s.artist
-                                );
-                                if (wouldCreateSameArtistInRow) return false;
-                            }
-                            
                             return true;
                         });
                         
-                        const selectedCandidates = candidates.slice(0, 2);
+                        // Build selected candidates while checking artist constraints
+                        const selectedCandidates = [];
+                        const currentGroup = [song, ...selectedCandidates];
+                        
+                        for (const candidate of candidates) {
+                            if (selectedCandidates.length >= 2) break;
+                            
+                            if (avoidSameArtist) {
+                                // Check if candidate artist matches any song already in the group
+                                const hasDuplicateArtist = currentGroup.some(groupSong => 
+                                    groupSong.artist === candidate.artist
+                                );
+                                if (hasDuplicateArtist) continue;
+                            }
+                            
+                            selectedCandidates.push(candidate);
+                            currentGroup.push(candidate);
+                        }
+                        
                         const potentialGroup = [song, ...selectedCandidates];
                         
                         if (potentialGroup.length > (bestGroup?.length || 0)) {
