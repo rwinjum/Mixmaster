@@ -1608,6 +1608,73 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return groups;
         }
 
+        // Calculate transition score between two songs based on musical properties
+        function calculateTransitionScore(song1, song2) {
+            let score = 0;
+            
+            // Energy progression (ideal: gradual change)
+            const energyDiff = Math.abs(song2.energy - song1.energy);
+            score += (1 - energyDiff) * 30; // Up to 30 points
+            
+            // Tempo compatibility (similar tempos blend better)
+            const tempoDiff = Math.abs(song2.tempo - song1.tempo);
+            const tempoScore = Math.max(0, 100 - tempoDiff) / 100;
+            score += tempoScore * 25; // Up to 25 points
+            
+            // Key compatibility (same key is ideal, but 5+ semitones apart is bad)
+            const keyDiff = Math.abs(song2.key - song1.key);
+            const minKeyDiff = Math.min(keyDiff, 12 - keyDiff);
+            const keyScore = Math.max(0, 1 - minKeyDiff / 6);
+            score += keyScore * 20; // Up to 20 points
+            
+            // Genre variety (slight difference is good, too different is bad)
+            const genreMatch = song1.genre === song2.genre ? 1 : 0.7;
+            score += genreMatch * 15; // Up to 15 points
+            
+            // Valence flow (emotional progression)
+            const valenceDiff = Math.abs(song2.valence - song1.valence);
+            score += (1 - valenceDiff) * 10; // Up to 10 points
+            
+            return Math.round(score);
+        }
+
+        // Optimize group order for smooth transitions between groups
+        function optimizeGroupOrder(groups) {
+            if (groups.length <= 1) return groups;
+            
+            const optimized = [];
+            const remaining = [...groups];
+            
+            // Start with the first group
+            optimized.push(remaining.shift());
+            
+            // Greedy algorithm: always pick the group with best transition
+            while (remaining.length > 0) {
+                const lastGroup = optimized[optimized.length - 1];
+                const lastSong = lastGroup.songs[lastGroup.songs.length - 1];
+                
+                let bestIndex = 0;
+                let bestScore = -Infinity;
+                
+                // Find the remaining group with the best first song transition
+                for (let i = 0; i < remaining.length; i++) {
+                    const nextGroup = remaining[i];
+                    const firstSong = nextGroup.songs[0];
+                    const transitionScore = calculateTransitionScore(lastSong, firstSong);
+                    
+                    if (transitionScore > bestScore) {
+                        bestScore = transitionScore;
+                        bestIndex = i;
+                    }
+                }
+                
+                // Add the best matching group
+                optimized.push(remaining.splice(bestIndex, 1)[0]);
+            }
+            
+            return optimized;
+        }
+
         function getExistingSuggestions(baseSong, rule, availableSongs, currentGroup) {
             if (!availableSongs || availableSongs.length === 0) {
                 return [];
@@ -2419,6 +2486,8 @@ ${suggestions.map((suggestion, index) => {
             // Simulate processing time
             setTimeout(() => {
                 organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                // Optimize group order for smooth transitions
+                organizedGroups = optimizeGroupOrder(organizedGroups);
                 renderGroups();
                 
                 isProcessing = false;
@@ -2436,6 +2505,8 @@ ${suggestions.map((suggestion, index) => {
             
             setTimeout(() => {
                 organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                // Optimize group order for smooth transitions
+                organizedGroups = optimizeGroupOrder(organizedGroups);
                 renderGroups();
                 
                 remixBtn.innerHTML = '🔄 Remix';
@@ -2494,6 +2565,8 @@ ${suggestions.map((suggestion, index) => {
             // Simulate processing
             setTimeout(async () => {
                 organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                // Optimize group order for smooth transitions
+                organizedGroups = optimizeGroupOrder(organizedGroups);
                 renderGroups();
                 
                 // Generate AI recommendations
@@ -2546,6 +2619,8 @@ ${suggestions.map((suggestion, index) => {
             
             setTimeout(() => {
                 organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                // Optimize group order for smooth transitions
+                organizedGroups = optimizeGroupOrder(organizedGroups);
                 renderGroups();
                 isProcessing = false;
                 remixBtn.innerHTML = '🔄 Remix';
