@@ -1319,7 +1319,35 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             // Helper function to find header index (case-insensitive)
             const findHeaderIndex = (name) => {
                 const lowerName = name.toLowerCase();
-                return headersLower.findIndex(h => h === lowerName || h.includes(lowerName));
+                // First try exact match
+                let idx = headersLower.findIndex(h => h === lowerName);
+                if (idx >= 0) return idx;
+                
+                // Then try smart partial match (prioritize common patterns)
+                const patterns = {
+                    'track': ['track name', 'track title'],
+                    'artist': ['artist name', 'artist'],
+                    'album': ['album name', 'album'],
+                    'duration': ['duration', 'length'],
+                    'genre': ['genres', 'genre'],
+                    'release': ['release date', 'release'],
+                    'energy': ['energy'],
+                    'tempo': ['tempo', 'bpm'],
+                    'dance': ['danceability', 'dance'],
+                    'key': ['key'],
+                    'valence': ['valence']
+                };
+                
+                // Check if we have specific patterns for this field
+                if (patterns[lowerName]) {
+                    for (const pattern of patterns[lowerName]) {
+                        idx = headersLower.findIndex(h => h.includes(pattern));
+                        if (idx >= 0) return idx;
+                    }
+                }
+                
+                // Fallback: generic include search
+                return headersLower.findIndex(h => h.includes(lowerName));
             };
             
             // Detect CSV format: Spotify vs BW26
