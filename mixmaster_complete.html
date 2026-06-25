@@ -971,12 +971,134 @@
     </div>
 
     <script>
+        // Gemini API Configuration
+        const GEMINI_API_KEY = 'AQ.Ab8RN6JHOAnaHpXtVJWPiNCIQc-unRsji2W9V750csk2Fx7jDw';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
         // Application State
         let loadedSongs = [];
         let organizedGroups = [];
         let selectedRules = [];
         let avoidSameArtist = true;
         let isProcessing = false;
+
+        // Gemini API Functions
+        async function callGemini(prompt) {
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error('Gemini API error:', error);
+                return null;
+            }
+        }
+
+        async function getAIGroupingExplanation(songs, rule) {
+            const songDescriptions = songs.map(s => 
+                `${s.title} by ${s.artist} (${s.genre}, ${s.era}, ${s.pace} tempo)`
+            ).join(', ');
+
+            const prompt = `You are a professional DJ. Explain why these 3 songs work perfectly together in a DJ set, considering the "${rule}" mixing rule. Keep it concise and engaging (1-2 sentences):
+
+Songs: ${songDescriptions}
+
+Focus on: musical flow, energy progression, and crowd energy.`;
+
+            return await callGemini(prompt);
+        }
+
+        async function getAISuggestions(baseSong, rule, availableSongs, count = 3) {
+            const songList = availableSongs.map(s => 
+                `- ${s.title} by ${s.artist} (${s.genre}, ${s.era}, tempo: ${s.tempo})`
+            ).join('\n');
+
+            const prompt = `You are a DJ music recommendation expert. The DJ needs songs similar to:
+"${baseSong.title}" by ${baseSong.artist} (${baseSong.genre}, ${baseSong.era}, tempo: ${baseSong.tempo})
+
+Mixing rule: ${rule}
+
+From this playlist, recommend the ${count} best matches:
+${songList}
+
+Return ONLY the song titles, one per line, no other text.`;
+
+            const response = await callGemini(prompt);
+            if (!response) return [];
+
+            const recommendations = response.split('\n')
+                .filter(line => line.trim().length > 0)
+                .slice(0, count);
+
+            return recommendations.map(title => {
+                const found = availableSongs.find(s => 
+                    s.title.toLowerCase().includes(title.toLowerCase().trim()) ||
+                    title.toLowerCase().includes(s.title.toLowerCase())
+                );
+                return found;
+            }).filter(Boolean);
+        }
+
+        async function getTransitionAnalysis(song1, song2) {
+            const prompt = `You are a DJ analyzing song transitions. Evaluate the transition quality between these songs (1-10 scale):
+
+Song 1: "${song1.title}" by ${song1.artist}
+- Genre: ${song1.genre}, Era: ${song1.era}, Tempo: ${song1.tempo} BPM, Energy: ${song1.energy}, Key: ${song1.keyName}
+
+Song 2: "${song2.title}" by ${song2.artist}
+- Genre: ${song2.genre}, Era: ${song2.era}, Tempo: ${song2.tempo} BPM, Energy: ${song2.energy}, Key: ${song2.keyName}
+
+Provide a JSON response with: {"score": 1-10, "analysis": "brief explanation"}`;
+
+            const response = await callGemini(prompt);
+            if (!response) return {score: 5, analysis: 'Good match'};
+
+            try {
+                return JSON.parse(response);
+            } catch {
+                return {score: 5, analysis: response.substring(0, 50)};
+            }
+        }
+
+        async function getSmartRecommendations(playlistSongs, mixStyle) {
+            const playlist = playlistSongs.map(s => 
+                `${s.title} by ${s.artist} (${s.genre})`
+            ).join(', ');
+
+            const prompt = `You are a music curator. Based on this DJ playlist:
+
+${playlist}
+
+Suggest 3 new songs that would enhance this mix using the "${mixStyle}" mixing rule. Consider genre flow, era diversity, and energy progression.
+
+Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": "why it fits"}, ...]`;
+
+            const response = await callGemini(prompt);
+            if (!response) return [];
+
+            try {
+                return JSON.parse(response);
+            } catch {
+                return [];
+            }
+        }
 
         // Sample data
         const sampleSongs = [
@@ -1592,6 +1714,29 @@
                     </div>
                 `;
                 groupDiv.appendChild(groupHeader);
+
+                // Add AI explanation
+                const explanationDiv = document.createElement('div');
+                explanationDiv.className = 'group-explanation';
+                explanationDiv.style.padding = '1rem';
+                explanationDiv.style.background = 'rgba(78, 205, 196, 0.1)';
+                explanationDiv.style.borderRadius = '0.5rem';
+                explanationDiv.style.marginBottom = '1rem';
+                explanationDiv.style.color = '#4ecdc4';
+                explanationDiv.style.fontSize = '0.9rem';
+                explanationDiv.style.lineHeight = '1.5';
+                explanationDiv.style.borderLeft = '3px solid #4ecdc4';
+                explanationDiv.innerHTML = '🤖 Loading AI analysis...';
+                groupDiv.appendChild(explanationDiv);
+
+                // Load AI explanation asynchronously
+                getAIGroupingExplanation(group.songs, group.rule).then(explanation => {
+                    if (explanation) {
+                        explanationDiv.innerHTML = `✨ ${explanation}`;
+                    } else {
+                        explanationDiv.innerHTML = '✨ Perfect group composition for seamless mixing';
+                    }
+                });
                 
                 // Create songs grid
                 const songsGrid = document.createElement('div');
@@ -2317,12 +2462,48 @@ ${suggestions.map((suggestion, index) => {
             updateRuleSelection();
             
             // Simulate processing
-            setTimeout(() => {
+            setTimeout(async () => {
                 organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
                 renderGroups();
+                
+                // Generate AI recommendations
+                const mixStyle = selectedRules[0];
+                getSmartRecommendations(loadedSongs.slice(0, 5), mixStyle).then(recommendations => {
+                    if (recommendations && recommendations.length > 0) {
+                        showAIRecommendations(recommendations);
+                    }
+                });
+                
                 isProcessing = false;
                 updateRuleSelection();
             }, 1500);
+        }
+
+        function showAIRecommendations(recommendations) {
+            const container = document.getElementById('groupsContainer');
+            const recommendationsDiv = document.createElement('div');
+            recommendationsDiv.style.marginTop = '3rem';
+            recommendationsDiv.style.padding = '2rem';
+            recommendationsDiv.style.background = 'rgba(255, 107, 107, 0.1)';
+            recommendationsDiv.style.borderRadius = '1rem';
+            recommendationsDiv.style.borderLeft = '4px solid #ff6b6b';
+            
+            recommendationsDiv.innerHTML = `
+                <h3 style="color: #ff6b6b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    🤖 AI Recommendations - Songs to Add to Your Mix
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    ${recommendations.map((rec, idx) => `
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px solid #ff6b6b;">
+                            <div style="color: #ff6b6b; font-weight: 700; margin-bottom: 0.5rem;">${idx + 1}. ${rec.title}</div>
+                            <div style="color: rgba(255, 255, 255, 0.7); margin-bottom: 0.5rem;">by ${rec.artist}</div>
+                            <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; font-style: italic;">${rec.reason}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            container.appendChild(recommendationsDiv);
         }
         
         function remixPlaylist() {
