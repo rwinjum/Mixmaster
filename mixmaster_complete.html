@@ -1189,6 +1189,10 @@
             const lines = csvText.split('\n');
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
             
+            // Detect CSV format: Spotify vs BW26
+            const isSpotifyFormat = headers.some(h => h === 'Track Name' || h === 'Artist Name(s)');
+            const isBW26Format = headers.some(h => h === 'Song' && headers.some(h2 => h2 === 'BPM'));
+            
             const parsedSongs = lines.slice(1).filter(line => line.trim()).map((line, index) => {
                 const values = [];
                 let current = '';
@@ -1209,21 +1213,87 @@
                 
                 const song = { id: index + 1 };
                 
-                const rawTitle = values[headers.indexOf('Track Name')] || '';
-                const rawArtist = values[headers.indexOf('Artist Name(s)')] || '';
-                const rawAlbum = values[headers.indexOf('Album Name')] || '';
+                // Map column names based on format
+                let titleIdx, artistIdx, albumIdx, genresIdx, releaseDateIdx, durationIdx, energyIdx, tempoIdx, danceIdx, keyIdx, valenceIdx;
+                
+                if (isBW26Format) {
+                    // BW26 format
+                    titleIdx = headers.indexOf('Song');
+                    artistIdx = headers.indexOf('Artist');
+                    albumIdx = headers.indexOf('Album');
+                    genresIdx = headers.indexOf('Genres');
+                    releaseDateIdx = headers.indexOf('Album Date');
+                    durationIdx = headers.indexOf('Duration');
+                    energyIdx = headers.indexOf('Energy');
+                    tempoIdx = headers.indexOf('BPM');
+                    danceIdx = headers.indexOf('Dance');
+                    keyIdx = headers.indexOf('Key');
+                    valenceIdx = headers.indexOf('Valence');
+                } else {
+                    // Spotify format (default)
+                    titleIdx = headers.indexOf('Track Name');
+                    artistIdx = headers.indexOf('Artist Name(s)');
+                    albumIdx = headers.indexOf('Album Name');
+                    genresIdx = headers.indexOf('Genres');
+                    releaseDateIdx = headers.indexOf('Release Date');
+                    durationIdx = headers.indexOf('Duration (ms)');
+                    energyIdx = headers.indexOf('Energy');
+                    tempoIdx = headers.indexOf('Tempo');
+                    danceIdx = headers.indexOf('Danceability');
+                    keyIdx = headers.indexOf('Key');
+                    valenceIdx = headers.indexOf('Valence');
+                }
+                
+                const rawTitle = titleIdx >= 0 ? values[titleIdx] : '';
+                const rawArtist = artistIdx >= 0 ? values[artistIdx] : '';
+                const rawAlbum = albumIdx >= 0 ? values[albumIdx] : '';
                 
                 song.title = toSentenceCase(rawTitle);
                 song.artist = toSentenceCase(rawArtist);
                 song.album = toSentenceCase(rawAlbum);
-                song.genres = values[headers.indexOf('Genres')] || '';
-                song.releaseDate = values[headers.indexOf('Release Date')] || '';
-                song.duration = parseInt(values[headers.indexOf('Duration (ms)')]) || 0;
-                song.energy = parseFloat(values[headers.indexOf('Energy')]) || 0;
-                song.tempo = parseFloat(values[headers.indexOf('Tempo')]) || 120;
-                song.danceability = parseFloat(values[headers.indexOf('Danceability')]) || 0;
-                song.key = parseInt(values[headers.indexOf('Key')]) || 0;
-                song.valence = parseFloat(values[headers.indexOf('Valence')]) || 0;
+                song.genres = genresIdx >= 0 ? values[genresIdx] : '';
+                song.releaseDate = releaseDateIdx >= 0 ? values[releaseDateIdx] : '';
+                
+                // Handle duration: convert MM:SS to milliseconds if needed
+                let duration = 0;
+                if (durationIdx >= 0) {
+                    const durationStr = values[durationIdx];
+                    if (durationStr && durationStr.includes(':')) {
+                        // MM:SS format (BW26)
+                        const parts = durationStr.split(':');
+                        if (parts.length === 2) {
+                            const minutes = parseInt(parts[0]) || 0;
+                            const seconds = parseInt(parts[1]) || 0;
+                            duration = (minutes * 60 + seconds) * 1000;
+                        }
+                    } else {
+                        // Milliseconds (Spotify)
+                        duration = parseInt(durationStr) || 0;
+                    }
+                }
+                song.duration = duration;
+                
+                song.energy = energyIdx >= 0 ? parseFloat(values[energyIdx]) : 0;
+                song.tempo = tempoIdx >= 0 ? parseFloat(values[tempoIdx]) : 120;
+                song.danceability = danceIdx >= 0 ? parseFloat(values[danceIdx]) : 0;
+                
+                // Handle Key parsing for BW26 format (can be like "C♯/D♭ Major")
+                let keyNum = 0;
+                if (keyIdx >= 0) {
+                    const keyStr = values[keyIdx];
+                    if (keyStr) {
+                        if (isBW26Format && keyStr.includes('/')) {
+                            // BW26 format key like "C♯/D♭ Major"
+                            keyNum = parseKeyFromString(keyStr);
+                        } else {
+                            // Spotify format (numeric)
+                            keyNum = parseInt(keyStr) || 0;
+                        }
+                    }
+                }
+                song.key = keyNum;
+                
+                song.valence = valenceIdx >= 0 ? parseFloat(values[valenceIdx]) : 0;
                 
                 song.era = getEraFromDate(song.releaseDate);
                 song.genre = getPrimaryGenre(song.genres);
@@ -1235,6 +1305,22 @@
             });
             
             return parsedSongs.filter(song => song.title && song.artist);
+        }
+        
+        // Helper function to parse key strings like "C♯/D♭ Major"
+        function parseKeyFromString(keyStr) {
+            const keyMap = {
+                'C': 0, 'C♯': 1, 'C#': 1, 'D♭': 1,
+                'D': 2, 'D♯': 3, 'D#': 3, 'E♭': 3,
+                'E': 4, 'F': 5, 'F♯': 6, 'F#': 6, 'G♭': 6,
+                'G': 7, 'G♯': 8, 'G#': 8, 'A♭': 8,
+                'A': 9, 'A♯': 10, 'A#': 10, 'B♭': 10,
+                'B': 11
+            };
+            
+            // Extract the note part (before "/" or space)
+            const notePart = keyStr.split(/[\s\/]/)[0];
+            return keyMap[notePart] || 0;
         }
 
         // Similarity calculation function
@@ -2182,6 +2268,90 @@ ${suggestions.map((suggestion, index) => {
             }, 1500);
         }
         
+        // File Upload Handler
+        function handleFileUpload(file) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const csvText = e.target.result;
+                    loadedSongs = parseCSV(csvText);
+                    
+                    if (loadedSongs.length === 0) {
+                        alert('No valid songs found in the CSV file. Please check the file format.');
+                        return;
+                    }
+                    
+                    updateSongCount();
+                } catch (error) {
+                    console.error('Error parsing CSV:', error);
+                    alert('Error parsing CSV file: ' + error.message);
+                }
+            };
+            reader.onerror = () => {
+                alert('Error reading file');
+            };
+            reader.readAsText(file);
+        }
+        
+        function loadSampleData() {
+            loadedSongs = sampleSongs.slice();
+            selectedRules = [];
+            organizedGroups = [];
+            updateSongCount();
+        }
+        
+        function organizePlaylist() {
+            if (loadedSongs.length === 0) {
+                alert('Please load a playlist first');
+                return;
+            }
+            
+            if (selectedRules.length === 0) {
+                alert('Please select at least one mixing rule');
+                return;
+            }
+            
+            isProcessing = true;
+            updateRuleSelection();
+            
+            // Simulate processing
+            setTimeout(() => {
+                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                renderGroups();
+                isProcessing = false;
+                updateRuleSelection();
+            }, 1500);
+        }
+        
+        function remixPlaylist() {
+            if (organizedGroups.length === 0) return;
+            
+            isProcessing = true;
+            const remixBtn = document.getElementById('remixBtn');
+            remixBtn.innerHTML = '🎵 Creating new mix...';
+            remixBtn.disabled = true;
+            
+            setTimeout(() => {
+                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                renderGroups();
+                isProcessing = false;
+                remixBtn.innerHTML = '🔄 Remix';
+                remixBtn.disabled = false;
+            }, 1500);
+        }
+        
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
             const uploadZone = document.getElementById('uploadZone');
@@ -2201,6 +2371,9 @@ ${suggestions.map((suggestion, index) => {
                     handleFileUpload(e.target.files[0]);
                 }
             });
+
+            // Add window.findSuggestions to global scope for use in buttons
+            window.findSuggestions = findSuggestions;
 
             // Drag and drop handlers
             uploadZone.addEventListener('dragover', (e) => {
