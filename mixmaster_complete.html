@@ -1313,9 +1313,18 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             const lines = csvText.split('\n');
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
             
+            // Create lowercase headers for case-insensitive matching
+            const headersLower = headers.map(h => h.toLowerCase());
+            
+            // Helper function to find header index (case-insensitive)
+            const findHeaderIndex = (name) => {
+                const lowerName = name.toLowerCase();
+                return headersLower.findIndex(h => h === lowerName || h.includes(lowerName));
+            };
+            
             // Detect CSV format: Spotify vs BW26
-            const isSpotifyFormat = headers.some(h => h === 'Track Name' || h === 'Artist Name(s)');
-            const isBW26Format = headers.some(h => h === 'Song' && headers.some(h2 => h2 === 'BPM'));
+            const isSpotifyFormat = findHeaderIndex('track') >= 0 && findHeaderIndex('artist') >= 0;
+            const isBW26Format = findHeaderIndex('song') >= 0 && findHeaderIndex('bpm') >= 0;
             
             const parsedSongs = lines.slice(1).filter(line => line.trim()).map((line, index) => {
                 const values = [];
@@ -1342,30 +1351,30 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 
                 if (isBW26Format) {
                     // BW26 format
-                    titleIdx = headers.indexOf('Song');
-                    artistIdx = headers.indexOf('Artist');
-                    albumIdx = headers.indexOf('Album');
-                    genresIdx = headers.indexOf('Genres');
-                    releaseDateIdx = headers.indexOf('Album Date');
-                    durationIdx = headers.indexOf('Duration');
-                    energyIdx = headers.indexOf('Energy');
-                    tempoIdx = headers.indexOf('BPM');
-                    danceIdx = headers.indexOf('Dance');
-                    keyIdx = headers.indexOf('Key');
-                    valenceIdx = headers.indexOf('Valence');
+                    titleIdx = findHeaderIndex('song');
+                    artistIdx = findHeaderIndex('artist');
+                    albumIdx = findHeaderIndex('album');
+                    genresIdx = findHeaderIndex('genres');
+                    releaseDateIdx = findHeaderIndex('date');
+                    durationIdx = findHeaderIndex('duration');
+                    energyIdx = findHeaderIndex('energy');
+                    tempoIdx = findHeaderIndex('bpm');
+                    danceIdx = findHeaderIndex('dance');
+                    keyIdx = findHeaderIndex('key');
+                    valenceIdx = findHeaderIndex('valence');
                 } else {
                     // Spotify format (default)
-                    titleIdx = headers.indexOf('Track Name');
-                    artistIdx = headers.indexOf('Artist Name(s)');
-                    albumIdx = headers.indexOf('Album Name');
-                    genresIdx = headers.indexOf('Genres');
-                    releaseDateIdx = headers.indexOf('Release Date');
-                    durationIdx = headers.indexOf('Duration (ms)');
-                    energyIdx = headers.indexOf('Energy');
-                    tempoIdx = headers.indexOf('Tempo');
-                    danceIdx = headers.indexOf('Danceability');
-                    keyIdx = headers.indexOf('Key');
-                    valenceIdx = headers.indexOf('Valence');
+                    titleIdx = findHeaderIndex('track');
+                    artistIdx = findHeaderIndex('artist');
+                    albumIdx = findHeaderIndex('album');
+                    genresIdx = findHeaderIndex('genres');
+                    releaseDateIdx = findHeaderIndex('release');
+                    durationIdx = findHeaderIndex('duration');
+                    energyIdx = findHeaderIndex('energy');
+                    tempoIdx = findHeaderIndex('tempo');
+                    danceIdx = findHeaderIndex('danceability');
+                    keyIdx = findHeaderIndex('key');
+                    valenceIdx = findHeaderIndex('valence');
                 }
                 
                 const rawTitle = titleIdx >= 0 ? values[titleIdx] : '';
