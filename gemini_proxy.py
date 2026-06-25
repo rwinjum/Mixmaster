@@ -11,7 +11,8 @@ app = Flask(__name__)
 
 # Gemini API configuration
 GEMINI_API_KEY = 'AQ.Ab8RN6JHOAnaHpXtVJWPiNCIQc-unRsji2W9V750csk2Fx7jDw'
-GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+# Try the newer API v1 endpoint with gemini-2.0-flash
+GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent'
 
 # Enable CORS
 from flask_cors import CORS
@@ -41,10 +42,19 @@ def gemini_proxy():
             timeout=30
         )
         
+        # Handle quota exceeded gracefully
+        if response.status_code == 429:
+            return jsonify({
+                'error': 'Rate limit exceeded',
+                'message': 'Free tier quota exceeded. AI features are temporarily unavailable.',
+                'success': False
+            }), 429
+        
         if response.status_code != 200:
             return jsonify({
                 'error': f'Gemini API error: {response.status_code}',
-                'details': response.text
+                'details': response.text,
+                'success': False
             }), response.status_code
         
         data = response.json()
@@ -56,13 +66,13 @@ def gemini_proxy():
         })
     
     except requests.exceptions.Timeout:
-        return jsonify({'error': 'Request timeout'}), 504
+        return jsonify({'error': 'Request timeout', 'success': False}), 504
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e), 'success': False}), 500
     except (KeyError, IndexError) as e:
-        return jsonify({'error': 'Unexpected API response format', 'details': str(e)}), 500
+        return jsonify({'error': 'Unexpected API response format', 'details': str(e), 'success': False}), 500
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e), 'success': False}), 500
 
 @app.route('/health', methods=['GET'])
 def health():
