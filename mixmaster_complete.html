@@ -2599,10 +2599,21 @@ ${suggestions.map((suggestion, index) => {
             document.querySelectorAll('.rule-option').forEach(rule => {
                 rule.addEventListener('click', () => {
                     const ruleValue = rule.dataset.rule;
+                    const isCombinedRule = ruleValue.includes('+');
+                    
                     if (selectedRules.includes(ruleValue)) {
+                        // Deselect if already selected
                         selectedRules = selectedRules.filter(r => r !== ruleValue);
                     } else {
-                        selectedRules.push(ruleValue);
+                        // If selecting a combined rule, clear all single rules
+                        if (isCombinedRule) {
+                            selectedRules = [ruleValue];
+                        } else {
+                            // If selecting a single rule, clear combined rules and keep only single rules
+                            selectedRules = selectedRules.filter(r => !r.includes('+'));
+                            // Only allow one single rule at a time
+                            selectedRules = [ruleValue];
+                        }
                     }
                     updateRuleSelection();
                 });
