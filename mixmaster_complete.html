@@ -1496,64 +1496,67 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             const shuffledSongs = [...songs].sort(() => Math.random() - 0.5);
             const remainingSongs = [...shuffledSongs];
             
+            // Check if a song matches ALL selected rules
+            function matchesAllRules(song1, song2, rulesToCheck) {
+                for (const rule of rulesToCheck) {
+                    // Handle combined rules
+                    if (rule === 'genre+era') {
+                        if (song2.genre !== song1.genre || song2.era !== song1.era) return false;
+                    } else if (rule === 'pace+era') {
+                        if (song2.pace !== song1.pace || song2.era !== song1.era) return false;
+                    } else {
+                        // Single rule
+                        if (song2[rule] !== song1[rule]) return false;
+                    }
+                }
+                return true;
+            }
+            
             while (remainingSongs.length > 0 && used.size < songs.length) {
                 let bestGroup = null;
-                let bestRule = null;
+                let bestRules = null;
                 
-                for (const rule of rules) {
-                    for (let i = 0; i < remainingSongs.length; i++) {
-                        const song = remainingSongs[i];
-                        if (used.has(song.id)) continue;
+                // Try to find best group using ALL selected rules
+                for (let i = 0; i < remainingSongs.length; i++) {
+                    const song = remainingSongs[i];
+                    if (used.has(song.id)) continue;
+                    
+                    const candidates = remainingSongs.filter(s => {
+                        if (used.has(s.id) || s.id === song.id) return false;
                         
-                        const group = [song];
-                        const candidates = remainingSongs.filter(s => {
-                            if (used.has(s.id) || s.id === song.id) return false;
-                            
-                            // Handle combined rules
-                            if (rule === 'genre+era') {
-                                if (s.genre !== song.genre || s.era !== song.era) return false;
-                            } else if (rule === 'pace+era') {
-                                if (s.pace !== song.pace || s.era !== song.era) return false;
-                            } else {
-                                // Single rule
-                                if (s[rule] !== song[rule]) return false;
-                            }
-                            
-                            return true;
-                        });
+                        // Song must match ALL selected rules
+                        if (!matchesAllRules(song, s, rules)) return false;
                         
-                        // Build selected candidates while checking artist constraints
-                        const selectedCandidates = [];
-                        const currentGroup = [song, ...selectedCandidates];
+                        return true;
+                    });
+                    
+                    // Build selected candidates while checking artist constraints
+                    const selectedCandidates = [];
+                    const currentGroup = [song];
+                    
+                    for (const candidate of candidates) {
+                        if (selectedCandidates.length >= 2) break;
                         
-                        for (const candidate of candidates) {
-                            if (selectedCandidates.length >= 2) break;
-                            
-                            if (avoidSameArtist) {
-                                // Check if candidate artist matches any song already in the group
-                                const hasDuplicateArtist = currentGroup.some(groupSong => 
-                                    groupSong.artist === candidate.artist
-                                );
-                                if (hasDuplicateArtist) continue;
-                            }
-                            
-                            selectedCandidates.push(candidate);
-                            currentGroup.push(candidate);
+                        if (avoidSameArtist) {
+                            // Check if candidate artist matches any song already in the group
+                            const hasDuplicateArtist = currentGroup.some(groupSong => 
+                                groupSong.artist === candidate.artist
+                            );
+                            if (hasDuplicateArtist) continue;
                         }
                         
-                        const potentialGroup = [song, ...selectedCandidates];
-                        
-                        if (potentialGroup.length > (bestGroup?.length || 0)) {
-                            bestGroup = potentialGroup;
-                            bestRule = rule;
-                        }
-                        
-                        if (potentialGroup.length === 3) {
-                            break;
-                        }
+                        selectedCandidates.push(candidate);
+                        currentGroup.push(candidate);
                     }
                     
-                    if (bestGroup?.length === 3) {
+                    const potentialGroup = [song, ...selectedCandidates];
+                    
+                    if (potentialGroup.length > (bestGroup?.length || 0)) {
+                        bestGroup = potentialGroup;
+                        bestRules = rules;
+                    }
+                    
+                    if (potentialGroup.length === 3) {
                         break;
                     }
                 }
@@ -1569,18 +1572,32 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                     
                     // Generate rule value for display
                     let ruleValue;
-                    if (bestRule === 'genre+era') {
+                    let displayRule = bestRules[0];
+                    if (bestRules.length > 1) {
+                        // Multiple rules selected - show all
+                        const ruleValues = bestRules.map(rule => {
+                            if (rule === 'genre+era') {
+                                return `${bestGroup[0].genre}+${bestGroup[0].era}`;
+                            } else if (rule === 'pace+era') {
+                                return `${bestGroup[0].pace}+${bestGroup[0].era}`;
+                            } else {
+                                return bestGroup[0][rule];
+                            }
+                        });
+                        displayRule = bestRules.join('+');
+                        ruleValue = ruleValues.join(' / ');
+                    } else if (displayRule === 'genre+era') {
                         ruleValue = `${bestGroup[0].genre} + ${bestGroup[0].era}`;
-                    } else if (bestRule === 'pace+era') {
+                    } else if (displayRule === 'pace+era') {
                         ruleValue = `${bestGroup[0].pace} + ${bestGroup[0].era}`;
                     } else {
-                        ruleValue = bestGroup[0][bestRule];
+                        ruleValue = bestGroup[0][displayRule];
                     }
                     
                     groups.push({
                         id: groups.length + 1,
                         songs: bestGroup,
-                        rule: bestRule,
+                        rule: displayRule,
                         ruleValue: ruleValue
                     });
                 } else {
@@ -2599,21 +2616,10 @@ ${suggestions.map((suggestion, index) => {
             document.querySelectorAll('.rule-option').forEach(rule => {
                 rule.addEventListener('click', () => {
                     const ruleValue = rule.dataset.rule;
-                    const isCombinedRule = ruleValue.includes('+');
-                    
                     if (selectedRules.includes(ruleValue)) {
-                        // Deselect if already selected
                         selectedRules = selectedRules.filter(r => r !== ruleValue);
                     } else {
-                        // If selecting a combined rule, clear all single rules
-                        if (isCombinedRule) {
-                            selectedRules = [ruleValue];
-                        } else {
-                            // If selecting a single rule, clear combined rules and keep only single rules
-                            selectedRules = selectedRules.filter(r => !r.includes('+'));
-                            // Only allow one single rule at a time
-                            selectedRules = [ruleValue];
-                        }
+                        selectedRules.push(ruleValue);
                     }
                     updateRuleSelection();
                 });
