@@ -1820,6 +1820,24 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 return;
             }
             
+            console.log('=== RENDER GROUPS START ===');
+            console.log('First group songs when rendering:');
+            if (organizedGroups.length > 0) {
+                organizedGroups[0].songs.forEach((song, i) => {
+                    console.log(`Group 0, Song ${i}:`, {
+                        title: song.title,
+                        artist: song.artist,
+                        genre: song.genre,
+                        era: song.era,
+                        pace: song.pace,
+                        tempo: song.tempo,
+                        keyName: song.keyName,
+                        durationFormatted: song.durationFormatted,
+                        id: song.id
+                    });
+                });
+            }
+            
             resultsSection.classList.remove('hidden');
             groupCount.textContent = `${organizedGroups.length} groups`;
             container.innerHTML = '';
@@ -1878,6 +1896,8 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 
                 group.songs.forEach((song, songIndex) => {
                     const currentSongNumber = overallSongNumber++;
+                    
+                    console.log(`Rendering Group ${groupIndex + 1}, Song ${songIndex + 1}:`, song);
                     
                     const songCard = document.createElement('div');
                     songCard.className = 'song-card';
@@ -2574,9 +2594,61 @@ ${suggestions.map((suggestion, index) => {
             
             // Simulate processing
             setTimeout(async () => {
+                console.log('=== ORGANIZE PLAYLIST START ===');
+                console.log('First 3 loadedSongs before grouping:');
+                loadedSongs.slice(0, 3).forEach((song, i) => {
+                    console.log(`Song ${i}:`, {
+                        title: song.title,
+                        artist: song.artist,
+                        genre: song.genre,
+                        era: song.era,
+                        pace: song.pace,
+                        tempo: song.tempo,
+                        keyName: song.keyName,
+                        durationFormatted: song.durationFormatted,
+                        id: song.id
+                    });
+                });
+                
                 organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                
+                console.log('First group songs after grouping:');
+                if (organizedGroups.length > 0) {
+                    organizedGroups[0].songs.forEach((song, i) => {
+                        console.log(`Group 0, Song ${i}:`, {
+                            title: song.title,
+                            artist: song.artist,
+                            genre: song.genre,
+                            era: song.era,
+                            pace: song.pace,
+                            tempo: song.tempo,
+                            keyName: song.keyName,
+                            durationFormatted: song.durationFormatted,
+                            id: song.id
+                        });
+                    });
+                }
+                
                 // Optimize group order for smooth transitions
                 organizedGroups = optimizeGroupOrder(organizedGroups);
+                
+                console.log('First group songs after optimization:');
+                if (organizedGroups.length > 0) {
+                    organizedGroups[0].songs.forEach((song, i) => {
+                        console.log(`Group 0, Song ${i}:`, {
+                            title: song.title,
+                            artist: song.artist,
+                            genre: song.genre,
+                            era: song.era,
+                            pace: song.pace,
+                            tempo: song.tempo,
+                            keyName: song.keyName,
+                            durationFormatted: song.durationFormatted,
+                            id: song.id
+                        });
+                    });
+                }
+                
                 renderGroups();
                 
                 // Generate AI recommendations
