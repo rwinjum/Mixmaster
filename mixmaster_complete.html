@@ -2511,27 +2511,6 @@ ${suggestions.map((suggestion, index) => {
         }
 
         // File Upload Handlers
-        function handleFileUpload(file) {
-            if (!file || !file.name.endsWith('.csv')) {
-                alert('Please upload a CSV file');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const csvData = e.target.result;
-                    loadedSongs = parseCSV(csvData);
-                    updateSongCount();
-                    updateRuleSelection();
-                } catch (error) {
-                    alert('Error parsing CSV file. Please check the format.');
-                    console.error('CSV parsing error:', error);
-                }
-            };
-            reader.readAsText(file);
-        }
-
         function remixPlaylist() {
             if (loadedSongs.length === 0 || selectedRules.length === 0) return;
             
@@ -2554,11 +2533,31 @@ ${suggestions.map((suggestion, index) => {
         function handleFileUpload(file) {
             if (!file) return;
             
+            console.log('=== FILE UPLOAD START ===');
+            console.log('Filename:', file.name);
+            
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const csvText = e.target.result;
+                    console.log('CSV text loaded, length:', csvText.length);
+                    
                     loadedSongs = parseCSV(csvText);
+                    
+                    console.log('Parse complete. Songs loaded:', loadedSongs.length);
+                    if (loadedSongs.length > 0) {
+                        console.log('First 3 songs after upload:');
+                        loadedSongs.slice(0, 3).forEach((song, i) => {
+                            console.log(`Song ${i}:`, {
+                                title: song.title,
+                                artist: song.artist,
+                                genre: song.genre,
+                                era: song.era,
+                                tempo: song.tempo,
+                                energy: song.energy
+                            });
+                        });
+                    }
                     
                     if (loadedSongs.length === 0) {
                         alert('No valid songs found in the CSV file. Please check the file format.');
