@@ -2506,33 +2506,6 @@ ${suggestions.map((suggestion, index) => {
             reader.readAsText(file);
         }
 
-        function loadSampleData() {
-            loadedSongs = [...sampleSongs];
-            updateSongCount();
-            updateRuleSelection();
-        }
-
-        function organizePlaylist() {
-            if (selectedRules.length === 0 || loadedSongs.length === 0) return;
-            
-            isProcessing = true;
-            const organizeBtn = document.getElementById('organizeBtn');
-            organizeBtn.innerHTML = '🎵 Creating your mix... <div class="spinner"></div>';
-            organizeBtn.classList.add('loading');
-            
-            // Simulate processing time
-            setTimeout(() => {
-                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
-                // Optimize group order for smooth transitions
-                organizedGroups = optimizeGroupOrder(organizedGroups);
-                renderGroups();
-                
-                isProcessing = false;
-                organizeBtn.classList.remove('loading');
-                updateRuleSelection();
-            }, 2000);
-        }
-
         function remixPlaylist() {
             if (loadedSongs.length === 0 || selectedRules.length === 0) return;
             
