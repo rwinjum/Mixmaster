@@ -1313,10 +1313,6 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             const lines = csvText.split('\n');
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
             
-            // DEBUG: Log headers for debugging CSV parsing issues
-            console.log('CSV Headers:', headers);
-            console.log('Headers count:', headers.length);
-            
             // Create lowercase headers for case-insensitive matching
             const headersLower = headers.map(h => h.toLowerCase());
             
@@ -1325,10 +1321,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 const lowerName = name.toLowerCase();
                 // First try exact match
                 let idx = headersLower.findIndex(h => h === lowerName);
-                if (idx >= 0) {
-                    console.log(`✓ Found exact match for '${name}' at index ${idx}`);
-                    return idx;
-                }
+                if (idx >= 0) return idx;
                 
                 // Then try smart partial match (prioritize common patterns)
                 const patterns = {
@@ -1349,24 +1342,12 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 if (patterns[lowerName]) {
                     for (const pattern of patterns[lowerName]) {
                         idx = headersLower.findIndex(h => h.includes(pattern));
-                        if (idx >= 0) {
-                            console.log(`✓ Found pattern match for '${name}' (pattern: '${pattern}') at index ${idx}: '${headers[idx]}'`);
-                            return idx;
-                        }
+                        if (idx >= 0) return idx;
                     }
                 }
                 
                 // Fallback: generic include search
-                idx = headersLower.findIndex(h => h.includes(lowerName));
-                if (idx >= 0) {
-                    console.log(`✓ Found fallback match for '${name}' at index ${idx}: '${headers[idx]}'`);
-                }
-                
-                if (idx < 0) {
-                    console.log(`✗ NO MATCH found for '${name}'`);
-                }
-                
-                return idx;
+                return headersLower.findIndex(h => h.includes(lowerName));
             };
             
             // Detect CSV format: Spotify vs BW26
@@ -1422,14 +1403,6 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                     danceIdx = findHeaderIndex('danceability');
                     keyIdx = findHeaderIndex('key');
                     valenceIdx = findHeaderIndex('valence');
-                    
-                    // DEBUG: Log indices for first row
-                    if (index === 0) {
-                        console.log('Spotify format column indices:', {
-                            titleIdx, artistIdx, albumIdx, genresIdx, releaseDateIdx,
-                            durationIdx, energyIdx, tempoIdx, danceIdx, keyIdx, valenceIdx
-                        });
-                    }
                 }
                 
                 const rawTitle = titleIdx >= 0 ? values[titleIdx] : '';
@@ -1441,18 +1414,6 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 song.album = toSentenceCase(rawAlbum);
                 song.genres = genresIdx >= 0 ? values[genresIdx] : '';
                 song.releaseDate = releaseDateIdx >= 0 ? values[releaseDateIdx] : '';
-                
-                // DEBUG: Log raw values for first few rows
-                if (index < 2) {
-                    console.log(`Row ${index} genres: "${song.genres}"`);
-                    console.log(`Row ${index} releaseDate: "${song.releaseDate}"`);
-                    console.log(`Row ${index} raw values array length: ${values.length}`);
-                    if (values.length > 22) {
-                        console.log(`Row ${index} value[22] (tempo): "${values[22]}"`);
-                        console.log(`Row ${index} value[13] (energy): "${values[13]}"`);
-                        console.log(`Row ${index} value[5] (duration): "${values[5]}"`);
-                    }
-                }
                 
                 // Handle duration: convert MM:SS to milliseconds if needed
                 let duration = 0;
@@ -1506,16 +1467,6 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             
             return parsedSongs.filter(song => song.title && song.artist);
         }
-        
-        // DEBUG: Test parseCSV output
-        window.testParsing = (csvText) => {
-            const parsed = parseCSV(csvText);
-            console.log('=== PARSED SONGS ===');
-            parsed.slice(0, 3).forEach((s, i) => {
-                console.log(`Song ${i}: "${s.title}" - Genre: ${s.genre}, Era: ${s.era}, Tempo: ${s.tempo}, Energy: ${s.energy}`);
-            });
-            return parsed;
-        };
         
         // Helper function to parse key strings like "C♯/D♭ Major"
         function parseKeyFromString(keyStr) {
@@ -2582,11 +2533,6 @@ ${suggestions.map((suggestion, index) => {
                 try {
                     const csvText = e.target.result;
                     loadedSongs = parseCSV(csvText);
-                    
-                    // DEBUG: Test parsed songs
-                    if (window.testParsing) {
-                        window.testParsing(csvText);
-                    }
                     
                     if (loadedSongs.length === 0) {
                         alert('No valid songs found in the CSV file. Please check the file format.');
