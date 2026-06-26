@@ -1442,6 +1442,19 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 song.genres = genresIdx >= 0 ? values[genresIdx] : '';
                 song.releaseDate = releaseDateIdx >= 0 ? values[releaseDateIdx] : '';
                 
+                // DEBUG: Log raw values for first few rows
+                if (index < 2) {
+                    console.log(`Row ${index}:`, {
+                        titleIdx, title: rawTitle,
+                        artistIdx, artist: rawArtist,
+                        genresIdx, genres: song.genres,
+                        releaseDateIdx, releaseDate: song.releaseDate,
+                        tempoIdx, tempo: values[tempoIdx],
+                        energyIdx, energy: values[energyIdx],
+                        durationIdx, duration: values[durationIdx]
+                    });
+                }
+                
                 // Handle duration: convert MM:SS to milliseconds if needed
                 let duration = 0;
                 if (durationIdx >= 0) {
