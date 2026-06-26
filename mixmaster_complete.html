@@ -1405,19 +1405,20 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                     valenceIdx = findHeaderIndex('valence');
                 }
                 
-                const rawTitle = titleIdx >= 0 ? values[titleIdx] : '';
-                const rawArtist = artistIdx >= 0 ? values[artistIdx] : '';
-                const rawAlbum = albumIdx >= 0 ? values[albumIdx] : '';
+                // Extract values safely with defaults
+                const rawTitle = titleIdx >= 0 && titleIdx < values.length ? values[titleIdx].replace(/"/g, '') : '';
+                const rawArtist = artistIdx >= 0 && artistIdx < values.length ? values[artistIdx].replace(/"/g, '') : '';
+                const rawAlbum = albumIdx >= 0 && albumIdx < values.length ? values[albumIdx].replace(/"/g, '') : '';
                 
                 song.title = toSentenceCase(rawTitle);
                 song.artist = toSentenceCase(rawArtist);
                 song.album = toSentenceCase(rawAlbum);
-                song.genres = genresIdx >= 0 ? values[genresIdx] : '';
-                song.releaseDate = releaseDateIdx >= 0 ? values[releaseDateIdx] : '';
+                song.genres = genresIdx >= 0 && genresIdx < values.length ? values[genresIdx] : '';
+                song.releaseDate = releaseDateIdx >= 0 && releaseDateIdx < values.length ? values[releaseDateIdx] : '';
                 
                 // Handle duration: convert MM:SS to milliseconds if needed
                 let duration = 0;
-                if (durationIdx >= 0) {
+                if (durationIdx >= 0 && durationIdx < values.length) {
                     const durationStr = values[durationIdx];
                     if (durationStr && durationStr.includes(':')) {
                         // MM:SS format (BW26)
@@ -1434,13 +1435,18 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 }
                 song.duration = duration;
                 
-                song.energy = energyIdx >= 0 ? parseFloat(values[energyIdx]) : 0;
-                song.tempo = tempoIdx >= 0 ? parseFloat(values[tempoIdx]) : 120;
-                song.danceability = danceIdx >= 0 ? parseFloat(values[danceIdx]) : 0;
+                // Extract audio features, defaulting if missing
+                const energyVal = energyIdx >= 0 && energyIdx < values.length ? values[energyIdx] : '';
+                const tempoVal = tempoIdx >= 0 && tempoIdx < values.length ? values[tempoIdx] : '';
+                const danceVal = danceIdx >= 0 && danceIdx < values.length ? values[danceIdx] : '';
+                
+                song.energy = energyVal ? parseFloat(energyVal) : 0.5;
+                song.tempo = tempoVal ? parseFloat(tempoVal) : 120;
+                song.danceability = danceVal ? parseFloat(danceVal) : 0.5;
                 
                 // Handle Key parsing for BW26 format (can be like "C♯/D♭ Major")
                 let keyNum = 0;
-                if (keyIdx >= 0) {
+                if (keyIdx >= 0 && keyIdx < values.length) {
                     const keyStr = values[keyIdx];
                     if (keyStr) {
                         if (isBW26Format && keyStr.includes('/')) {
