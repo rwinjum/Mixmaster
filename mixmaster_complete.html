@@ -1507,6 +1507,16 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return parsedSongs.filter(song => song.title && song.artist);
         }
         
+        // DEBUG: Test parseCSV output
+        window.testParsing = (csvText) => {
+            const parsed = parseCSV(csvText);
+            console.log('=== PARSED SONGS ===');
+            parsed.slice(0, 3).forEach((s, i) => {
+                console.log(`Song ${i}: "${s.title}" - Genre: ${s.genre}, Era: ${s.era}, Tempo: ${s.tempo}, Energy: ${s.energy}`);
+            });
+            return parsed;
+        };
+        
         // Helper function to parse key strings like "C♯/D♭ Major"
         function parseKeyFromString(keyStr) {
             const keyMap = {
@@ -2572,6 +2582,11 @@ ${suggestions.map((suggestion, index) => {
                 try {
                     const csvText = e.target.result;
                     loadedSongs = parseCSV(csvText);
+                    
+                    // DEBUG: Test parsed songs
+                    if (window.testParsing) {
+                        window.testParsing(csvText);
+                    }
                     
                     if (loadedSongs.length === 0) {
                         alert('No valid songs found in the CSV file. Please check the file format.');
