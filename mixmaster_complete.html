@@ -862,6 +862,35 @@
             </div>
         </section>
 
+        <!-- Spotify Import Section -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">🎵</div>
+                <h2 class="section-title">Or import from Spotify</h2>
+            </div>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+                <div style="flex: 1; min-width: 300px;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Playlist URL</label>
+                    <input type="text" id="spotifyUrlInput" 
+                        placeholder="https://open.spotify.com/playlist/..." 
+                        style="width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 0.5rem; color: white; font-size: 1rem;"
+                    >
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem;">
+                        Paste any public Spotify playlist link
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="importSpotifyBtn">
+                    📥 Import from Spotify
+                </button>
+            </div>
+            <div class="upload-status hidden" id="spotifyStatus" style="margin-top: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(78, 205, 196, 0.1); border-radius: 0.5rem; border-left: 3px solid #4ecdc4;">
+                    <div id="spotifyLoadingSpinner" style="display: none; width: 20px; height: 20px; border: 3px solid rgba(78, 205, 196, 0.3); border-top: 3px solid #4ecdc4; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div id="spotifyStatusText" style="color: #4ecdc4; flex: 1;">Loading playlist...</div>
+                </div>
+            </div>
+        </section>
+
         <!-- Rules Section -->
         <section class="section hidden" id="rulesSection">
             <div class="section-header">
@@ -2724,6 +2753,80 @@ ${suggestions.map((suggestion, index) => {
             link.click();
             document.body.removeChild(link);
         }
+
+        // Import from Spotify
+        async function importFromSpotify() {
+            const urlInput = document.getElementById('spotifyUrlInput');
+            const playlistUrl = urlInput.value.trim();
+            
+            if (!playlistUrl) {
+                alert('Please paste a Spotify playlist URL');
+                return;
+            }
+            
+            // Extract playlist ID from URL
+            const playlistIdMatch = playlistUrl.match(/playlist\/([a-zA-Z0-9]+)/);
+            if (!playlistIdMatch) {
+                alert('Invalid Spotify URL. Please use a full playlist URL.');
+                return;
+            }
+            
+            const playlistId = playlistIdMatch[1];
+            const statusDiv = document.getElementById('spotifyStatus');
+            const spinner = document.getElementById('spotifyLoadingSpinner');
+            const statusText = document.getElementById('spotifyStatusText');
+            
+            statusDiv.classList.remove('hidden');
+            spinner.style.display = 'block';
+            statusText.textContent = 'Fetching playlist from Spotify...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/spotify-playlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playlist_id: playlistId })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to fetch playlist');
+                }
+                
+                // Convert the fetched data to CSV format and parse
+                const csvData = data.csv_data;
+                loadedSongs = parseCSV(csvData);
+                
+                spinner.style.display = 'none';
+                statusText.textContent = `✅ Loaded ${loadedSongs.length} songs from Spotify!`;
+                
+                updateSongCount();
+                updateRuleSelection();
+                
+                // Clear input
+                urlInput.value = '';
+                
+                // Hide status after 3 seconds
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 3000);
+                
+            } catch (error) {
+                spinner.style.display = 'none';
+                statusText.textContent = `❌ Error: ${error.message}`;
+                statusText.style.color = '#ff6b6b';
+                console.error('Spotify import error:', error);
+                
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                    statusText.style.color = '#4ecdc4';
+                }, 3000);
+            }
+        }
         
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
@@ -2736,12 +2839,22 @@ ${suggestions.map((suggestion, index) => {
             const exportCsvBtn = document.getElementById('exportCsvBtn');
             const exportDetailedBtn = document.getElementById('exportDetailedBtn');
             const exportSpotifyBtn = document.getElementById('exportSpotifyBtn');
+            const importSpotifyBtn = document.getElementById('importSpotifyBtn');
+            const spotifyUrlInput = document.getElementById('spotifyUrlInput');
 
             // Upload zone handlers
             uploadZone.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
                     handleFileUpload(e.target.files[0]);
+                }
+            });
+
+            // Spotify import handler
+            importSpotifyBtn.addEventListener('click', importFromSpotify);
+            spotifyUrlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    importFromSpotify();
                 }
             });
 
