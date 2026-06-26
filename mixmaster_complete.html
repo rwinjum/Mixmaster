@@ -1444,15 +1444,14 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 
                 // DEBUG: Log raw values for first few rows
                 if (index < 2) {
-                    console.log(`Row ${index}:`, {
-                        titleIdx, title: rawTitle,
-                        artistIdx, artist: rawArtist,
-                        genresIdx, genres: song.genres,
-                        releaseDateIdx, releaseDate: song.releaseDate,
-                        tempoIdx, tempo: values[tempoIdx],
-                        energyIdx, energy: values[energyIdx],
-                        durationIdx, duration: values[durationIdx]
-                    });
+                    console.log(`Row ${index} genres: "${song.genres}"`);
+                    console.log(`Row ${index} releaseDate: "${song.releaseDate}"`);
+                    console.log(`Row ${index} raw values array length: ${values.length}`);
+                    if (values.length > 22) {
+                        console.log(`Row ${index} value[22] (tempo): "${values[22]}"`);
+                        console.log(`Row ${index} value[13] (energy): "${values[13]}"`);
+                        console.log(`Row ${index} value[5] (duration): "${values[5]}"`);
+                    }
                 }
                 
                 // Handle duration: convert MM:SS to milliseconds if needed
