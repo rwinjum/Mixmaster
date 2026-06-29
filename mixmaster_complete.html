@@ -1785,6 +1785,8 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 }
             });
             
+            console.log(`Applying ${issuesToApply.length} fixes...`);
+            
             // Apply fixes to loaded songs
             issuesToApply.forEach(issue => {
                 if (loadedSongs[issue.songIndex]) {
@@ -1800,12 +1802,12 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             
             // Check for remaining issues
             const remainingIssues = detectPotentialCompilationIssues(loadedSongs);
+            console.log(`Detected ${remainingIssues.length} remaining issues out of ${loadedSongs.length} songs`);
+            
             if (remainingIssues.length > 0) {
                 console.log(`Found ${remainingIssues.length} more issues. Showing next batch...`);
-                // Re-show modal with remaining issues
-                setTimeout(() => {
-                    showCompilationFixModal(remainingIssues);
-                }, 500);
+                // Show modal with remaining issues
+                showCompilationFixModal(remainingIssues);
             } else {
                 // No more issues - close modal
                 const modal = document.getElementById('compilationFixModal');
