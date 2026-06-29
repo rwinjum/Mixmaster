@@ -1691,10 +1691,29 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             songs.forEach((song, idx) => {
                 const album = song.album ? song.album.toLowerCase() : '';
                 const releaseYear = song.releaseDate.split('-')[0];
+                const titleLower = song.title.toLowerCase();
                 
-                // Check if we have a correction for this song (regardless of album keyword)
+                // Check if we have a correction for this song (with more precise matching)
                 for (const [songPattern, correctDate] of Object.entries(compilationDateCorrections)) {
-                    if (song.title.toLowerCase().includes(songPattern.toLowerCase())) {
+                    const patternLower = songPattern.toLowerCase();
+                    
+                    // Exact match or match at word boundary to avoid false positives
+                    // e.g., "Flower" should match "Flower" but NOT "No Rain, No Flowers"
+                    const words = titleLower.split(/[\s\-,()\"']+/).filter(w => w.length > 0);
+                    const patternWords = patternLower.split(/[\s\-,()\"']+/).filter(w => w.length > 0);
+                    
+                    // Check if all pattern words are in title words (in order or grouped)
+                    let matchFound = false;
+                    if (patternWords.length === 1) {
+                        // Single word patterns: match as exact word
+                        matchFound = words.includes(patternWords[0]);
+                    } else {
+                        // Multi-word patterns: check if all words appear in sequence
+                        const titleStr = titleLower;
+                        matchFound = titleStr.includes(patternLower);
+                    }
+                    
+                    if (matchFound) {
                         const correctYear = correctDate.split('-')[0];
                         
                         // Flag if dates differ - this is a known issue that should be fixed
