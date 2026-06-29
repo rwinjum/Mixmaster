@@ -1719,7 +1719,7 @@ ${songDescriptions}`;
                     }
                 }
                 
-                if (bestGroup && bestGroup.length > 0) {
+                if (bestGroup && bestGroup.length >= 2) {
                     bestGroup.forEach(song => {
                         used.add(song.id);
                         const index = remainingSongs.findIndex(s => s.id === song.id);
