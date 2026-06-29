@@ -1016,6 +1016,33 @@
         let avoidSameArtist = true;
         let isProcessing = false;
 
+        // Compilation album date corrections (original release dates)
+        const compilationDateCorrections = {
+            "(Marie's The Name) His Latest Flame": "1961-08-08",
+            "Southbound": "1973-08-15",
+            "Hold Me, Thrill Me, Kiss Me, Kill Me": "1995-06-05",
+            "American Girl": "1976-09-14",
+            "Drown": "1995-10-23",
+            "Ocean Size": "1989-09-07",
+            "Harborcoat": "1983-01-01",
+            "We Walk": "1985-01-01",
+            "Boulevard of Broken Dreams": "2004-11-01",
+            "Dancing Days": "1971-11-08",
+            "All Your Lies": "1988-06-09",
+            "Mood for Trouble": "1988-06-09",
+            "Losing My Religion": "1991-01-01",
+            "Wait for Me": "2012-09-18",
+            "The Boy": "1998-01-01",
+            "Invisible Sun": "2019-09-20",
+            "As Alive As You Need Me To Be": "2025-07-17",
+            "Everywhere I Go": "2016-04-08",
+            "Who Are You": "1978-12-18",
+            "Acquiesce": "1996-10-07",
+            "The Underdog": "2007-04-10",
+            "Hands All Over": "1989-01-24",
+            "Flower": "1988-06-09"
+        };
+
         // Ollama API Functions
         async function callOllama(prompt) {
             try {
@@ -1400,6 +1427,50 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 }
             });
             return songs;
+        }
+
+        // Detect and fix compilation album dates to original release dates
+        function detectAndFixCompilationDates(songs) {
+            let corrections = [];
+            
+            songs.forEach(song => {
+                // Check if this song title matches a compilation correction
+                for (const [songPattern, correctDate] of Object.entries(compilationDateCorrections)) {
+                    if (song.title.toLowerCase().includes(songPattern.toLowerCase())) {
+                        // Check if album looks like a compilation
+                        const album = song.album ? song.album.toLowerCase() : '';
+                        const isCompilation = album.includes('deluxe') || 
+                                            album.includes('remaster') || 
+                                            album.includes('live') || 
+                                            album.includes('rarities') ||
+                                            album.includes('greatest') ||
+                                            album.includes('#1 hits') ||
+                                            album.includes('compilation') ||
+                                            album.includes('best of') ||
+                                            album.includes('anthology') ||
+                                            album.includes('super') ||
+                                            album.includes('expanded');
+                        
+                        if (isCompilation && song.releaseDate !== correctDate) {
+                            const oldDate = song.releaseDate;
+                            corrections.push({
+                                track: song.title,
+                                album: song.album,
+                                oldDate: oldDate,
+                                newDate: correctDate
+                            });
+                            song.releaseDate = correctDate;
+                            // Recalculate era with corrected date
+                            song.era = getEraFromDate(song.releaseDate);
+                            console.log(`🔧 Fixed compilation date: "${song.title}" (${album})`);
+                            console.log(`   ${oldDate.split('-')[0]} → ${correctDate.split('-')[0]} (Era: ${song.era})`);
+                        }
+                        break;
+                    }
+                }
+            });
+            
+            return corrections;
         }
 
         function getPaceFromFeatures(energy, tempo, danceability) {
@@ -2839,6 +2910,15 @@ ${suggestions.map((suggestion, index) => {
                     
                     // Fill empty genres using audio features
                     loadedSongs = fillEmptyGenres(loadedSongs);
+                    
+                    // Auto-detect and fix compilation album dates
+                    const compilationFixes = detectAndFixCompilationDates(loadedSongs);
+                    if (compilationFixes.length > 0) {
+                        console.log(`🔧 Fixed ${compilationFixes.length} compilation album dates:`);
+                        compilationFixes.forEach(fix => {
+                            console.log(`   ${fix.track}: ${fix.oldDate.split('-')[0]} → ${fix.newDate.split('-')[0]}`);
+                        });
+                    }
                     
                     // Validate CSV data quality
                     const validation = validateCSVData(loadedSongs);
