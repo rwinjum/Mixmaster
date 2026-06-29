@@ -1018,9 +1018,9 @@
         // Ollama API Functions
         async function callOllama(prompt) {
             try {
-                // Use local proxy to call Ollama API with 10 second timeout
+                // Use local proxy to call Ollama API with 30 second timeout
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
 
                 const response = await fetch(PROXY_URL, {
                     method: 'POST',
@@ -1579,20 +1579,28 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         // AI-enhanced compatibility scoring
         async function analyzeGroupCompatibility(songs) {
             const songDescriptions = songs.map(s => 
-                `${s.title} by ${s.artist} (${s.genre}, ${s.era}, ${s.tempo}BPM, Energy: ${s.energy})`
-            ).join('\n');
+                `${s.title} by ${s.artist} (${s.genre}, ${s.tempo}BPM, Energy: ${s.energy})`
+            ).join(', ');
 
-            const prompt = `As a professional DJ, rate how well these 3 songs work together for a seamless mix (score 1-10). Consider tempo compatibility, key matching, energy progression, genre flow, and era diversity.
+            const prompt = `Rate this DJ group 1-10 for musical compatibility (consider tempo, energy, genre flow). Format: "SCORE: X/10 REASON: brief reason"
 
-${songDescriptions}
-
-Return ONLY a JSON response: {"compatibility_score": X, "reason": "brief explanation"}`;
+${songDescriptions}`;
 
             const response = await callOllama(prompt);
             if (!response) return { compatibility_score: 5, reason: 'Algorithmic grouping' };
 
             try {
-                return JSON.parse(response);
+                // Parse simple format: "SCORE: 8/10 REASON: good tempo progression"
+                const scoreMatch = response.match(/SCORE:\s*(\d+)/i);
+                const reasonMatch = response.match(/REASON:\s*(.+?)(?:\n|$)/i);
+                
+                const score = scoreMatch ? parseInt(scoreMatch[1]) : 5;
+                const reason = reasonMatch ? reasonMatch[1].trim() : 'Good compatibility';
+                
+                return { 
+                    compatibility_score: Math.min(10, Math.max(1, score)),
+                    reason: reason.substring(0, 100)
+                };
             } catch {
                 return { compatibility_score: 5, reason: 'Algorithmic grouping' };
             }
