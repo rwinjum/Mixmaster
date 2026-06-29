@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>MIXMASTER - DJ Playlist Organizer</title>
     <style>
         * {
@@ -853,7 +856,9 @@
             width: 90%;
             max-width: 600px;
             max-height: 80vh;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             animation: slideIn 0.3s ease-out;
         }
 
@@ -874,6 +879,7 @@
             align-items: center;
             padding: 1.5rem;
             border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+            flex-shrink: 0;
         }
 
         .modal-title {
@@ -904,6 +910,9 @@
 
         .modal-body {
             padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
         }
 
         .modal-description {
@@ -916,7 +925,6 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            margin-bottom: 1.5rem;
         }
 
         .modal-issue {
@@ -982,15 +990,113 @@
             font-weight: 600;
         }
 
-        .modal-footer {
+        /* Data Quality Check modal — fixed scroll area (Edge-safe) */
+        #compilationFixModal.modal {
+            background: transparent !important;
+            border: none !important;
+            backdrop-filter: none !important;
+            max-width: none !important;
+            max-height: none !important;
+            width: auto !important;
+            overflow: visible !important;
+            flex-direction: row !important;
+        }
+
+        #compilationFixModal .modal-content {
+            display: block !important;
+            position: relative !important;
+            z-index: 20001 !important;
+            width: min(600px, 92vw) !important;
+            max-width: 600px !important;
+            max-height: 90vh !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+
+        #compilationFixModal .modal-header {
+            flex-shrink: 0;
+        }
+
+        #compilationFixModal .modal-body {
+            display: block !important;
+            overflow: hidden !important;
+            padding: 1rem 1.5rem 1.25rem !important;
+        }
+
+        #compilationFixModal .modal-description {
+            margin-bottom: 0.75rem !important;
+        }
+
+        #compilationFixModal .modal-scroll-hint {
+            display: none;
+            margin: 0 0 0.75rem 0;
+            font-size: 0.875rem;
+            color: rgba(78, 205, 196, 0.95);
+        }
+
+        #compilationFixModal .modal-scroll-hint.visible {
+            display: block;
+        }
+
+        #compilationFixModal #modalIssuesScroll {
+            display: block !important;
+            box-sizing: border-box !important;
+            height: 320px !important;
+            max-height: 320px !important;
+            overflow-y: scroll !important;
+            overflow-x: hidden !important;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(78, 205, 196, 0.75) rgba(255, 255, 255, 0.08);
+            padding: 0.5rem 0.35rem 0.5rem 0.5rem;
+            border: 1px solid rgba(78, 205, 196, 0.25);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #compilationFixModal .modal-issues {
+            display: block !important;
+        }
+
+        #compilationFixModal .modal-issue {
+            margin-bottom: 1rem;
+        }
+
+        #compilationFixModal .modal-issue:last-child {
+            margin-bottom: 0;
+        }
+
+        #compilationFixModal #modalIssuesScroll::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        #compilationFixModal #modalIssuesScroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+        }
+
+        #compilationFixModal #modalIssuesScroll::-webkit-scrollbar-thumb {
+            background: rgba(78, 205, 196, 0.65);
+            border-radius: 6px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+        }
+
+        #compilationFixModal #modalIssuesScroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(78, 205, 196, 0.85);
+        }
+
+        #compilationFixModal .modal-footer {
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
             padding: 1.5rem;
             border-top: 1px solid rgba(78, 205, 196, 0.2);
+            flex-shrink: 0;
         }
 
-        .modal-footer .btn {
+        #compilationFixModal .modal-footer .btn {
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
         }
@@ -1185,25 +1291,26 @@
                 </div>
             </div>
         </section>
+    </div>
 
-        <!-- Compilation Album Fix Modal -->
-        <div id="compilationFixModal" class="modal hidden">
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Data Quality Check</h2>
-                    <button class="modal-close" id="modalCloseBtn">&times;</button>
+    <!-- Data Quality Check modal (outside .container so fixed positioning/scroll work in Edge) -->
+    <div id="compilationFixModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Data Quality Check</h2>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Found <span id="issueCount">0</span> potential compilation album issues that can be auto-corrected:</p>
+                <p class="modal-scroll-hint" id="modalScrollHint">Scroll inside the box below to review all items.</p>
+                <div class="modal-issues-scroll" id="modalIssuesScroll">
+                    <div class="modal-issues" id="modalIssuesList"></div>
                 </div>
-                <div class="modal-body">
-                    <p class="modal-description">Found <span id="issueCount">0</span> potential compilation album issues that can be auto-corrected:</p>
-                    <div class="modal-issues" id="modalIssuesList">
-                        <!-- Issues will be populated here -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" id="modalSkipBtn">Skip for now</button>
-                    <button class="btn btn-primary" id="modalApplyBtn">Apply selected fixes</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalSkipBtn">Skip for now</button>
+                <button class="btn btn-primary" id="modalApplyBtn">Apply selected fixes</button>
             </div>
         </div>
     </div>
@@ -1739,7 +1846,35 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return potentialIssues;
         }
 
+        // Show data quality modal when compilation date fixes are available
+        function showDataQualityCheckIfNeeded() {
+            const potentialIssues = detectPotentialCompilationIssues(loadedSongs);
+            if (potentialIssues.length > 0) {
+                console.log(`Detected ${potentialIssues.length} potential compilation album issues`);
+                showCompilationFixModal(potentialIssues);
+            }
+        }
+
         // Show modal with detected compilation issues
+        function layoutCompilationFixModal() {
+            const modal = document.getElementById('compilationFixModal');
+            const scroll = document.getElementById('modalIssuesScroll');
+            if (!modal || !scroll) return;
+
+            // Fixed pixel height — avoids flex/grid scroll bugs in Edge
+            const scrollHeight = Math.max(220, Math.min(Math.floor(window.innerHeight * 0.45), 420));
+            scroll.style.setProperty('height', scrollHeight + 'px', 'important');
+            scroll.style.setProperty('max-height', scrollHeight + 'px', 'important');
+            scroll.style.setProperty('overflow-y', 'scroll', 'important');
+
+            const scrollHint = document.getElementById('modalScrollHint');
+            const issueCount = window.pendingCompilationIssues?.length || 0;
+            if (scrollHint) {
+                const needsScroll = scroll.scrollHeight > scroll.clientHeight + 2;
+                scrollHint.classList.toggle('visible', issueCount > 3 || needsScroll);
+            }
+        }
+
         function showCompilationFixModal(issues) {
             if (issues.length === 0) {
                 return; // No issues, don't show modal
@@ -1790,6 +1925,18 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             
             // Show modal
             modal.classList.remove('hidden');
+
+            const runLayout = () => {
+                layoutCompilationFixModal();
+                const scrollEl = document.getElementById('modalIssuesScroll');
+                if (scrollEl) scrollEl.scrollTop = 0;
+            };
+
+            requestAnimationFrame(() => {
+                runLayout();
+                requestAnimationFrame(runLayout);
+            });
+            setTimeout(runLayout, 50);
         }
 
         // Apply selected compilation fixes
@@ -3273,15 +3420,6 @@ ${suggestions.map((suggestion, index) => {
                     // Fill empty genres using audio features
                     loadedSongs = fillEmptyGenres(loadedSongs);
                     
-                    // Auto-detect and fix compilation album dates
-                    const compilationFixes = detectAndFixCompilationDates(loadedSongs);
-                    if (compilationFixes.length > 0) {
-                        console.log(`🔧 Fixed ${compilationFixes.length} compilation album dates:`);
-                        compilationFixes.forEach(fix => {
-                            console.log(`   ${fix.track}: ${fix.oldDate.split('-')[0]} → ${fix.newDate.split('-')[0]}`);
-                        });
-                    }
-                    
                     // Validate CSV data quality
                     const validation = validateCSVData(loadedSongs);
                     console.log(`CSV Validation: ${validation.issueCount} issues found`);
@@ -3307,11 +3445,7 @@ ${suggestions.map((suggestion, index) => {
                     }
                     
                     // Detect potential compilation issues for user review
-                    const potentialIssues = detectPotentialCompilationIssues(loadedSongs);
-                    if (potentialIssues.length > 0) {
-                        console.log(`Detected ${potentialIssues.length} potential compilation album issues`);
-                        showCompilationFixModal(potentialIssues);
-                    }
+                    showDataQualityCheckIfNeeded();
                     
                     updateSongCount();
                 } catch (error) {
@@ -3513,6 +3647,8 @@ ${suggestions.map((suggestion, index) => {
                 // Convert the fetched data to CSV format and parse
                 const csvData = data.csv_data;
                 loadedSongs = parseCSV(csvData);
+                loadedSongs = fillEmptyGenres(loadedSongs);
+                showDataQualityCheckIfNeeded();
                 
                 spinner.style.display = 'none';
                 statusText.textContent = `✅ Loaded ${loadedSongs.length} songs from Spotify!`;
@@ -3577,6 +3713,12 @@ ${suggestions.map((suggestion, index) => {
 
             modalOverlay.addEventListener('click', () => {
                 compilationFixModal.classList.add('hidden');
+            });
+
+            window.addEventListener('resize', () => {
+                if (!compilationFixModal.classList.contains('hidden')) {
+                    layoutCompilationFixModal();
+                }
             });
 
             // Upload zone handlers
