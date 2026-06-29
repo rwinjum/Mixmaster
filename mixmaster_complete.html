@@ -835,6 +835,11 @@
                 Transform your Spotify playlists using the legendary "group of three" DJ rule. 
                 Create seamless transitions that keep the energy flowing.
             </p>
+            <div style="margin-top: 1rem;">
+                <a href="instructions.html" target="_blank" style="display: inline-block; padding: 8px 16px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; text-decoration: none; font-size: 0.9rem; transition: all 0.3s; font-weight: 500;">
+                    📖 How to Use
+                </a>
+            </div>
         </header>
 
         <!-- Upload Section -->
@@ -1013,7 +1018,10 @@
         // Ollama API Functions
         async function callOllama(prompt) {
             try {
-                // Use local proxy to call Ollama API
+                // Use local proxy to call Ollama API with 10 second timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
                 const response = await fetch(PROXY_URL, {
                     method: 'POST',
                     headers: {
@@ -1021,8 +1029,11 @@
                     },
                     body: JSON.stringify({
                         prompt: prompt
-                    })
+                    }),
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 if (!response.ok) {
                     throw new Error(`Proxy error: ${response.statusText}`);
@@ -1404,7 +1415,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 const song = { id: index + 1 };
                 
                 // Map column names based on format
-                let titleIdx, artistIdx, albumIdx, genresIdx, releaseDateIdx, durationIdx, energyIdx, tempoIdx, danceIdx, keyIdx, valenceIdx;
+                let titleIdx, artistIdx, albumIdx, genresIdx, releaseDateIdx, durationIdx, energyIdx, tempoIdx, danceIdx, keyIdx, valenceIdx, trackUriIdx;
                 
                 if (isBW26Format) {
                     // BW26 format
@@ -1419,6 +1430,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                     danceIdx = findHeaderIndex('dance');
                     keyIdx = findHeaderIndex('key');
                     valenceIdx = findHeaderIndex('valence');
+                    trackUriIdx = -1; // BW26 doesn't have URI
                 } else {
                     // Spotify format (default)
                     titleIdx = findHeaderIndex('track');
@@ -1432,6 +1444,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                     danceIdx = findHeaderIndex('danceability');
                     keyIdx = findHeaderIndex('key');
                     valenceIdx = findHeaderIndex('valence');
+                    trackUriIdx = findHeaderIndex('track uri');
                 }
                 
                 // Extract values safely with defaults
@@ -1444,6 +1457,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 song.album = toSentenceCase(rawAlbum);
                 song.genres = genresIdx >= 0 && genresIdx < values.length ? values[genresIdx] : '';
                 song.releaseDate = releaseDateIdx >= 0 && releaseDateIdx < values.length ? values[releaseDateIdx] : '';
+                song.trackUri = trackUriIdx >= 0 && trackUriIdx < values.length ? values[trackUriIdx].replace(/"/g, '') : '';
                 
                 // Handle duration: convert MM:SS to milliseconds if needed
                 let duration = 0;
@@ -1562,6 +1576,70 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         }
 
         // Grouping Algorithm
+        // AI-enhanced compatibility scoring
+        async function analyzeGroupCompatibility(songs) {
+            const songDescriptions = songs.map(s => 
+                `${s.title} by ${s.artist} (${s.genre}, ${s.era}, ${s.tempo}BPM, Energy: ${s.energy})`
+            ).join('\n');
+
+            const prompt = `As a professional DJ, rate how well these 3 songs work together for a seamless mix (score 1-10). Consider tempo compatibility, key matching, energy progression, genre flow, and era diversity.
+
+${songDescriptions}
+
+Return ONLY a JSON response: {"compatibility_score": X, "reason": "brief explanation"}`;
+
+            const response = await callOllama(prompt);
+            if (!response) return { compatibility_score: 5, reason: 'Algorithmic grouping' };
+
+            try {
+                return JSON.parse(response);
+            } catch {
+                return { compatibility_score: 5, reason: 'Algorithmic grouping' };
+            }
+        }
+
+        // AI-enhanced grouping that shows results fast, then updates with AI in background
+        async function groupSongsByRulesWithAI(songs, rules, avoidSameArtist) {
+            // First, create groups using the existing algorithm (fast)
+            const initialGroups = groupSongsByRules(songs, rules, avoidSameArtist);
+            
+            // Start AI analysis in background (don't wait for it)
+            initialGroups.forEach(group => {
+                if (group.songs.length === 3) {
+                    analyzeGroupCompatibility(group.songs).then(analysis => {
+                        group.analysis = analysis;
+                        // Re-render to show updated analysis
+                        updateGroupAnalysis(initialGroups.indexOf(group), analysis);
+                    }).catch(() => {
+                        // Silently fail - keep algorithmic grouping
+                    });
+                }
+            });
+            
+            // Return groups immediately without waiting for AI
+            return initialGroups;
+        }
+
+        // Update a specific group's AI analysis in the UI
+        function updateGroupAnalysis(groupIndex, analysis) {
+            const groupElements = document.querySelectorAll('.group-analysis');
+            if (groupElements[groupIndex]) {
+                const analysisDiv = groupElements[groupIndex];
+                const score = analysis.compatibility_score;
+                const scoreColor = score >= 8 ? '#4ecdc4' : score >= 6 ? '#ffd93d' : '#ff6b6b';
+                analysisDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>🎵 Musical Compatibility:</strong> ${analysis.reason}
+                        </div>
+                        <div style="color: ${scoreColor}; font-weight: bold; font-size: 1.1rem;">
+                            ${score}/10
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
         function groupSongsByRules(songs, rules, avoidSameArtist) {
             const groups = [];
             const used = new Set();
@@ -1902,28 +1980,37 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 `;
                 groupDiv.appendChild(groupHeader);
 
-                // Add AI explanation
-                const explanationDiv = document.createElement('div');
-                explanationDiv.className = 'group-explanation';
-                explanationDiv.style.padding = '1rem';
-                explanationDiv.style.background = 'rgba(78, 205, 196, 0.1)';
-                explanationDiv.style.borderRadius = '0.5rem';
-                explanationDiv.style.marginBottom = '1rem';
-                explanationDiv.style.color = '#4ecdc4';
-                explanationDiv.style.fontSize = '0.9rem';
-                explanationDiv.style.lineHeight = '1.5';
-                explanationDiv.style.borderLeft = '3px solid #4ecdc4';
-                explanationDiv.innerHTML = '🤖 Loading AI analysis...';
-                groupDiv.appendChild(explanationDiv);
-
-                // Load AI explanation asynchronously
-                getAIGroupingExplanation(group.songs, group.rule).then(explanation => {
-                    if (explanation) {
-                        explanationDiv.innerHTML = `✨ ${explanation}`;
-                    } else {
-                        explanationDiv.innerHTML = '✨ Perfect group composition for seamless mixing';
-                    }
-                });
+                // Add AI compatibility analysis placeholder
+                const analysisDiv = document.createElement('div');
+                analysisDiv.className = 'group-analysis';
+                analysisDiv.style.padding = '1rem';
+                analysisDiv.style.background = 'rgba(78, 205, 196, 0.1)';
+                analysisDiv.style.borderRadius = '0.5rem';
+                analysisDiv.style.marginBottom = '1rem';
+                analysisDiv.style.color = '#4ecdc4';
+                analysisDiv.style.fontSize = '0.9rem';
+                analysisDiv.style.lineHeight = '1.5';
+                analysisDiv.style.borderLeft = '3px solid #4ecdc4';
+                
+                if (group.analysis) {
+                    // AI analysis already loaded
+                    const score = group.analysis.compatibility_score;
+                    const scoreColor = score >= 8 ? '#4ecdc4' : score >= 6 ? '#ffd93d' : '#ff6b6b';
+                    analysisDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>🎵 Musical Compatibility:</strong> ${group.analysis.reason}
+                            </div>
+                            <div style="color: ${scoreColor}; font-weight: bold; font-size: 1.1rem;">
+                                ${score}/10
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Show loading state while AI analyzes
+                    analysisDiv.innerHTML = '⏳ Analyzing musical compatibility...';
+                }
+                groupDiv.appendChild(analysisDiv);
                 
                 // Create songs grid
                 const songsGrid = document.createElement('div');
@@ -2470,17 +2557,18 @@ ${suggestions.map((suggestion, index) => {
 
         // Export Functions
         function exportToCSV() {
-            const headers = ['Group', 'Position', 'Title', 'Artist', 'Album', 'Genre', 'Era', 'Pace', 'Tempo', 'Key', 'Duration'];
+            const headers = ['Track URI', 'Title', 'Artist', 'Album', 'Group', 'Position', 'Genre', 'Era', 'Pace', 'Tempo', 'Key', 'Duration'];
             const rows = [headers];
             
             organizedGroups.forEach((group, groupIndex) => {
                 group.songs.forEach((song, songIndex) => {
                     rows.push([
-                        `Group ${groupIndex + 1}`,
-                        songIndex + 1,
+                        song.trackUri || '',
                         song.title,
                         song.artist,
                         song.album || '',
+                        `Group ${groupIndex + 1}`,
+                        songIndex + 1,
                         song.genre,
                         song.era,
                         song.pace,
@@ -2644,7 +2732,7 @@ ${suggestions.map((suggestion, index) => {
                     });
                 });
                 
-                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+                organizedGroups = await groupSongsByRulesWithAI(loadedSongs, selectedRules, avoidSameArtist);
                 
                 console.log('First group songs after grouping:');
                 if (organizedGroups.length > 0) {
@@ -2684,14 +2772,6 @@ ${suggestions.map((suggestion, index) => {
                 }
                 
                 renderGroups();
-                
-                // Generate AI recommendations
-                const mixStyle = selectedRules[0];
-                getSmartRecommendations(loadedSongs.slice(0, 5), mixStyle).then(recommendations => {
-                    if (recommendations && recommendations.length > 0) {
-                        showAIRecommendations(recommendations);
-                    }
-                });
                 
                 isProcessing = false;
                 updateRuleSelection();
@@ -2733,8 +2813,8 @@ ${suggestions.map((suggestion, index) => {
             remixBtn.innerHTML = '🎵 Creating new mix...';
             remixBtn.disabled = true;
             
-            setTimeout(() => {
-                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
+            setTimeout(async () => {
+                organizedGroups = await groupSongsByRulesWithAI(loadedSongs, selectedRules, avoidSameArtist);
                 // Optimize group order for smooth transitions
                 organizedGroups = optimizeGroupOrder(organizedGroups);
                 renderGroups();
@@ -2778,20 +2858,21 @@ ${suggestions.map((suggestion, index) => {
             
             statusDiv.classList.remove('hidden');
             spinner.style.display = 'block';
-            statusText.textContent = 'Fetching playlist from Spotify...';
+            statusText.textContent = 'Connecting to Spotify...';
             
             try {
-                const response = await fetch('http://localhost:5000/api/spotify-playlist', {
+                const response = await fetch('http://localhost:5000/api/spotify-playlist-public', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ playlist_id: playlistId })
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
-                }
-                
                 const data = await response.json();
+                
+                // Check for errors
+                if (!response.ok) {
+                    throw new Error(data.error || `Server error: ${response.status}`);
+                }
                 
                 if (!data.success) {
                     throw new Error(data.error || 'Failed to fetch playlist');
@@ -2803,6 +2884,7 @@ ${suggestions.map((suggestion, index) => {
                 
                 spinner.style.display = 'none';
                 statusText.textContent = `✅ Loaded ${loadedSongs.length} songs from Spotify!`;
+                statusText.style.color = '#4ecdc4';
                 
                 updateSongCount();
                 updateRuleSelection();

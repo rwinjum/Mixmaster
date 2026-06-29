@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIXMASTER - Instructions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4ecdc4;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #4ecdc4;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(78, 205, 196, 0.3);
+        }
+        
+        .subtitle {
+            color: #95a5a6;
+            font-size: 1.1em;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4ecdc4;
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .back-link:hover {
+            background: #45b8ad;
+        }
+        
+        h2 {
+            color: #4ecdc4;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h3 {
+            color: #74b9ff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .step {
+            background: #2d2d2d;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #4ecdc4;
+            border-radius: 6px;
+            transition: transform 0.2s;
+        }
+        
+        .step:hover {
+            transform: translateX(5px);
+            border-left-color: #74b9ff;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #4ecdc4;
+            color: #1a1a1a;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .code-block {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            color: #74b9ff;
+            overflow-x: auto;
+        }
+        
+        .warning {
+            background: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #e74c3c;
+        }
+        
+        .info {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #3498db;
+        }
+        
+        .success {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid #2ecc71;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #2ecc71;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .feature {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #74b9ff;
+        }
+        
+        .feature strong {
+            color: #4ecdc4;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 MIXMASTER Instructions</h1>
+            <p class="subtitle">DJ Playlist Organizer - Step-by-Step Guide</p>
+        </div>
+        
+        <h2>📋 Overview</h2>
+        <p>MIXMASTER is a powerful DJ playlist organizer that uses audio analysis to create balanced, mixed playlists. It intelligently groups songs based on their musical properties (energy, tempo, danceability, etc.) to create smooth transitions and maintain consistent pacing.</p>
+        
+        <h2>🚀 Quick Start: 3 Main Steps</h2>
+        
+        <div class="step">
+            <h3><span class="step-number">1</span>Get Your Spotify Playlist Data</h3>
+            <p>Export your Spotify playlist with full audio metadata using <strong>Exportify</strong>:</p>
+            <ol>
+                <li>Go to <a href="https://exportify.app" target="_blank" style="color: #4ecdc4;">https://exportify.app</a></li>
+                <li>Sign in with your Spotify account</li>
+                <li>Select your playlist (e.g., "BW26")</li>
+                <li>Click "Export" and download the CSV file</li>
+            </ol>
+            <div class="success">✅ The exported CSV will include all audio features: Danceability, Energy, Tempo, etc.</div>
+        </div>
+        
+        <div class="step">
+            <h3><span class="step-number">2</span>Upload Your CSV</h3>
+            <p>Import your playlist data into MIXMASTER:</p>
+            <ol>
+                <li>Click the <strong>upload zone</strong> (or drag & drop)</li>
+                <li>Select your exported CSV file</li>
+                <li>Wait for the file to load (you'll see a success message)</li>
+                <li>Check the <strong>Song Count</strong> to confirm all tracks loaded</li>
+            </ol>
+            <div class="info">💡 The CSV parser automatically detects Spotify export format and maps columns correctly.</div>
+        </div>
+        
+        <div class="step">
+            <h3><span class="step-number">3</span>Organize Your Playlist</h3>
+            <p>Create balanced, mixed playlists using our algorithms:</p>
+            
+            <h4>Option A: Group of Three (Recommended)</h4>
+            <ol>
+                <li>Click <strong>"🎵 Organize Playlist"</strong></li>
+                <li>Select <strong>"Group of Three"</strong> from the dropdown</li>
+                <li>Click <strong>"Organize"</strong></li>
+                <li>See your songs grouped into balanced sets of 3</li>
+            </ol>
+            
+            <h4>Option B: Energy-Based Organization</h4>
+            <ol>
+                <li>Select <strong>"By Energy"</strong> from the dropdown</li>
+                <li>Organizes songs from low → high energy</li>
+                <li>Great for building energy through a set</li>
+            </ol>
+            
+            <h4>Option C: By Artist</h4>
+            <ol>
+                <li>Select <strong>"By Artist"</strong></li>
+                <li>Groups all songs by artist</li>
+                <li>Useful for themed DJ sets</li>
+            </ol>
+        </div>
+        
+        <h2>📊 Understanding the Results</h2>
+        <p>After organizing, each group displays:</p>
+        <ul>
+            <li><strong>Position</strong>: Where the song falls in the group</li>
+            <li><strong>Song Info</strong>: Track name, artist, album</li>
+            <li><strong>Audio Features</strong>: BPM, Energy, Danceability, etc.</li>
+            <li><strong>Group Label</strong>: Shows the grouping strategy and properties</li>
+        </ul>
+        
+        <h2>💾 Export Your Results</h2>
+        <p>Save your organized playlist in multiple formats:</p>
+        
+        <div class="feature-list">
+            <div class="feature">
+                <strong>📄 Export as CSV</strong><br>
+                Download the organized playlist as a CSV file for use in other tools
+            </div>
+            <div class="feature">
+                <strong>📝 Export Detailed</strong><br>
+                Get a detailed report with all audio features and grouping info
+            </div>
+            <div class="feature">
+                <strong>🎵 Create Spotify Playlist</strong><br>
+                Export to Spotify and create a new playlist directly (coming soon)
+            </div>
+            <div class="feature">
+                <strong>🔄 Remix</strong><br>
+                Reorganize with different grouping strategies
+            </div>
+        </div>
+        
+        <h2>🎯 Key Features</h2>
+        
+        <h3>Group of Three Algorithm</h3>
+        <p>The signature MIXMASTER feature creates balanced groups of 3 songs by:</p>
+        <ul>
+            <li>Analyzing 12 audio features for each song</li>
+            <li>Creating groups with diverse energy and tempo</li>
+            <li>Ensuring smooth transitions between songs</li>
+            <li>Balancing fast and slow, energetic and calm tracks</li>
+        </ul>
+        
+        <h3>Audio Features Analyzed</h3>
+        <div class="feature-list">
+            <div class="feature">🎚️ <strong>Energy</strong><br>0-100 intensity</div>
+            <div class="feature">🎵 <strong>Tempo</strong><br>BPM (beats per minute)</div>
+            <div class="feature">💃 <strong>Danceability</strong><br>How groove-able</div>
+            <div class="feature">🎼 <strong>Key</strong><br>Musical key</div>
+            <div class="feature">📊 <strong>Valence</strong><br>Musical positivity</div>
+            <div class="feature">🎤 <strong>Acousticness</strong><br>Acoustic vs electronic</div>
+            <div class="feature">🗣️ <strong>Speechiness</strong><br>Spoken words vs music</div>
+            <div class="feature">🎹 <strong>Instrumentalness</strong><br>Vocals vs instruments</div>
+        </div>
+        
+        <h2>🤖 How MIXMASTER Works</h2>
+        <p>MIXMASTER combines intelligent algorithms with optional AI analysis to create the perfect DJ playlist:</p>
+        
+        <h3>The Core Engine</h3>
+        <ol>
+            <li><strong>Data Import:</strong> You export your Spotify playlist with full audio metadata using Exportify</li>
+            <li><strong>Rule-Based Grouping:</strong> MIXMASTER's algorithm analyzes 12 audio features and groups songs based on your selected rules:
+                <ul>
+                    <li><strong>By Genre:</strong> Groups similar music styles together</li>
+                    <li><strong>By Era:</strong> Groups songs from the same time period</li>
+                    <li><strong>By Pace:</strong> Groups by energy and tempo for flow control</li>
+                    <li><strong>Combined Rules:</strong> Mix multiple criteria for sophisticated organization</li>
+                </ul>
+            </li>
+            <li><strong>AI Enhancement (Optional):</strong> When Ollama is running, AI analyzes each group's musical compatibility, considering:
+                <ul>
+                    <li>Tempo transitions between songs</li>
+                    <li>Key compatibility (harmonic mixing)</li>
+                    <li>Energy progression</li>
+                    <li>Genre and era cohesion</li>
+                </ul>
+            </li>
+            <li><strong>Smart Optimization:</strong> The system ensures artist variety and smooth transitions</li>
+        </ol>
+        
+        <div class="step">
+            <strong>💡 Tech Stack:</strong> MIXMASTER uses HTML5/JavaScript frontend, Python Flask backend, Spotify API for metadata, and optional Ollama AI integration for compatibility analysis.
+        </div>
+        
+        <h2>⭐ Understanding AI Ratings</h2>
+        <p>Each group of 3 songs receives an <strong>AI Compatibility Score</strong> that evaluates how well they work together:</p>
+        
+        <div class="feature-list">
+            <div class="feature">
+                <strong style="color: #4ecdc4;">🟢 8-10 Excellent</strong><br>
+                Perfect flow and compatibility. Seamless transitions between songs.
+            </div>
+            <div class="feature">
+                <strong style="color: #ffd93d;">🟡 6-7 Good</strong><br>
+                Solid grouping with good compatibility. Minor adjustment opportunities.
+            </div>
+            <div class="feature">
+                <strong style="color: #ff6b6b;">🔴 5 or Below</strong><br>
+                Algorithmic grouping only. (Ollama not running or AI unavailable)
+            </div>
+        </div>
+        
+        <h3>What the AI Analyzes</h3>
+        <ul>
+            <li><strong>Tempo Compatibility:</strong> How smoothly BPM transitions between songs</li>
+            <li><strong>Key Matching:</strong> Harmonic compatibility for smooth mixing</li>
+            <li><strong>Energy Progression:</strong> Does energy build, drop, or stay consistent?</li>
+            <li><strong>Genre Flow:</strong> How well do genres complement each other?</li>
+            <li><strong>Era Diversity:</strong> Does the group have interesting era combinations?</li>
+        </ul>
+        
+        <div class="step">
+            <strong>⚡ To Get AI Ratings:</strong> Make sure Ollama is running on your system. MIXMASTER will automatically use AI analysis to generate compatibility scores when available. Without Ollama, you'll get rule-based grouping (score 5/10) but the organization is still musically sound.
+        </div>
+        
+        <h2>❓ FAQ</h2>
+        
+        <h3>Q: Why do I need audio features?</h3>
+        <p>Audio features enable intelligent grouping. Without them, MIXMASTER can't analyze what makes songs work together. Use Exportify to get complete data.</p>
+        
+        <h3>Q: Can I use songs without Spotify data?</h3>
+        <p>Yes, but you'll get less intelligent grouping. MIXMASTER works best with full audio metadata from Exportify.</p>
+        
+        <h3>Q: How many songs can I organize?</h3>
+        <p>MIXMASTER handles playlists of any size, from 10 to 500+ songs. Performance stays smooth throughout.</p>
+        
+        <h3>Q: Can I edit the groups after organizing?</h3>
+        <p>Currently, grouping is automatic. You can re-organize with different strategies or remix to try again.</p>
+        
+        <h3>Q: How do I use this for DJing?</h3>
+        <p>Export to Spotify, download to your DJ software, or use the CSV data. The "Group of Three" creates smooth song transitions for live sets.</p>
+        
+        <h2>🔧 Troubleshooting</h2>
+        
+        <div class="warning">
+            <strong>⚠️ CSV Won't Upload?</strong><br>
+            Make sure your CSV is from Exportify and has all columns (Track name, Artist, audio features). If it still fails, try opening and re-saving in Excel first.
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ No Audio Features Showing?</strong><br>
+            Use Exportify instead of TuneMyMusic. TuneMyMusic doesn't include audio features in its export.
+        </div>
+        
+        <div class="info">
+            <strong>💡 Tip:</strong> Save your organized playlists! You can always reload the original CSV to try different grouping strategies.
+        </div>
+        
+        <h2>📞 Getting Help</h2>
+        <p>For issues or feature requests, check that you're using Exportify to export your playlist with all audio features included. This solves most problems!</p>
+        
+        <hr style="margin: 30px 0; border: 1px solid #333;">
+        
+        <a href="mixmaster_complete.html" class="back-link">← Back to MIXMASTER</a>
+    </div>
+</body>
+</html>
