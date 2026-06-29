@@ -32,6 +32,7 @@ ORIGINAL_DATES = {
     ("Comfortably Numb - Live from the Luck", "The Luck and Strange Concerts"): "1979-11-30",
     ("More Than This", "Roxy Music Collection"): "1982-05-01",
     ("Everybody Wants You", "Absolute Hits"): "1982-07-23",
+    ("Crown of Thorns", "On Earth As It Is"): "1989-03-20",
 }
 
 import csv
@@ -74,8 +75,8 @@ def fix_original_dates(input_csv, output_csv=None):
         writer.writerows(rows)
     
     print("=" * 80)
-    print(f"\n✅ Fixed {corrections_made} songs")
-    print(f"💾 Saved to: {output_csv}\n")
+    print(f"\nFixed {corrections_made} songs")
+    print(f"Saved to: {output_csv}\n")
     
     return corrections_made
 

@@ -811,6 +811,189 @@
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            z-index: 20001;
+            background: linear-gradient(135deg, rgba(30, 30, 50, 0.95), rgba(50, 40, 60, 0.95));
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: white;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-description {
+            margin: 0 0 1.5rem 0;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+
+        .modal-issues {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-issue {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(78, 205, 196, 0.05);
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .modal-issue:hover {
+            background: rgba(78, 205, 196, 0.1);
+            border-color: rgba(78, 205, 196, 0.4);
+        }
+
+        .modal-issue input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: #4ecdc4;
+        }
+
+        .modal-issue-content {
+            flex: 1;
+        }
+
+        .modal-issue-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-issue-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .modal-issue-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-issue-detail-label {
+            font-weight: 600;
+            color: #4ecdc4;
+        }
+
+        .modal-issue-detail-old {
+            color: #ff6b6b;
+            text-decoration: line-through;
+        }
+
+        .modal-issue-detail-new {
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(78, 205, 196, 0.2);
+        }
+
+        .modal-footer .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -1002,6 +1185,27 @@
                 </div>
             </div>
         </section>
+
+        <!-- Compilation Album Fix Modal -->
+        <div id="compilationFixModal" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Data Quality Check</h2>
+                    <button class="modal-close" id="modalCloseBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-description">Found <span id="issueCount">0</span> potential compilation album issues that can be auto-corrected:</p>
+                    <div class="modal-issues" id="modalIssuesList">
+                        <!-- Issues will be populated here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="modalSkipBtn">Skip for now</button>
+                    <button class="btn btn-primary" id="modalApplyBtn">Apply selected fixes</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1043,7 +1247,8 @@
             "Flower": "1988-06-09",
             "Comfortably Numb": "1979-11-30",
             "More Than This": "1982-05-01",
-            "Everybody Wants You": "1982-07-23"
+            "Everybody Wants You": "1982-07-23",
+            "Crown of Thorns": "1989-03-20"
         };
 
         // Ollama API Functions
@@ -1474,6 +1679,131 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             });
             
             return corrections;
+        }
+
+        // Detect potential compilation album issues for user review
+        function detectPotentialCompilationIssues(songs) {
+            const potentialIssues = [];
+            const compilationKeywords = ['deluxe', 'remaster', 'live', 'rarities', 'greatest', '#1 hits', 
+                                        'compilation', 'best of', 'anthology', 'super', 'expanded', 'absolute hits', 
+                                        'complete works', 'collection', 'hits', 'essentials'];
+            
+            songs.forEach((song, idx) => {
+                const album = song.album ? song.album.toLowerCase() : '';
+                const releaseYear = song.releaseDate.split('-')[0];
+                
+                // Check if album looks like a compilation
+                const hasCompilationKeyword = compilationKeywords.some(kw => album.includes(kw));
+                
+                if (hasCompilationKeyword) {
+                    // Check if we have a correction for this song
+                    for (const [songPattern, correctDate] of Object.entries(compilationDateCorrections)) {
+                        if (song.title.toLowerCase().includes(songPattern.toLowerCase())) {
+                            const correctYear = correctDate.split('-')[0];
+                            
+                            // Only flag if dates differ and suggest correction
+                            if (releaseYear !== correctYear && releaseYear > correctYear) {
+                                potentialIssues.push({
+                                    songIndex: idx,
+                                    track: song.title,
+                                    album: song.album,
+                                    currentDate: song.releaseDate,
+                                    suggestedDate: correctDate,
+                                    confidence: 'HIGH',
+                                    reason: `Found in "${songPattern}" database`
+                                });
+                            }
+                            break;
+                        }
+                    }
+                }
+            });
+            
+            return potentialIssues;
+        }
+
+        // Show modal with detected compilation issues
+        function showCompilationFixModal(issues) {
+            if (issues.length === 0) {
+                return; // No issues, don't show modal
+            }
+
+            const modal = document.getElementById('compilationFixModal');
+            const issuesList = document.getElementById('modalIssuesList');
+            const issueCount = document.getElementById('issueCount');
+            
+            issueCount.textContent = issues.length;
+            issuesList.innerHTML = '';
+            
+            issues.forEach((issue, idx) => {
+                const currentYear = issue.currentDate.split('-')[0];
+                const suggestedYear = issue.suggestedDate.split('-')[0];
+                
+                const issueEl = document.createElement('div');
+                issueEl.className = 'modal-issue';
+                issueEl.innerHTML = `
+                    <input type="checkbox" class="issue-checkbox" data-issue-index="${idx}" checked>
+                    <div class="modal-issue-content">
+                        <div class="modal-issue-title">${issue.track}</div>
+                        <div class="modal-issue-details">
+                            <div class="modal-issue-detail">
+                                <span class="modal-issue-detail-label">Album:</span>
+                                <span>${issue.album}</span>
+                            </div>
+                            <div class="modal-issue-detail">
+                                <span class="modal-issue-detail-label">Current:</span>
+                                <span class="modal-issue-detail-old">${currentYear}</span>
+                            </div>
+                            <div class="modal-issue-detail">
+                                <span class="modal-issue-detail-label">Original:</span>
+                                <span class="modal-issue-detail-new">${suggestedYear}</span>
+                            </div>
+                            <div class="modal-issue-detail">
+                                <span class="modal-issue-detail-label">Reason:</span>
+                                <span>${issue.reason}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                issuesList.appendChild(issueEl);
+            });
+            
+            // Store issues for later application
+            window.pendingCompilationIssues = issues;
+            
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+
+        // Apply selected compilation fixes
+        function applyCompilationFixes() {
+            const checkboxes = document.querySelectorAll('.issue-checkbox:checked');
+            const issuesToApply = [];
+            
+            checkboxes.forEach(checkbox => {
+                const issueIndex = parseInt(checkbox.dataset.issueIndex);
+                if (window.pendingCompilationIssues && window.pendingCompilationIssues[issueIndex]) {
+                    issuesToApply.push(window.pendingCompilationIssues[issueIndex]);
+                }
+            });
+            
+            // Apply fixes to loaded songs
+            issuesToApply.forEach(issue => {
+                if (loadedSongs[issue.songIndex]) {
+                    const song = loadedSongs[issue.songIndex];
+                    console.log(`✓ Fixed: "${song.title}" ${issue.currentDate.split('-')[0]} → ${issue.suggestedDate.split('-')[0]}`);
+                    song.releaseDate = issue.suggestedDate;
+                    song.era = getEraFromDate(song.releaseDate);
+                }
+            });
+            
+            // Close modal
+            const modal = document.getElementById('compilationFixModal');
+            modal.classList.add('hidden');
+            
+            // Continue with normal workflow
+            console.log(`Applied ${issuesToApply.length} compilation fixes`);
+            updateSongCount();
         }
 
         function getPaceFromFeatures(energy, tempo, danceability) {
@@ -2947,6 +3277,13 @@ ${suggestions.map((suggestion, index) => {
                         return;
                     }
                     
+                    // Detect potential compilation issues for user review
+                    const potentialIssues = detectPotentialCompilationIssues(loadedSongs);
+                    if (potentialIssues.length > 0) {
+                        console.log(`Detected ${potentialIssues.length} potential compilation album issues`);
+                        showCompilationFixModal(potentialIssues);
+                    }
+                    
                     updateSongCount();
                 } catch (error) {
                     console.error('Error parsing CSV:', error);
@@ -3189,6 +3526,29 @@ ${suggestions.map((suggestion, index) => {
             const exportSpotifyBtn = document.getElementById('exportSpotifyBtn');
             const importSpotifyBtn = document.getElementById('importSpotifyBtn');
             const spotifyUrlInput = document.getElementById('spotifyUrlInput');
+
+            // Modal handlers
+            const compilationFixModal = document.getElementById('compilationFixModal');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalSkipBtn = document.getElementById('modalSkipBtn');
+            const modalApplyBtn = document.getElementById('modalApplyBtn');
+            const modalOverlay = compilationFixModal.querySelector('.modal-overlay');
+
+            modalCloseBtn.addEventListener('click', () => {
+                compilationFixModal.classList.add('hidden');
+            });
+
+            modalSkipBtn.addEventListener('click', () => {
+                compilationFixModal.classList.add('hidden');
+            });
+
+            modalApplyBtn.addEventListener('click', () => {
+                applyCompilationFixes();
+            });
+
+            modalOverlay.addEventListener('click', () => {
+                compilationFixModal.classList.add('hidden');
+            });
 
             // Upload zone handlers
             uploadZone.addEventListener('click', () => fileInput.click());
