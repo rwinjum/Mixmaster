@@ -1795,13 +1795,23 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 }
             });
             
-            // Close modal
-            const modal = document.getElementById('compilationFixModal');
-            modal.classList.add('hidden');
-            
-            // Continue with normal workflow
             console.log(`Applied ${issuesToApply.length} compilation fixes`);
             updateSongCount();
+            
+            // Check for remaining issues
+            const remainingIssues = detectPotentialCompilationIssues(loadedSongs);
+            if (remainingIssues.length > 0) {
+                console.log(`Found ${remainingIssues.length} more issues. Showing next batch...`);
+                // Re-show modal with remaining issues
+                setTimeout(() => {
+                    showCompilationFixModal(remainingIssues);
+                }, 500);
+            } else {
+                // No more issues - close modal
+                const modal = document.getElementById('compilationFixModal');
+                modal.classList.add('hidden');
+                console.log('All compilation issues fixed!');
+            }
         }
 
         function getPaceFromFeatures(energy, tempo, danceability) {
