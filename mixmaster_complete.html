@@ -1012,6 +1012,7 @@
         let loadedSongs = [];
         let organizedGroups = [];
         let selectedRules = [];
+        let uploadedFileName = 'mixmaster-playlist';
         let avoidSameArtist = true;
         let isProcessing = false;
 
@@ -1349,6 +1350,58 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return 'Pop';
         }
 
+        // Predict genre from audio features when genre is empty
+        function predictGenreFromAudioFeatures(song) {
+            const energy = song.energy || 0;
+            const danceability = song.danceability || 0;
+            const tempo = song.tempo || 0;
+            const acousticness = song.acousticness || 0;
+            const instrumentalness = song.instrumentalness || 0;
+            const valence = song.valence || 0;
+            const speechiness = song.speechiness || 0;
+            
+            // High speechiness -> Hip Hop/Rap
+            if (speechiness > 0.4) return 'Hip Hop/Rap';
+            
+            // Very acoustic -> Folk/Singer-Songwriter
+            if (acousticness > 0.7 && tempo < 110) return 'Folk';
+            
+            // High instrumentalness -> Instrumental/Ambient
+            if (instrumentalness > 0.6) return 'Instrumental';
+            
+            // High energy + high tempo + high danceability -> Dance/Electronic
+            if (energy > 0.7 && danceability > 0.7 && tempo > 120) return 'Electronic';
+            
+            // High energy + high tempo -> Rock
+            if (energy > 0.7 && tempo > 130) return 'Rock/Alternative';
+            
+            // High danceability -> Pop/Dance
+            if (danceability > 0.7 && energy > 0.5) return 'Pop/Dance';
+            
+            // High valence (positive) + mid tempo -> Pop
+            if (valence > 0.7 && danceability > 0.5) return 'Pop';
+            
+            // Slow + acoustic + low valence -> Blues/Soul
+            if (tempo < 100 && acousticness > 0.4 && valence < 0.4) return 'R&B/Soul';
+            
+            // Default based on energy
+            if (energy > 0.6) return 'Pop';
+            if (energy < 0.3) return 'Singer-Songwriter';
+            
+            return 'Pop';
+        }
+
+        // Fill empty genres using audio features
+        function fillEmptyGenres(songs) {
+            songs.forEach(song => {
+                if (!song.genre || song.genre.trim() === '' || song.genre === '""') {
+                    song.genre = predictGenreFromAudioFeatures(song);
+                    console.log(`✓ Predicted genre for "${song.title}": ${song.genre}`);
+                }
+            });
+            return songs;
+        }
+
         function getPaceFromFeatures(energy, tempo, danceability) {
             const energyScore = energy || 0.5;
             const tempoScore = Math.min(1, (tempo || 120) / 140);
@@ -1373,6 +1426,17 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         }
 
         // CSV Parsing Function
+        // Fill empty genres using audio features
+        function fillEmptyGenres(songs) {
+            songs.forEach(song => {
+                if (!song.genre || song.genre.trim() === '') {
+                    song.genre = predictGenreFromAudioFeatures(song);
+                    console.log(`✓ Predicted genre for "${song.title}": ${song.genre}`);
+                }
+            });
+            return songs;
+        }
+        
         function parseCSV(csvText) {
             const lines = csvText.split('\n');
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
@@ -2689,7 +2753,7 @@ ${suggestions.map((suggestion, index) => {
             });
             
             const csvContent = rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-            downloadFile(csvContent, 'mixmaster-playlist.csv', 'text/csv');
+            downloadFile(csvContent, `${uploadedFileName}-transferbacktoSpotify.csv`, 'text/csv');
         }
 
         function exportDetailed() {
@@ -2762,6 +2826,9 @@ ${suggestions.map((suggestion, index) => {
             console.log('=== FILE UPLOAD START ===');
             console.log('Filename:', file.name);
             
+            // Store filename for export (remove .csv extension)
+            uploadedFileName = file.name.replace('.csv', '').replace('.CSV', '');
+            
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
@@ -2769,6 +2836,9 @@ ${suggestions.map((suggestion, index) => {
                     console.log('CSV text loaded, length:', csvText.length);
                     
                     loadedSongs = parseCSV(csvText);
+                    
+                    // Fill empty genres using audio features
+                    loadedSongs = fillEmptyGenres(loadedSongs);
                     
                     // Validate CSV data quality
                     const validation = validateCSVData(loadedSongs);
