@@ -1692,29 +1692,27 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 const album = song.album ? song.album.toLowerCase() : '';
                 const releaseYear = song.releaseDate.split('-')[0];
                 
-                // Check if album looks like a compilation
-                const hasCompilationKeyword = compilationKeywords.some(kw => album.includes(kw));
-                
-                if (hasCompilationKeyword) {
-                    // Check if we have a correction for this song
-                    for (const [songPattern, correctDate] of Object.entries(compilationDateCorrections)) {
-                        if (song.title.toLowerCase().includes(songPattern.toLowerCase())) {
-                            const correctYear = correctDate.split('-')[0];
+                // Check if we have a correction for this song (regardless of album keyword)
+                for (const [songPattern, correctDate] of Object.entries(compilationDateCorrections)) {
+                    if (song.title.toLowerCase().includes(songPattern.toLowerCase())) {
+                        const correctYear = correctDate.split('-')[0];
+                        
+                        // Flag if dates differ - this is a known issue that should be fixed
+                        if (releaseYear !== correctYear) {
+                            // Check if album looks like a compilation (for context)
+                            const hasCompilationKeyword = compilationKeywords.some(kw => album.includes(kw));
                             
-                            // Only flag if dates differ and suggest correction
-                            if (releaseYear !== correctYear && releaseYear > correctYear) {
-                                potentialIssues.push({
-                                    songIndex: idx,
-                                    track: song.title,
-                                    album: song.album,
-                                    currentDate: song.releaseDate,
-                                    suggestedDate: correctDate,
-                                    confidence: 'HIGH',
-                                    reason: `Found in "${songPattern}" database`
-                                });
-                            }
-                            break;
+                            potentialIssues.push({
+                                songIndex: idx,
+                                track: song.title,
+                                album: song.album,
+                                currentDate: song.releaseDate,
+                                suggestedDate: correctDate,
+                                confidence: hasCompilationKeyword ? 'HIGH' : 'MEDIUM',
+                                reason: `Found in "${songPattern}" database`
+                            });
                         }
+                        break;
                     }
                 }
             });
