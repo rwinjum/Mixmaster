@@ -654,7 +654,7 @@
             padding: 1rem;
         }
 
-        .modal {
+        .modal-overlay .modal {
             background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -815,8 +815,8 @@
             animation: spin 1s ease-in-out infinite;
         }
 
-        /* Modal Styles */
-        .modal {
+        /* Compilation fix modal overlay (full-screen) */
+        #compilationFixModal {
             position: fixed;
             inset: 0;
             z-index: 20000;
@@ -826,7 +826,7 @@
             animation: fadeIn 0.3s ease-out;
         }
 
-        .modal.hidden {
+        #compilationFixModal.hidden {
             display: none;
         }
 
@@ -1636,7 +1636,10 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         // Utility Functions
         function toSentenceCase(text) {
             if (!text) return '';
-            return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+            return text.split(/\s+/).map(word => {
+                if (!word) return word;
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }).join(' ');
         }
 
         function getEraFromDate(dateString) {
@@ -1797,7 +1800,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             
             songs.forEach((song, idx) => {
                 const album = song.album ? song.album.toLowerCase() : '';
-                const releaseYear = song.releaseDate.split('-')[0];
+                const releaseYear = (song.releaseDate || '').toString().split('-')[0];
                 const titleLower = song.title.toLowerCase();
                 
                 // Check if we have a correction for this song (with more precise matching)
@@ -2006,17 +2009,6 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         }
 
         // CSV Parsing Function
-        // Fill empty genres using audio features
-        function fillEmptyGenres(songs) {
-            songs.forEach(song => {
-                if (!song.genre || song.genre.trim() === '') {
-                    song.genre = predictGenreFromAudioFeatures(song);
-                    console.log(`✓ Predicted genre for "${song.title}": ${song.genre}`);
-                }
-            });
-            return songs;
-        }
-        
         function parseCSV(csvText) {
             const lines = csvText.split('\n');
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
@@ -3163,13 +3155,13 @@ ${suggestions.map((suggestion, index) => {
             
             modal.querySelector('.modal-body').innerHTML = content;
 
-            // Add footer if it doesn't exist
-            if (!modal.querySelector('.modal-footer')) {
-                const modalContent = modal.querySelector('.modal');
-                modalContent.innerHTML += `<div class="modal-footer">${footer}</div>`;
-            } else {
-                modal.querySelector('.modal-footer').innerHTML = footer;
+            let footerEl = modal.querySelector('.modal-footer');
+            if (!footerEl) {
+                footerEl = document.createElement('div');
+                footerEl.className = 'modal-footer';
+                modal.querySelector('.modal').appendChild(footerEl);
             }
+            footerEl.innerHTML = footer;
         }
 
         function generateMockSuggestions(baseSong, group) {
@@ -3244,57 +3236,6 @@ ${suggestions.map((suggestion, index) => {
             });
         
             return suggestions.slice(0, 3); // Return max 3 suggestions
-        }
-
-        function getExistingSuggestions(baseSong, rule, availableSongs, currentGroup) {
-            if (!availableSongs || availableSongs.length === 0) {
-                return [];
-            }
-            
-            let filteredSongs = availableSongs.filter(song => {
-                // Don't suggest the same song
-                if (song.id === baseSong.id) return false;
-                
-                // Check if song is already in current group
-                if (currentGroup.some(groupSong => groupSong.id === song.id)) return false;
-                
-                // Check rule compatibility
-                let ruleMatch = false;
-                if (rule === 'genre+era') {
-                    ruleMatch = song.genre === baseSong.genre && song.era === baseSong.era;
-                } else if (rule === 'pace+era') {
-                    ruleMatch = song.pace === baseSong.pace && song.era === baseSong.era;
-                } else {
-                    // Single rule
-                    ruleMatch = song[rule] === baseSong[rule];
-                }
-                
-                if (!ruleMatch) return false;
-                
-                if (avoidSameArtist) {
-                    const wouldCreateSameArtistInRow = currentGroup.some(groupSong => 
-                        groupSong.artist === song.artist
-                    );
-                    if (wouldCreateSameArtistInRow || song.artist === baseSong.artist) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-            
-            const songsWithSimilarity = filteredSongs.map(song => ({
-                ...song,
-                similarity: calculateSimilarity(baseSong, song, rule),
-                source: 'playlist',
-                reasoning: `Perfect match from your playlist with similar ${rule} characteristics and compatible mixing elements`
-            }));
-            
-            const suggestions = songsWithSimilarity
-                .filter(song => song.similarity > 0)
-                .sort((a, b) => b.similarity - a.similarity)
-                .slice(0, 3);
-            
-            return suggestions;
         }
 
         function addSuggestionToGroup(groupIndex, songIndex, suggestionStr) {
@@ -3381,25 +3322,6 @@ ${suggestions.map((suggestion, index) => {
         }
 
         // File Upload Handlers
-        function remixPlaylist() {
-            if (loadedSongs.length === 0 || selectedRules.length === 0) return;
-            
-            const remixBtn = document.getElementById('remixBtn');
-            remixBtn.innerHTML = '🔄 Remixing...';
-            remixBtn.disabled = true;
-            
-            setTimeout(() => {
-                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
-                // Optimize group order for smooth transitions
-                organizedGroups = optimizeGroupOrder(organizedGroups);
-                renderGroups();
-                
-                remixBtn.innerHTML = '🔄 Remix';
-                remixBtn.disabled = false;
-            }, 1500);
-        }
-        
-        // File Upload Handler
         function handleFileUpload(file) {
             if (!file) return;
             
@@ -3572,7 +3494,7 @@ ${suggestions.map((suggestion, index) => {
         }
         
         function remixPlaylist() {
-            if (organizedGroups.length === 0) return;
+            if (loadedSongs.length === 0 || selectedRules.length === 0) return;
             
             isProcessing = true;
             const remixBtn = document.getElementById('remixBtn');
@@ -3581,23 +3503,12 @@ ${suggestions.map((suggestion, index) => {
             
             setTimeout(async () => {
                 organizedGroups = await groupSongsByRulesWithAI(loadedSongs, selectedRules, avoidSameArtist);
-                // Optimize group order for smooth transitions
                 organizedGroups = optimizeGroupOrder(organizedGroups);
                 renderGroups();
                 isProcessing = false;
                 remixBtn.innerHTML = '🔄 Remix';
                 remixBtn.disabled = false;
             }, 1500);
-        }
-        
-        function downloadFile(content, filename, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
 
         // Import from Spotify
