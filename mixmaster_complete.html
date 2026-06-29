@@ -1541,6 +1541,36 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return parsedSongs.filter(song => song.title && song.artist);
         }
         
+        // Validate CSV data quality and report issues
+        function validateCSVData(songs) {
+            const issues = [];
+            
+            songs.forEach((song, idx) => {
+                // Check for empty genres
+                if (!song.genre || song.genre === 'Pop') {
+                    issues.push(`Row ${idx + 2}: "${song.title}" has no genre data (defaulting to Pop)`);
+                }
+                
+                // Check for year-only dates
+                if (song.releaseDate && song.releaseDate.toString().length === 4) {
+                    issues.push(`Row ${idx + 2}: "${song.title}" has year-only date "${song.releaseDate}"`);
+                }
+                
+                // Check for invalid audio features (should be 0-1 range)
+                if (song.energy && (song.energy < 0 || song.energy > 1)) {
+                    issues.push(`Row ${idx + 2}: "${song.title}" has out-of-range energy: ${song.energy}`);
+                }
+                if (song.danceability && (song.danceability < 0 || song.danceability > 1)) {
+                    issues.push(`Row ${idx + 2}: "${song.title}" has out-of-range danceability: ${song.danceability}`);
+                }
+            });
+            
+            if (issues.length > 0) {
+                console.warn('CSV Data Quality Issues:', issues);
+            }
+            return { issueCount: issues.length, issues };
+        }
+        
         // Helper function to parse key strings like "C♯/D♭ Major"
         function parseKeyFromString(keyStr) {
             const keyMap = {
@@ -2739,6 +2769,10 @@ ${suggestions.map((suggestion, index) => {
                     console.log('CSV text loaded, length:', csvText.length);
                     
                     loadedSongs = parseCSV(csvText);
+                    
+                    // Validate CSV data quality
+                    const validation = validateCSVData(loadedSongs);
+                    console.log(`CSV Validation: ${validation.issueCount} issues found`);
                     
                     console.log('Parse complete. Songs loaded:', loadedSongs.length);
                     if (loadedSongs.length > 0) {
