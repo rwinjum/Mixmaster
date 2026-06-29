@@ -31,6 +31,7 @@ ORIGINAL_DATES = {
     ("Hands All Over", "Chris Cornell (Deluxe"): "1989-01-24",
     ("Comfortably Numb - Live from the Luck", "The Luck and Strange Concerts"): "1979-11-30",
     ("More Than This", "Roxy Music Collection"): "1982-05-01",
+    ("Everybody Wants You", "Absolute Hits"): "1982-07-23",
 }
 
 import csv
