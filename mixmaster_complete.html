@@ -1731,7 +1731,7 @@ ${songDescriptions}`;
                     }
                 }
                 
-                if (bestGroup && bestGroup.length >= 2) {
+                if (bestGroup && bestGroup.length === 3) {
                     bestGroup.forEach(song => {
                         used.add(song.id);
                         const index = remainingSongs.findIndex(s => s.id === song.id);
@@ -1773,6 +1773,16 @@ ${songDescriptions}`;
                 } else {
                     break;
                 }
+            }
+            
+            // Handle leftover songs (< 3 remaining) by distributing them to existing groups
+            while (remainingSongs.length > 0 && groups.length > 0) {
+                const leftoverSong = remainingSongs.shift();
+                // Find the group with fewest songs to keep sizes balanced
+                const targetGroup = groups.reduce((min, current) => 
+                    current.songs.length < min.songs.length ? current : min
+                );
+                targetGroup.songs.push(leftoverSong);
             }
             
             return groups;
