@@ -29,6 +29,7 @@ ORIGINAL_DATES = {
     ("Acquiesce - Live from Wembley", "Acquiesce (Live from Wembley"): "1996-10-07",
     ("The Underdog", "Ga Ga Ga Ga Ga (2017"): "2007-04-10",
     ("Hands All Over", "Chris Cornell (Deluxe"): "1989-01-24",
+    ("Comfortably Numb - Live from the Luck", "The Luck and Strange Concerts"): "1979-11-30",
 }
 
 import csv
