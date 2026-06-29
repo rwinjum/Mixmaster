@@ -1775,6 +1775,41 @@ ${songDescriptions}`;
                 }
             }
             
+            // Create final group with any remaining songs (even if < 3)
+            if (remainingSongs.length > 0) {
+                const finalGroup = remainingSongs;
+                
+                // Generate rule value for final group
+                let ruleValue;
+                let displayRule = rules[0];
+                if (rules.length > 1) {
+                    const ruleValues = rules.map(rule => {
+                        if (rule === 'genre+era') {
+                            return `${finalGroup[0].genre}+${finalGroup[0].era}`;
+                        } else if (rule === 'pace+era') {
+                            return `${finalGroup[0].pace}+${finalGroup[0].era}`;
+                        } else {
+                            return finalGroup[0][rule];
+                        }
+                    });
+                    displayRule = rules.join('+');
+                    ruleValue = ruleValues.join(' / ');
+                } else if (displayRule === 'genre+era') {
+                    ruleValue = `${finalGroup[0].genre} + ${finalGroup[0].era}`;
+                } else if (displayRule === 'pace+era') {
+                    ruleValue = `${finalGroup[0].pace} + ${finalGroup[0].era}`;
+                } else {
+                    ruleValue = finalGroup[0][displayRule];
+                }
+                
+                groups.push({
+                    id: groups.length + 1,
+                    songs: finalGroup,
+                    rule: displayRule,
+                    ruleValue: ruleValue
+                });
+            }
+            
             return groups;
         }
 
