@@ -1018,9 +1018,9 @@
         // Ollama API Functions
         async function callOllama(prompt) {
             try {
-                // Use local proxy to call Ollama API with 30 second timeout
+                // Use local proxy to call Ollama API with 60 second timeout
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000);
+                const timeoutId = setTimeout(() => controller.abort(), 60000);
 
                 const response = await fetch(PROXY_URL, {
                     method: 'POST',
@@ -1611,18 +1611,30 @@ ${songDescriptions}`;
             // First, create groups using the existing algorithm (fast)
             const initialGroups = groupSongsByRules(songs, rules, avoidSameArtist);
             
-            // Start AI analysis in background (don't wait for it)
-            initialGroups.forEach(group => {
-                if (group.songs.length === 3) {
-                    analyzeGroupCompatibility(group.songs).then(analysis => {
-                        group.analysis = analysis;
-                        // Re-render to show updated analysis
-                        updateGroupAnalysis(initialGroups.indexOf(group), analysis);
-                    }).catch(() => {
-                        // Silently fail - keep algorithmic grouping
-                    });
+            // Start AI analysis in background (sequential with delays to avoid overwhelming Ollama)
+            const analyzeSequentially = async () => {
+                for (let i = 0; i < initialGroups.length; i++) {
+                    const group = initialGroups[i];
+                    // Add delay between analyses to give Ollama time to process
+                    if (i > 0) {
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+                    }
+                    
+                    if (group.songs.length >= 2) { // Analyze groups with 2+ songs
+                        try {
+                            const analysis = await analyzeGroupCompatibility(group.songs);
+                            group.analysis = analysis;
+                            // Re-render to show updated analysis
+                            updateGroupAnalysis(i, analysis);
+                        } catch (e) {
+                            // Silently fail - keep algorithmic grouping
+                        }
+                    }
                 }
-            });
+            };
+            
+            // Launch sequential analysis (don't await it)
+            analyzeSequentially();
             
             // Return groups immediately without waiting for AI
             return initialGroups;
