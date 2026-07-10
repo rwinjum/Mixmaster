@@ -196,210 +196,174 @@
         </div>
         
         <h2>📋 Overview</h2>
-        <p>MIXMASTER is a powerful DJ playlist organizer that uses audio analysis to create balanced, mixed playlists. It intelligently groups songs based on their musical properties (energy, tempo, danceability, etc.) to create smooth transitions and maintain consistent pacing.</p>
-        
-        <h2>🚀 Quick Start: 3 Main Steps</h2>
-        
+        <p>MIXMASTER is an AI-powered DJ playlist organizer that groups songs into sets of 3 using the classic DJ "group of three" rule. It analyzes genre, era, and pace to create smooth, musically coherent transitions — and uses a local AI (Ollama) to rate each group's compatibility.</p>
+
+        <h2>🚀 Quick Start</h2>
+
         <div class="step">
-            <h3><span class="step-number">1</span>Get Your Spotify Playlist Data</h3>
-            <p>Export your Spotify playlist with full audio metadata using <strong>Exportify</strong>:</p>
+            <h3><span class="step-number">1</span>Export Your Spotify Playlist</h3>
+            <p>Use <strong>Exportify</strong> to export your playlist as a CSV:</p>
             <ol>
                 <li>Go to <a href="https://exportify.app" target="_blank" style="color: #4ecdc4;">https://exportify.app</a></li>
                 <li>Sign in with your Spotify account</li>
-                <li>Select your playlist (e.g., "BW26")</li>
-                <li>Click "Export" and download the CSV file</li>
+                <li>Select your playlist and click <strong>Export</strong></li>
+                <li>Save the downloaded CSV file</li>
             </ol>
-            <div class="success">✅ The exported CSV will include all audio features: Danceability, Energy, Tempo, etc.</div>
+            <div class="info">💡 Since November 2024, Spotify removed audio features (BPM, energy, etc.) from its API. Exportify CSVs will only contain basic track info — use the <strong>Enrich metadata</strong> button after loading to fill in genres and BPM estimates.</div>
         </div>
-        
+
         <div class="step">
             <h3><span class="step-number">2</span>Upload Your CSV</h3>
-            <p>Import your playlist data into MIXMASTER:</p>
             <ol>
-                <li>Click the <strong>upload zone</strong> (or drag & drop)</li>
-                <li>Select your exported CSV file</li>
-                <li>Wait for the file to load (you'll see a success message)</li>
-                <li>Check the <strong>Song Count</strong> to confirm all tracks loaded</li>
+                <li>Click the upload zone (or drag and drop your CSV file)</li>
+                <li>MIXMASTER loads all tracks and shows the song count</li>
+                <li>Click <strong>🔍 Enrich metadata</strong> to auto-detect genres and estimate BPM for each song</li>
             </ol>
-            <div class="info">💡 The CSV parser automatically detects Spotify export format and maps columns correctly.</div>
+            <div class="success">✅ Enrich metadata uses a built-in artist→genre database covering 150+ artists, plus Last.fm lookup for anything not in the database.</div>
         </div>
-        
+
         <div class="step">
-            <h3><span class="step-number">3</span>Organize Your Playlist</h3>
-            <p>Create balanced, mixed playlists using our algorithms:</p>
-            
-            <h4>Option A: Group of Three (Recommended)</h4>
+            <h3><span class="step-number">3</span>Choose Mixing Rules &amp; Organize</h3>
             <ol>
-                <li>Click <strong>"🎵 Organize Playlist"</strong></li>
-                <li>Select <strong>"Group of Three"</strong> from the dropdown</li>
-                <li>Click <strong>"Organize"</strong></li>
-                <li>See your songs grouped into balanced sets of 3</li>
-            </ol>
-            
-            <h4>Option B: Energy-Based Organization</h4>
-            <ol>
-                <li>Select <strong>"By Energy"</strong> from the dropdown</li>
-                <li>Organizes songs from low → high energy</li>
-                <li>Great for building energy through a set</li>
-            </ol>
-            
-            <h4>Option C: By Artist</h4>
-            <ol>
-                <li>Select <strong>"By Artist"</strong></li>
-                <li>Groups all songs by artist</li>
-                <li>Useful for themed DJ sets</li>
+                <li>Select one or more <strong>mixing rules</strong>: By Genre, By Era, By Pace, or combinations</li>
+                <li>Optionally enable <strong>Avoid same artist in a row</strong></li>
+                <li>Click <strong>🚀 Start the mix</strong></li>
+                <li>Songs are grouped into sets of 3 with AI compatibility scores</li>
             </ol>
         </div>
-        
-        <h2>📊 Understanding the Results</h2>
-        <p>After organizing, each group displays:</p>
-        <ul>
-            <li><strong>Position</strong>: Where the song falls in the group</li>
-            <li><strong>Song Info</strong>: Track name, artist, album</li>
-            <li><strong>Audio Features</strong>: BPM, Energy, Danceability, etc.</li>
-            <li><strong>Group Label</strong>: Shows the grouping strategy and properties</li>
-        </ul>
-        
-        <h2>💾 Export Your Results</h2>
-        <p>Save your organized playlist in multiple formats:</p>
-        
+
+        <h2>🔍 Enriching Metadata (Genre &amp; BPM)</h2>
+        <p>Because Spotify no longer provides audio features, MIXMASTER enriches missing data in two ways:</p>
+        <ol>
+            <li><strong>Built-in artist map</strong> — 150+ artists across Classic Rock, Grunge, Alt, Metal, Hip Hop, R&amp;B, and Pop are mapped instantly with no API key needed.</li>
+            <li><strong>Last.fm lookup</strong> — For artists not in the built-in map, MIXMASTER can query the Last.fm API (free). You need a Last.fm API key for this.</li>
+        </ol>
+
+        <h3>Setting Up Your Last.fm API Key</h3>
+        <div class="step">
+            <ol>
+                <li>Get a free API key at <a href="https://www.last.fm/api/account/create" target="_blank" style="color: #4ecdc4;">last.fm/api/account/create</a> (takes ~2 minutes)</li>
+                <li>Open your browser's DevTools: press <strong>F12</strong></li>
+                <li>Click the <strong>Console</strong> tab</li>
+                <li>Paste this command (replace <code>YOUR_KEY_HERE</code> with your actual key):
+                    <div class="code-block">localStorage.setItem('lastfm_api_key', 'YOUR_KEY_HERE')</div>
+                </li>
+                <li>Press <strong>Enter</strong> — the key is saved in your browser permanently</li>
+                <li>Click <strong>🔍 Enrich metadata</strong> — it will now look up any remaining songs via Last.fm</li>
+            </ol>
+            <div class="info">💡 The key is stored only in your browser's local storage — it never leaves your machine and is not saved in any file.</div>
+        </div>
+
+        <h2>🤖 AI Compatibility Scores (Ollama)</h2>
+        <p>After grouping, MIXMASTER uses a local AI model (Ollama) to rate each group 1–10 for musical compatibility. This runs entirely on your machine — no internet required.</p>
+
+        <h3>Setting Up Ollama</h3>
+        <div class="step">
+            <ol>
+                <li>Download and install Ollama from <a href="https://ollama.com" target="_blank" style="color: #4ecdc4;">ollama.com</a></li>
+                <li>Open a terminal and pull a model (only needed once):
+                    <div class="code-block">ollama pull mistral</div>
+                </li>
+                <li>Start Ollama (keep this terminal open):
+                    <div class="code-block">ollama serve</div>
+                </li>
+                <li>In a second terminal, start the MIXMASTER proxy server from your project folder:
+                    <div class="code-block">python gemini_proxy.py</div>
+                </li>
+                <li>Reload MIXMASTER and organize your playlist — AI scores will now appear</li>
+            </ol>
+            <div class="info">💡 If Ollama is already running (e.g., you see "bind: Only one usage of each socket address"), skip step 3 — it's already started.</div>
+        </div>
+
+        <h2>⭐ Understanding AI Ratings</h2>
         <div class="feature-list">
             <div class="feature">
-                <strong>📄 Export as CSV</strong><br>
-                Download the organized playlist as a CSV file for use in other tools
+                <strong style="color: #4ecdc4;">🟢 8–10 Excellent</strong><br>
+                Perfect flow. Seamless tempo, key, and energy transitions.
             </div>
             <div class="feature">
-                <strong>📝 Export Detailed</strong><br>
-                Get a detailed report with all audio features and grouping info
+                <strong style="color: #ffd93d;">🟡 6–7 Good</strong><br>
+                Solid grouping with compatible characteristics.
             </div>
             <div class="feature">
-                <strong>🎵 Create Spotify Playlist</strong><br>
-                Export to Spotify and create a new playlist directly (coming soon)
+                <strong style="color: #ff6b6b;">🔴 5 or below</strong><br>
+                Algorithmic grouping only — Ollama is not running.
+            </div>
+        </div>
+
+        <h2>✏️ Editing Songs</h2>
+        <p>After organizing, you can fine-tune any song:</p>
+        <ol>
+            <li>Click the <strong>⋮ menu</strong> on any song card</li>
+            <li>Choose <strong>Edit song</strong> to change genre, era, pace, BPM, or key</li>
+            <li>Use <strong>Move up / Move down</strong> to reorder within a group</li>
+            <li>Use <strong>Find suggestions</strong> to see replacement options from your playlist</li>
+            <li>Use <strong>Remove song</strong> to drop it from the mix</li>
+        </ol>
+        <p>Use the <strong>▲ ▼ arrows</strong> on each group header to reorder entire groups.</p>
+
+        <h2>💾 Exporting Your Playlist</h2>
+        <div class="feature-list">
+            <div class="feature">
+                <strong>📄 Export CSV</strong><br>
+                Downloads the organized playlist — ready to import back into Spotify or other tools
+            </div>
+            <div class="feature">
+                <strong>📝 Detailed Export</strong><br>
+                Markdown report with all group info, BPM, key, and era details
             </div>
             <div class="feature">
                 <strong>🔄 Remix</strong><br>
-                Reorganize with different grouping strategies
+                Re-shuffle with the same rules for a different arrangement
+            </div>
+            <div class="feature">
+                <strong>💾 Export to Spotify</strong><br>
+                Coming soon — direct playlist creation via Spotify API
             </div>
         </div>
-        
-        <h2>🎯 Key Features</h2>
-        
-        <h3>Group of Three Algorithm</h3>
-        <p>The signature MIXMASTER feature creates balanced groups of 3 songs by:</p>
-        <ul>
-            <li>Analyzing 12 audio features for each song</li>
-            <li>Creating groups with diverse energy and tempo</li>
-            <li>Ensuring smooth transitions between songs</li>
-            <li>Balancing fast and slow, energetic and calm tracks</li>
-        </ul>
-        
-        <h3>Audio Features Analyzed</h3>
+
+        <h2>🎯 Mixing Rules Explained</h2>
         <div class="feature-list">
-            <div class="feature">🎚️ <strong>Energy</strong><br>0-100 intensity</div>
-            <div class="feature">🎵 <strong>Tempo</strong><br>BPM (beats per minute)</div>
-            <div class="feature">💃 <strong>Danceability</strong><br>How groove-able</div>
-            <div class="feature">🎼 <strong>Key</strong><br>Musical key</div>
-            <div class="feature">📊 <strong>Valence</strong><br>Musical positivity</div>
-            <div class="feature">🎤 <strong>Acousticness</strong><br>Acoustic vs electronic</div>
-            <div class="feature">🗣️ <strong>Speechiness</strong><br>Spoken words vs music</div>
-            <div class="feature">🎹 <strong>Instrumentalness</strong><br>Vocals vs instruments</div>
+            <div class="feature"><strong>🎵 By Genre</strong><br>Groups Rock with Rock, Pop with Pop, etc.</div>
+            <div class="feature"><strong>📅 By Era</strong><br>Groups 70s together, 90s together, etc.</div>
+            <div class="feature"><strong>⚡ By Pace</strong><br>Groups by High / Medium / Low energy</div>
+            <div class="feature"><strong>🎯 Genre + Era</strong><br>Must match both genre AND era</div>
+            <div class="feature"><strong>🔥 Pace + Era</strong><br>Must match both pace AND era</div>
         </div>
-        
-        <h2>🤖 How MIXMASTER Works</h2>
-        <p>MIXMASTER combines intelligent algorithms with optional AI analysis to create the perfect DJ playlist:</p>
-        
-        <h3>The Core Engine</h3>
-        <ol>
-            <li><strong>Data Import:</strong> You export your Spotify playlist with full audio metadata using Exportify</li>
-            <li><strong>Rule-Based Grouping:</strong> MIXMASTER's algorithm analyzes 12 audio features and groups songs based on your selected rules:
-                <ul>
-                    <li><strong>By Genre:</strong> Groups similar music styles together</li>
-                    <li><strong>By Era:</strong> Groups songs from the same time period</li>
-                    <li><strong>By Pace:</strong> Groups by energy and tempo for flow control</li>
-                    <li><strong>Combined Rules:</strong> Mix multiple criteria for sophisticated organization</li>
-                </ul>
-            </li>
-            <li><strong>AI Enhancement (Optional):</strong> When Ollama is running, AI analyzes each group's musical compatibility, considering:
-                <ul>
-                    <li>Tempo transitions between songs</li>
-                    <li>Key compatibility (harmonic mixing)</li>
-                    <li>Energy progression</li>
-                    <li>Genre and era cohesion</li>
-                </ul>
-            </li>
-            <li><strong>Smart Optimization:</strong> The system ensures artist variety and smooth transitions</li>
-        </ol>
-        
-        <div class="step">
-            <strong>💡 Tech Stack:</strong> MIXMASTER uses HTML5/JavaScript frontend, Python Flask backend, Spotify API for metadata, and optional Ollama AI integration for compatibility analysis.
-        </div>
-        
-        <h2>⭐ Understanding AI Ratings</h2>
-        <p>Each group of 3 songs receives an <strong>AI Compatibility Score</strong> that evaluates how well they work together:</p>
-        
-        <div class="feature-list">
-            <div class="feature">
-                <strong style="color: #4ecdc4;">🟢 8-10 Excellent</strong><br>
-                Perfect flow and compatibility. Seamless transitions between songs.
-            </div>
-            <div class="feature">
-                <strong style="color: #ffd93d;">🟡 6-7 Good</strong><br>
-                Solid grouping with good compatibility. Minor adjustment opportunities.
-            </div>
-            <div class="feature">
-                <strong style="color: #ff6b6b;">🔴 5 or Below</strong><br>
-                Algorithmic grouping only. (Ollama not running or AI unavailable)
-            </div>
-        </div>
-        
-        <h3>What the AI Analyzes</h3>
-        <ul>
-            <li><strong>Tempo Compatibility:</strong> How smoothly BPM transitions between songs</li>
-            <li><strong>Key Matching:</strong> Harmonic compatibility for smooth mixing</li>
-            <li><strong>Energy Progression:</strong> Does energy build, drop, or stay consistent?</li>
-            <li><strong>Genre Flow:</strong> How well do genres complement each other?</li>
-            <li><strong>Era Diversity:</strong> Does the group have interesting era combinations?</li>
-        </ul>
-        
-        <div class="step">
-            <strong>⚡ To Get AI Ratings:</strong> Make sure Ollama is running on your system. MIXMASTER will automatically use AI analysis to generate compatibility scores when available. Without Ollama, you'll get rule-based grouping (score 5/10) but the organization is still musically sound.
-        </div>
-        
-        <h2>❓ FAQ</h2>
-        
-        <h3>Q: Why do I need audio features?</h3>
-        <p>Audio features enable intelligent grouping. Without them, MIXMASTER can't analyze what makes songs work together. Use Exportify to get complete data.</p>
-        
-        <h3>Q: Can I use songs without Spotify data?</h3>
-        <p>Yes, but you'll get less intelligent grouping. MIXMASTER works best with full audio metadata from Exportify.</p>
-        
-        <h3>Q: How many songs can I organize?</h3>
-        <p>MIXMASTER handles playlists of any size, from 10 to 500+ songs. Performance stays smooth throughout.</p>
-        
-        <h3>Q: Can I edit the groups after organizing?</h3>
-        <p>Currently, grouping is automatic. You can re-organize with different strategies or remix to try again.</p>
-        
-        <h3>Q: How do I use this for DJing?</h3>
-        <p>Export to Spotify, download to your DJ software, or use the CSV data. The "Group of Three" creates smooth song transitions for live sets.</p>
-        
+        <div class="info">💡 You can select multiple rules at once. Songs must satisfy ALL selected rules to be grouped together.</div>
+
         <h2>🔧 Troubleshooting</h2>
-        
+
         <div class="warning">
-            <strong>⚠️ CSV Won't Upload?</strong><br>
-            Make sure your CSV is from Exportify and has all columns (Track name, Artist, audio features). If it still fails, try opening and re-saving in Excel first.
+            <strong>⚠️ All songs showing "Pop" genre?</strong><br>
+            Exportify CSVs no longer include genre data (Spotify API change, Nov 2024). Click <strong>🔍 Enrich metadata</strong> after loading your CSV to auto-detect genres.
         </div>
-        
+
         <div class="warning">
-            <strong>⚠️ No Audio Features Showing?</strong><br>
-            Use Exportify instead of TuneMyMusic. TuneMyMusic doesn't include audio features in its export.
+            <strong>⚠️ All compatibility scores show 5/10?</strong><br>
+            Ollama is not running. Start it with <code>ollama serve</code> in a terminal, then run <code>python gemini_proxy.py</code> from the project folder.
         </div>
-        
+
+        <div class="warning">
+            <strong>⚠️ "ollama serve" gives a port error?</strong><br>
+            That means Ollama is already running — you're good. Just start the proxy: <code>python gemini_proxy.py</code>.
+        </div>
+
         <div class="info">
-            <strong>💡 Tip:</strong> Save your organized playlists! You can always reload the original CSV to try different grouping strategies.
+            <strong>💡 Song era looks wrong?</strong><br>
+            Songs from compilation albums often show the compilation's release year instead of the original. Use the ⋮ menu → Edit song to correct the era manually.
         </div>
-        
-        <h2>📞 Getting Help</h2>
-        <p>For issues or feature requests, check that you're using Exportify to export your playlist with all audio features included. This solves most problems!</p>
+
+        <h2>❓ FAQ</h2>
+
+        <h3>Q: Do I need an internet connection?</h3>
+        <p>Only for Last.fm genre lookups. The core grouping and AI scoring (Ollama) run entirely offline on your machine.</p>
+
+        <h3>Q: How many songs can I organize?</h3>
+        <p>Any size — tested with 200+ song playlists. Larger playlists take a bit longer for AI scoring since each group is analyzed sequentially.</p>
+
+        <h3>Q: Can I run this without Python / Ollama?</h3>
+        <p>Yes — the core app is pure HTML/JS. You only need Python and Ollama for AI compatibility scores. Without them, you still get full grouping, just with algorithmic 5/10 scores.</p>
         
         <hr style="margin: 30px 0; border: 1px solid #333;">
         
