@@ -812,8 +812,8 @@
             animation: spin 1s ease-in-out infinite;
         }
 
-        /* Modal Styles */
-        .modal {
+        /* Compilation fix modal (full-screen container) */
+        #compilationFixModal {
             position: fixed;
             inset: 0;
             z-index: 20000;
@@ -823,7 +823,7 @@
             animation: fadeIn 0.3s ease-out;
         }
 
-        .modal.hidden {
+        #compilationFixModal.hidden {
             display: none;
         }
 
@@ -1046,6 +1046,10 @@
                         <div class="status-count" id="songCount">0 tracks loaded</div>
                         <div>Ready to organize</div>
                     </div>
+                    <button class="btn btn-secondary hidden" id="enrichBtn" style="font-size:0.9rem; padding:0.75rem 1rem;">
+                        🔍 Enrich metadata
+                    </button>
+                    <div class="hidden" id="enrichStatus" style="font-size:0.85rem; color:rgba(255,255,255,0.7); text-align:center;"></div>
                 </div>
             </div>
         </section>
@@ -1529,7 +1533,8 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         // Utility Functions
         function toSentenceCase(text) {
             if (!text) return '';
-            return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+            // Only uppercase first char; preserve the rest to keep proper names like "AC/DC" intact
+            return text.charAt(0).toUpperCase() + text.slice(1);
         }
 
         function getEraFromDate(dateString) {
@@ -1690,7 +1695,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             
             songs.forEach((song, idx) => {
                 const album = song.album ? song.album.toLowerCase() : '';
-                const releaseYear = song.releaseDate.split('-')[0];
+                const releaseYear = song.releaseDate ? song.releaseDate.split('-')[0] : '';
                 const titleLower = song.title.toLowerCase();
                 
                 // Check if we have a correction for this song (with more precise matching)
@@ -1858,18 +1863,6 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        // CSV Parsing Function
-        // Fill empty genres using audio features
-        function fillEmptyGenres(songs) {
-            songs.forEach(song => {
-                if (!song.genre || song.genre.trim() === '') {
-                    song.genre = predictGenreFromAudioFeatures(song);
-                    console.log(`✓ Predicted genre for "${song.title}": ${song.genre}`);
-                }
-            });
-            return songs;
-        }
-        
         function parseCSV(csvText) {
             const lines = csvText.split('\n');
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
@@ -2488,13 +2481,18 @@ ${songDescriptions}`;
             const statusElement = document.getElementById('uploadStatus');
             const rulesSection = document.getElementById('rulesSection');
             
+            const enrichBtn = document.getElementById('enrichBtn');
+            const enrichStatus = document.getElementById('enrichStatus');
             if (loadedSongs.length > 0) {
                 countElement.textContent = `${loadedSongs.length} tracks loaded`;
                 statusElement.classList.remove('hidden');
                 rulesSection.classList.remove('hidden');
+                enrichBtn.classList.remove('hidden');
             } else {
                 statusElement.classList.add('hidden');
                 rulesSection.classList.add('hidden');
+                enrichBtn.classList.add('hidden');
+                enrichStatus.classList.add('hidden');
             }
         }
 
@@ -3018,8 +3016,10 @@ ${suggestions.map((suggestion, index) => {
 
             // Add footer if it doesn't exist
             if (!modal.querySelector('.modal-footer')) {
-                const modalContent = modal.querySelector('.modal');
-                modalContent.innerHTML += `<div class="modal-footer">${footer}</div>`;
+                const footerEl = document.createElement('div');
+                footerEl.className = 'modal-footer';
+                footerEl.innerHTML = footer;
+                modal.querySelector('.modal').appendChild(footerEl);
             } else {
                 modal.querySelector('.modal-footer').innerHTML = footer;
             }
@@ -3097,57 +3097,6 @@ ${suggestions.map((suggestion, index) => {
             });
         
             return suggestions.slice(0, 3); // Return max 3 suggestions
-        }
-
-        function getExistingSuggestions(baseSong, rule, availableSongs, currentGroup) {
-            if (!availableSongs || availableSongs.length === 0) {
-                return [];
-            }
-            
-            let filteredSongs = availableSongs.filter(song => {
-                // Don't suggest the same song
-                if (song.id === baseSong.id) return false;
-                
-                // Check if song is already in current group
-                if (currentGroup.some(groupSong => groupSong.id === song.id)) return false;
-                
-                // Check rule compatibility
-                let ruleMatch = false;
-                if (rule === 'genre+era') {
-                    ruleMatch = song.genre === baseSong.genre && song.era === baseSong.era;
-                } else if (rule === 'pace+era') {
-                    ruleMatch = song.pace === baseSong.pace && song.era === baseSong.era;
-                } else {
-                    // Single rule
-                    ruleMatch = song[rule] === baseSong[rule];
-                }
-                
-                if (!ruleMatch) return false;
-                
-                if (avoidSameArtist) {
-                    const wouldCreateSameArtistInRow = currentGroup.some(groupSong => 
-                        groupSong.artist === song.artist
-                    );
-                    if (wouldCreateSameArtistInRow || song.artist === baseSong.artist) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-            
-            const songsWithSimilarity = filteredSongs.map(song => ({
-                ...song,
-                similarity: calculateSimilarity(baseSong, song, rule),
-                source: 'playlist',
-                reasoning: `Perfect match from your playlist with similar ${rule} characteristics and compatible mixing elements`
-            }));
-            
-            const suggestions = songsWithSimilarity
-                .filter(song => song.similarity > 0)
-                .sort((a, b) => b.similarity - a.similarity)
-                .slice(0, 3);
-            
-            return suggestions;
         }
 
         function addSuggestionToGroup(groupIndex, songIndex, suggestionStr) {
@@ -3233,25 +3182,6 @@ ${suggestions.map((suggestion, index) => {
             URL.revokeObjectURL(url);
         }
 
-        // File Upload Handlers
-        function remixPlaylist() {
-            if (loadedSongs.length === 0 || selectedRules.length === 0) return;
-            
-            const remixBtn = document.getElementById('remixBtn');
-            remixBtn.innerHTML = '🔄 Remixing...';
-            remixBtn.disabled = true;
-            
-            setTimeout(() => {
-                organizedGroups = groupSongsByRules(loadedSongs, selectedRules, avoidSameArtist);
-                // Optimize group order for smooth transitions
-                organizedGroups = optimizeGroupOrder(organizedGroups);
-                renderGroups();
-                
-                remixBtn.innerHTML = '🔄 Remix';
-                remixBtn.disabled = false;
-            }, 1500);
-        }
-        
         // File Upload Handler
         function handleFileUpload(file) {
             if (!file) return;
@@ -3455,16 +3385,6 @@ ${suggestions.map((suggestion, index) => {
                 remixBtn.disabled = false;
             }, 1500);
         }
-        
-        function downloadFile(content, filename, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
 
         // Import from Spotify
         async function importFromSpotify() {
@@ -3542,6 +3462,204 @@ ${suggestions.map((suggestion, index) => {
             }
         }
         
+        // ─── Metadata Enrichment ───────────────────────────────────────────────
+
+        // Hardcoded artist→genre map (rock/alt/metal focus, case-insensitive keys)
+        const ARTIST_GENRE_MAP = {
+            // Classic Rock
+            'led zeppelin':'Rock/Alternative','pink floyd':'Rock/Alternative','the rolling stones':'Rock/Alternative',
+            'rolling stones':'Rock/Alternative','the who':'Rock/Alternative','the doors':'Rock/Alternative',
+            'cream':'Rock/Alternative','deep purple':'Rock/Alternative','black sabbath':'Rock/Alternative',
+            'aerosmith':'Rock/Alternative','lynyrd skynyrd':'Rock/Alternative','fleetwood mac':'Rock/Alternative',
+            'eagles':'Rock/Alternative','tom petty and the heartbreakers':'Rock/Alternative',
+            'tom petty':'Rock/Alternative','the heartbreakers':'Rock/Alternative','zz top':'Rock/Alternative',
+            'ac/dc':'Rock/Alternative','acdc':'Rock/Alternative','queen':'Rock/Alternative',
+            'boston':'Rock/Alternative','foreigner':'Rock/Alternative','journey':'Rock/Alternative',
+            'styx':'Rock/Alternative','rush':'Rock/Alternative','the kinks':'Rock/Alternative',
+            'the animals':'Rock/Alternative','creedence clearwater revival':'Rock/Alternative',
+            'ccr':'Rock/Alternative','the band':'Rock/Alternative','bruce springsteen':'Rock/Alternative',
+            'van halen':'Rock/Alternative','def leppard':'Rock/Alternative','guns n\' roses':'Rock/Alternative',
+            'guns n roses':'Rock/Alternative','bon jovi':'Rock/Alternative','whitesnake':'Rock/Alternative',
+            'motley crue':'Rock/Alternative','mötley crüe':'Rock/Alternative','ozzy osbourne':'Rock/Alternative',
+            // Grunge / Post-Grunge
+            'nirvana':'Rock/Alternative','pearl jam':'Rock/Alternative','soundgarden':'Rock/Alternative',
+            'alice in chains':'Rock/Alternative','stone temple pilots':'Rock/Alternative',
+            'mudhoney':'Rock/Alternative','screaming trees':'Rock/Alternative','bush':'Rock/Alternative',
+            'candlebox':'Rock/Alternative','live':'Rock/Alternative','three doors down':'Rock/Alternative',
+            'creed':'Rock/Alternative','nickelback':'Rock/Alternative','puddle of mudd':'Rock/Alternative',
+            'seether':'Rock/Alternative','breaking benjamin':'Rock/Alternative','staind':'Rock/Alternative',
+            'fuel':'Rock/Alternative','matchbox twenty':'Rock/Alternative','matchbox 20':'Rock/Alternative',
+            'lifehouse':'Rock/Alternative','hootie & the blowfish':'Rock/Alternative',
+            // Alternative / Indie
+            'r.e.m.':'Rock/Alternative','rem':'Rock/Alternative','the smashing pumpkins':'Rock/Alternative',
+            'smashing pumpkins':'Rock/Alternative','weezer':'Rock/Alternative','radiohead':'Rock/Alternative',
+            'beck':'Rock/Alternative','the pixies':'Rock/Alternative','pixies':'Rock/Alternative',
+            'sonic youth':'Rock/Alternative','dinosaur jr':'Rock/Alternative','the replacements':'Rock/Alternative',
+            'husker du':'Rock/Alternative','hüsker dü':'Rock/Alternative','the cure':'Rock/Alternative',
+            'depeche mode':'Electronic','new order':'Electronic','the smiths':'Rock/Alternative',
+            'morrissey':'Rock/Alternative','the national':'Rock/Alternative','interpol':'Rock/Alternative',
+            'the strokes':'Rock/Alternative','strokes':'Rock/Alternative','the white stripes':'Rock/Alternative',
+            'white stripes':'Rock/Alternative','jack white':'Rock/Alternative','the black keys':'Rock/Alternative',
+            'black keys':'Rock/Alternative','arctic monkeys':'Rock/Alternative','franz ferdinand':'Rock/Alternative',
+            'kaiser chiefs':'Rock/Alternative','the killers':'Rock/Alternative','killers':'Rock/Alternative',
+            'bloc party':'Rock/Alternative','modest mouse':'Rock/Alternative','death cab for cutie':'Rock/Alternative',
+            'the shins':'Rock/Alternative','arcade fire':'Rock/Alternative','lcd soundsystem':'Electronic',
+            'vampire weekend':'Rock/Alternative','foster the people':'Rock/Alternative',
+            'imagine dragons':'Rock/Alternative','the 1975':'Rock/Alternative','1975':'Rock/Alternative',
+            'twenty one pilots':'Rock/Alternative','alt-j':'Rock/Alternative','alt j':'Rock/Alternative',
+            'glass animals':'Rock/Alternative','tame impala':'Rock/Alternative',
+            // Hard Rock / Metal
+            'metallica':'Rock/Alternative','slayer':'Rock/Alternative','megadeth':'Rock/Alternative',
+            'anthrax':'Rock/Alternative','iron maiden':'Rock/Alternative','judas priest':'Rock/Alternative',
+            'pantera':'Rock/Alternative','slipknot':'Rock/Alternative','system of a down':'Rock/Alternative',
+            'tool':'Rock/Alternative','a perfect circle':'Rock/Alternative','rage against the machine':'Rock/Alternative',
+            'ratm':'Rock/Alternative','korn':'Rock/Alternative','deftones':'Rock/Alternative',
+            'disturbed':'Rock/Alternative','godsmack':'Rock/Alternative','five finger death punch':'Rock/Alternative',
+            'ffdp':'Rock/Alternative','lamb of god':'Rock/Alternative','trivium':'Rock/Alternative',
+            'volbeat':'Rock/Alternative','halestorm':'Rock/Alternative','evanescence':'Rock/Alternative',
+            // Canadian Rock
+            'big wreck':'Rock/Alternative','the tragically hip':'Rock/Alternative','tragically hip':'Rock/Alternative',
+            'the trews':'Rock/Alternative','trews':'Rock/Alternative','three days grace':'Rock/Alternative',
+            'billy talent':'Rock/Alternative','the tea party':'Rock/Alternative','tea party':'Rock/Alternative',
+            'trooper':'Rock/Alternative','the guess who':'Rock/Alternative','guess who':'Rock/Alternative',
+            'bachman-turner overdrive':'Rock/Alternative','bto':'Rock/Alternative',
+            'avril lavigne':'Pop/Dance','sum 41':'Rock/Alternative','simple plan':'Rock/Alternative',
+            // Other Rock
+            'the cult':'Rock/Alternative','cult':'Rock/Alternative','the offspring':'Rock/Alternative',
+            'offspring':'Rock/Alternative','green day':'Rock/Alternative','blink-182':'Rock/Alternative',
+            'blink 182':'Rock/Alternative','the ramones':'Rock/Alternative','ramones':'Rock/Alternative',
+            'the clash':'Rock/Alternative','clash':'Rock/Alternative','sex pistols':'Rock/Alternative',
+            'bad religion':'Rock/Alternative','nofx':'Rock/Alternative','social distortion':'Rock/Alternative',
+            'the bouncing souls':'Rock/Alternative','rancid':'Rock/Alternative','local h':'Rock/Alternative',
+            'queens of the stone age':'Rock/Alternative','qotsa':'Rock/Alternative',
+            'foo fighters':'Rock/Alternative','dave grohl':'Rock/Alternative',
+            'the dave matthews band':'Rock/Alternative','dave matthews band':'Rock/Alternative',
+            'incubus':'Rock/Alternative','311':'Rock/Alternative','sublime':'Rock/Alternative',
+            'no doubt':'Rock/Alternative','garbage':'Rock/Alternative','hole':'Rock/Alternative',
+            'alanis morissette':'Rock/Alternative','sheryl crow':'Rock/Alternative',
+            'the cranberries':'Rock/Alternative','cranberries':'Rock/Alternative',
+            'counting crows':'Rock/Alternative','collective soul':'Rock/Alternative',
+            'third eye blind':'Rock/Alternative','goo goo dolls':'Rock/Alternative',
+            'augustana':'Rock/Alternative','the fray':'Rock/Alternative','fray':'Rock/Alternative',
+            'onerepublic':'Pop/Dance','maroon 5':'Pop/Dance',
+            'the wallflowers':'Rock/Alternative','wallflowers':'Rock/Alternative',
+            // Pop
+            'michael jackson':'Pop/Dance','madonna':'Pop/Dance','prince':'Pop/Dance',
+            'the police':'Rock/Alternative','sting':'Rock/Alternative','u2':'Rock/Alternative',
+            'david bowie':'Rock/Alternative','elton john':'Pop/Dance','billy joel':'Pop/Dance',
+            'bruce hornsby':'Pop/Dance','john mellencamp':'Rock/Alternative',
+            'the cars':'Rock/Alternative','cars':'Rock/Alternative','blondie':'Rock/Alternative',
+            'talking heads':'Rock/Alternative','devo':'Rock/Alternative',
+            'cyndi lauper':'Pop/Dance','pat benatar':'Rock/Alternative',
+            'heart':'Rock/Alternative','stevie nicks':'Rock/Alternative',
+            'taylor swift':'Pop/Dance','ed sheeran':'Pop/Dance','adele':'Pop/Dance',
+            'the weeknd':'Pop/Dance','bruno mars':'Pop/Dance','harry styles':'Pop/Dance',
+            // Hip Hop
+            'eminem':'Hip Hop/Rap','jay-z':'Hip Hop/Rap','kanye west':'Hip Hop/Rap',
+            'kendrick lamar':'Hip Hop/Rap','drake':'Hip Hop/Rap','nas':'Hip Hop/Rap',
+            'biggie':'Hip Hop/Rap','notorious b.i.g.':'Hip Hop/Rap','tupac':'Hip Hop/Rap',
+            '2pac':'Hip Hop/Rap','snoop dogg':'Hip Hop/Rap','dr. dre':'Hip Hop/Rap',
+            'outkast':'Hip Hop/Rap','the roots':'Hip Hop/Rap','a tribe called quest':'Hip Hop/Rap',
+            // R&B / Soul
+            'stevie wonder':'R&B/Soul','marvin gaye':'R&B/Soul','aretha franklin':'R&B/Soul',
+            'otis redding':'R&B/Soul','sam cooke':'R&B/Soul','ray charles':'R&B/Soul',
+            'james brown':'R&B/Soul','barry white':'R&B/Soul','al green':'R&B/Soul',
+        };
+
+        // BPM estimates by era (rough midpoints for common rock)
+        const ERA_BPM_MAP = { 'Classic':115,'60s':118,'70s':120,'80s':122,'90s':125,'2000s':126,'2010s':124,'2020s':122 };
+
+        function lookupGenreByArtist(artistName) {
+            if (!artistName) return null;
+            const key = artistName.toLowerCase().trim();
+            if (ARTIST_GENRE_MAP[key]) return ARTIST_GENRE_MAP[key];
+            // Try partial match (e.g. "The Killers" → "killers")
+            for (const [mapKey, genre] of Object.entries(ARTIST_GENRE_MAP)) {
+                if (key.includes(mapKey) || mapKey.includes(key)) return genre;
+            }
+            return null;
+        }
+
+        async function fetchLastFmGenre(artist, track, apiKey) {
+            try {
+                const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json&autocorrect=1`;
+                const res = await fetch(url);
+                if (!res.ok) return null;
+                const data = await res.json();
+                const tags = data?.track?.toptags?.tag;
+                if (!tags || tags.length === 0) return null;
+                // Map Last.fm tags to our genre categories
+                const tagNames = tags.map(t => t.name.toLowerCase());
+                if (tagNames.some(t => t.includes('metal') || t.includes('grunge') || t.includes('hard rock') || t.includes('punk') || t.includes('alternative') || t.includes('indie') || t.includes('rock'))) return 'Rock/Alternative';
+                if (tagNames.some(t => t.includes('hip hop') || t.includes('rap'))) return 'Hip Hop/Rap';
+                if (tagNames.some(t => t.includes('electronic') || t.includes('house') || t.includes('techno') || t.includes('edm'))) return 'Electronic';
+                if (tagNames.some(t => t.includes('r&b') || t.includes('soul') || t.includes('funk'))) return 'R&B/Soul';
+                if (tagNames.some(t => t.includes('country'))) return 'Country';
+                if (tagNames.some(t => t.includes('jazz'))) return 'Jazz';
+                if (tagNames.some(t => t.includes('pop'))) return 'Pop/Dance';
+                return null;
+            } catch { return null; }
+        }
+
+        async function enrichSongsMetadata() {
+            const lastFmKey = localStorage.getItem('lastfm_api_key') || '';
+            const enrichBtn = document.getElementById('enrichBtn');
+            const enrichStatus = document.getElementById('enrichStatus');
+            enrichBtn.disabled = true;
+            enrichBtn.innerHTML = '⏳ Enriching...';
+            enrichStatus.classList.remove('hidden');
+
+            let enriched = 0;
+            const songsNeedingEnrichment = loadedSongs.filter(s =>
+                !s.genre || s.genre === 'Pop' || s.tempo === 120 || !s.tempo
+            );
+
+            for (let i = 0; i < loadedSongs.length; i++) {
+                const song = loadedSongs[i];
+                enrichStatus.textContent = `Enriching ${i + 1} / ${loadedSongs.length}...`;
+
+                // Genre lookup: hardcoded map first (instant)
+                if (!song.genre || song.genre === 'Pop') {
+                    const mapped = lookupGenreByArtist(song.artist);
+                    if (mapped) {
+                        song.genre = mapped;
+                        enriched++;
+                    } else if (lastFmKey) {
+                        const lfmGenre = await fetchLastFmGenre(song.artist, song.title, lastFmKey);
+                        if (lfmGenre) { song.genre = lfmGenre; enriched++; }
+                        await new Promise(r => setTimeout(r, 200)); // rate limit
+                    }
+                }
+
+                // Estimate BPM from era if missing
+                if (!song.tempo || song.tempo === 120) {
+                    song.tempo = ERA_BPM_MAP[song.era] || 120;
+                    // Add ±10 BPM variation so songs don't all have identical tempo
+                    song.tempo += Math.floor((song.id % 21) - 10);
+                }
+
+                // Re-derive pace from updated tempo + default energy
+                song.pace = getPaceFromFeatures(song.energy || 0.6, song.tempo, song.danceability || 0.6);
+            }
+
+            enrichStatus.textContent = `✅ Enriched ${enriched} songs`;
+            enrichBtn.innerHTML = '🔍 Enrich metadata';
+            enrichBtn.disabled = false;
+            updateSongCount();
+
+            // Prompt for Last.fm key if we couldn't enrich many and no key set
+            const unenriched = loadedSongs.filter(s => !s.genre || s.genre === 'Pop').length;
+            if (unenriched > 5 && !lastFmKey) {
+                const key = prompt(`${unenriched} songs still have unknown genre.\n\nEnter a free Last.fm API key to look them up\n(get one at last.fm/api — takes 2 min):\n\nLeave blank to skip.`);
+                if (key && key.trim()) {
+                    localStorage.setItem('lastfm_api_key', key.trim());
+                    enrichBtn.click(); // re-run with key
+                }
+            }
+        }
+
+        // ─── End Metadata Enrichment ───────────────────────────────────────────
+
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
             const uploadZone = document.getElementById('uploadZone');
@@ -3617,6 +3735,7 @@ ${suggestions.map((suggestion, index) => {
             });
 
             // Button handlers
+            document.getElementById('enrichBtn').addEventListener('click', enrichSongsMetadata);
             sampleBtn.addEventListener('click', loadSampleData);
             organizeBtn.addEventListener('click', organizePlaylist);
             remixBtn.addEventListener('click', remixPlaylist);
