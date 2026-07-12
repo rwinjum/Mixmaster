@@ -3692,6 +3692,7 @@ ${suggestions.map((suggestion, index) => {
             'tesla':'Hair Metal','great white':'Hair Metal','ratt':'Hair Metal',
             'dokken':'Hair Metal','twisted sister':'Hair Metal','quiet riot':'Hair Metal',
             // Post-Punk / New Wave (late 70s–80s)
+            'roxy music':'Post-Punk/New Wave','brian eno':'Post-Punk/New Wave',
             'the cure':'Post-Punk/New Wave','joy division':'Post-Punk/New Wave',
             'new order':'Post-Punk/New Wave','the smiths':'Post-Punk/New Wave',
             'morrissey':'Post-Punk/New Wave','depeche mode':'Post-Punk/New Wave',
@@ -3736,6 +3737,7 @@ ${suggestions.map((suggestion, index) => {
             'the tea party':'Alternative','tea party':'Alternative',
             'queens of the stone age':'Alternative','qotsa':'Alternative',
             // Indie Rock (2000s–2010s)
+            'the young fresh fellows':'Indie Rock','young fresh fellows':'Indie Rock',
             'the strokes':'Indie Rock','strokes':'Indie Rock','the white stripes':'Indie Rock',
             'white stripes':'Indie Rock','jack white':'Indie Rock','the black keys':'Indie Rock',
             'black keys':'Indie Rock','arctic monkeys':'Indie Rock','franz ferdinand':'Indie Rock',
@@ -3877,13 +3879,12 @@ ${suggestions.map((suggestion, index) => {
                 const song = loadedSongs[i];
                 enrichStatus.textContent = `Enriching ${i + 1} / ${loadedSongs.length}...`;
 
-                // Genre: hardcoded map first, then Last.fm
-                if (!song.genre || song.genre === 'Pop') {
-                    const mapped = lookupGenreByArtist(song.artist);
-                    if (mapped) {
-                        song.genre = mapped;
-                        enriched++;
-                    } else if (lastFmKey) {
+                // Genre: hardcoded artist map always wins, then Last.fm for unknowns
+                const mapped = lookupGenreByArtist(song.artist);
+                if (mapped) {
+                    if (song.genre !== mapped) { song.genre = mapped; enriched++; }
+                } else if (!song.genre || song.genre === 'Pop') {
+                    if (lastFmKey) {
                         const lfmGenre = await fetchLastFmGenre(song.artist, song.title, lastFmKey);
                         if (lfmGenre) { song.genre = lfmGenre; enriched++; }
                         await new Promise(r => setTimeout(r, 200));
