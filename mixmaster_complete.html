@@ -1703,14 +1703,17 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         async function fetchOriginalReleaseYear(artist, title) {
             try {
                 const q = encodeURIComponent(`artist:"${artist}" AND recording:"${title}"`);
-                const url = `https://musicbrainz.org/ws/2/recording?query=${q}&fmt=json&limit=5`;
+                const url = `https://musicbrainz.org/ws/2/recording?query=${q}&fmt=json&limit=10`;
                 const res = await fetch(url, { headers: { 'User-Agent': 'MixmasterApp/1.0 (rwinjum@hotmail.com)' } });
                 if (!res.ok) return null;
                 const data = await res.json();
                 const recordings = data?.recordings || [];
+                const skipWords = ['remaster', 'remastered', 'compilation', 'greatest', 'best of', 'anthology', 'collection', 'hits', 'live'];
                 let earliest = null;
                 for (const rec of recordings) {
                     for (const rel of (rec.releases || [])) {
+                        const relTitle = (rel.title || '').toLowerCase();
+                        if (skipWords.some(w => relTitle.includes(w))) continue;
                         const dateStr = rel.date || rel['release-events']?.[0]?.date || '';
                         const year = parseInt(dateStr.slice(0, 4));
                         if (year > 1920 && year < 2030) {
