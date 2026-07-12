@@ -1913,12 +1913,19 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 if (overallPace > 0.4) return 'Medium';
                 return 'Low';
             }
-            // Derive from genre when no audio data
+            // Use real BPM from Deezer when available (tempo !== 120 means it was actually fetched)
+            const t = tempo || 0;
+            if (t > 0 && t !== 120) {
+                if (t > 128) return 'High';
+                if (t < 90) return 'Low';
+                // 90-128: let genre refine
+            }
+            // Derive from genre
             if (genre && GENRE_PACE_MAP[genre]) return GENRE_PACE_MAP[genre];
-            // Fall back to BPM
-            if ((tempo || 0) > 130) return 'High';
-            if ((tempo || 0) > 105) return 'Medium';
-            return 'Medium'; // neutral default
+            // Final BPM fallback
+            if (t > 128) return 'High';
+            if (t < 85) return 'Low';
+            return 'Medium';
         }
 
         function getKeyName(keyNum) {
