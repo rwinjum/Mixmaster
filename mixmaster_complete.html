@@ -1259,7 +1259,10 @@
         };
 
         // Ollama API Functions
+        let _ollamaUnavailable = false;
+
         async function callOllama(prompt) {
+            if (_ollamaUnavailable) return null;
             try {
                 // Use local proxy to call Ollama API with 60 second timeout
                 const controller = new AbortController();
@@ -1290,8 +1293,8 @@
                     return null;
                 }
             } catch (error) {
-                console.error('Ollama API error:', error);
-                // Return null to use fallback messages
+                _ollamaUnavailable = true;
+                // Return null to use algorithmic fallback
                 return null;
             }
         }
