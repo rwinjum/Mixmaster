@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>MIXMASTER - DJ Playlist Organizer</title>
     <style>
         * {
@@ -16,9 +19,6 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-        }
-
-        body > *:not(.modal-overlay) {
             overflow-x: hidden;
         }
 
@@ -654,7 +654,7 @@
             padding: 1rem;
         }
 
-        .modal {
+        .modal-overlay .modal {
             background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -815,7 +815,7 @@
             animation: spin 1s ease-in-out infinite;
         }
 
-        /* Compilation fix modal (full-screen container) */
+        /* Compilation fix modal overlay (full-screen) */
         #compilationFixModal {
             position: fixed;
             inset: 0;
@@ -839,7 +839,7 @@
             }
         }
 
-        .compilation-overlay {
+        .modal-overlay {
             position: absolute;
             inset: 0;
             background: rgba(0, 0, 0, 0.7);
@@ -856,7 +856,9 @@
             width: 90%;
             max-width: 600px;
             max-height: 80vh;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             animation: slideIn 0.3s ease-out;
         }
 
@@ -877,6 +879,7 @@
             align-items: center;
             padding: 1.5rem;
             border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+            flex-shrink: 0;
         }
 
         .modal-title {
@@ -907,6 +910,9 @@
 
         .modal-body {
             padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
         }
 
         .modal-description {
@@ -919,7 +925,6 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            margin-bottom: 1.5rem;
         }
 
         .modal-issue {
@@ -985,15 +990,113 @@
             font-weight: 600;
         }
 
-        .modal-footer {
+        /* Data Quality Check modal — fixed scroll area (Edge-safe) */
+        #compilationFixModal.modal {
+            background: transparent !important;
+            border: none !important;
+            backdrop-filter: none !important;
+            max-width: none !important;
+            max-height: none !important;
+            width: auto !important;
+            overflow: visible !important;
+            flex-direction: row !important;
+        }
+
+        #compilationFixModal .modal-content {
+            display: block !important;
+            position: relative !important;
+            z-index: 20001 !important;
+            width: min(600px, 92vw) !important;
+            max-width: 600px !important;
+            max-height: 90vh !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+
+        #compilationFixModal .modal-header {
+            flex-shrink: 0;
+        }
+
+        #compilationFixModal .modal-body {
+            display: block !important;
+            overflow: hidden !important;
+            padding: 1rem 1.5rem 1.25rem !important;
+        }
+
+        #compilationFixModal .modal-description {
+            margin-bottom: 0.75rem !important;
+        }
+
+        #compilationFixModal .modal-scroll-hint {
+            display: none;
+            margin: 0 0 0.75rem 0;
+            font-size: 0.875rem;
+            color: rgba(78, 205, 196, 0.95);
+        }
+
+        #compilationFixModal .modal-scroll-hint.visible {
+            display: block;
+        }
+
+        #compilationFixModal #modalIssuesScroll {
+            display: block !important;
+            box-sizing: border-box !important;
+            height: 320px !important;
+            max-height: 320px !important;
+            overflow-y: scroll !important;
+            overflow-x: hidden !important;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(78, 205, 196, 0.75) rgba(255, 255, 255, 0.08);
+            padding: 0.5rem 0.35rem 0.5rem 0.5rem;
+            border: 1px solid rgba(78, 205, 196, 0.25);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #compilationFixModal .modal-issues {
+            display: block !important;
+        }
+
+        #compilationFixModal .modal-issue {
+            margin-bottom: 1rem;
+        }
+
+        #compilationFixModal .modal-issue:last-child {
+            margin-bottom: 0;
+        }
+
+        #compilationFixModal #modalIssuesScroll::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        #compilationFixModal #modalIssuesScroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+        }
+
+        #compilationFixModal #modalIssuesScroll::-webkit-scrollbar-thumb {
+            background: rgba(78, 205, 196, 0.65);
+            border-radius: 6px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+        }
+
+        #compilationFixModal #modalIssuesScroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(78, 205, 196, 0.85);
+        }
+
+        #compilationFixModal .modal-footer {
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
             padding: 1.5rem;
             border-top: 1px solid rgba(78, 205, 196, 0.2);
+            flex-shrink: 0;
         }
 
-        .modal-footer .btn {
+        #compilationFixModal .modal-footer .btn {
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
         }
@@ -1049,10 +1152,6 @@
                         <div class="status-count" id="songCount">0 tracks loaded</div>
                         <div>Ready to organize</div>
                     </div>
-                    <button class="btn btn-secondary hidden" id="enrichBtn" style="font-size:0.9rem; padding:0.75rem 1rem;">
-                        🔍 Enrich metadata
-                    </button>
-                    <div class="hidden" id="enrichStatus" style="font-size:0.85rem; color:rgba(255,255,255,0.7); text-align:center;"></div>
                 </div>
             </div>
         </section>
@@ -1192,25 +1291,26 @@
                 </div>
             </div>
         </section>
+    </div>
 
-        <!-- Compilation Album Fix Modal -->
-        <div id="compilationFixModal" class="modal hidden">
-            <div class="compilation-overlay"></div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Data Quality Check</h2>
-                    <button class="modal-close" id="modalCloseBtn">&times;</button>
+    <!-- Data Quality Check modal (outside .container so fixed positioning/scroll work in Edge) -->
+    <div id="compilationFixModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Data Quality Check</h2>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Found <span id="issueCount">0</span> potential compilation album issues that can be auto-corrected:</p>
+                <p class="modal-scroll-hint" id="modalScrollHint">Scroll inside the box below to review all items.</p>
+                <div class="modal-issues-scroll" id="modalIssuesScroll">
+                    <div class="modal-issues" id="modalIssuesList"></div>
                 </div>
-                <div class="modal-body">
-                    <p class="modal-description">Found <span id="issueCount">0</span> potential compilation album issues that can be auto-corrected:</p>
-                    <div class="modal-issues" id="modalIssuesList">
-                        <!-- Issues will be populated here -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" id="modalSkipBtn">Skip for now</button>
-                    <button class="btn btn-primary" id="modalApplyBtn">Apply selected fixes</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalSkipBtn">Skip for now</button>
+                <button class="btn btn-primary" id="modalApplyBtn">Apply selected fixes</button>
             </div>
         </div>
     </div>
@@ -1536,8 +1636,10 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         // Utility Functions
         function toSentenceCase(text) {
             if (!text) return '';
-            // Only uppercase first char; preserve the rest to keep proper names like "AC/DC" intact
-            return text.charAt(0).toUpperCase() + text.slice(1);
+            return text.split(/\s+/).map(word => {
+                if (!word) return word;
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }).join(' ');
         }
 
         function getEraFromDate(dateString) {
@@ -1578,29 +1680,18 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         function getPrimaryGenre(genresString) {
             if (!genresString || genresString === '""' || genresString === '') return 'Pop';
             const genres = genresString.toLowerCase().replace(/"/g, '');
-
-            // Most specific sub-genres first
-            if (genres.includes('grunge')) return 'Grunge';
-            if (genres.includes('post-grunge') || genres.includes('post grunge')) return 'Post-Grunge';
-            if (genres.includes('hair metal') || genres.includes('glam metal') || genres.includes('glam rock')) return 'Hair Metal';
-            if (genres.includes('thrash') || genres.includes('death metal') || genres.includes('heavy metal') || genres.includes('nu-metal') || genres.includes('nu metal')) return 'Metal';
-            if (genres.includes('hard rock')) return 'Hard Rock';
-            if (genres.includes('progressive rock') || genres.includes('prog rock') || genres.includes('art rock')) return 'Progressive Rock';
-            if (genres.includes('post-punk') || genres.includes('post punk') || genres.includes('new wave') || genres.includes('gothic rock') || genres.includes('darkwave')) return 'Post-Punk/New Wave';
-            if (genres.includes('punk')) return 'Punk';
-            if (genres.includes('classic rock') || genres.includes('blues rock') || genres.includes('southern rock') || genres.includes('arena rock')) return 'Classic Rock';
-            if (genres.includes('indie')) return 'Indie Rock';
-            if (genres.includes('alternative') || genres.includes('college rock')) return 'Alternative';
-            if (genres.includes('metal')) return 'Metal';
-            if (genres.includes('rock')) return 'Classic Rock';
+            
+            // Check for heavier rock/metal subgenres first
+            if (genres.includes('grunge') || genres.includes('post-grunge') || genres.includes('hard rock') || genres.includes('metal') || genres.includes('punk')) return 'Rock/Alternative';
+            if (genres.includes('rock') || genres.includes('alternative') || genres.includes('indie')) return 'Rock/Alternative';
+            if (genres.includes('pop') || genres.includes('dance')) return 'Pop/Dance';
             if (genres.includes('hip hop') || genres.includes('rap')) return 'Hip Hop/Rap';
-            if (genres.includes('electronic') || genres.includes('house') || genres.includes('techno') || genres.includes('synth')) return 'Electronic';
+            if (genres.includes('electronic') || genres.includes('house') || genres.includes('techno')) return 'Electronic';
             if (genres.includes('r&b') || genres.includes('soul') || genres.includes('funk')) return 'R&B/Soul';
             if (genres.includes('country')) return 'Country';
             if (genres.includes('jazz')) return 'Jazz';
             if (genres.includes('classical')) return 'Classical';
-            if (genres.includes('pop') || genres.includes('dance')) return 'Pop';
-
+            
             return 'Pop';
         }
 
@@ -1616,18 +1707,32 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             
             // High speechiness -> Hip Hop/Rap
             if (speechiness > 0.4) return 'Hip Hop/Rap';
-            // Very acoustic -> Classic Rock / R&B
-            if (acousticness > 0.7 && tempo < 110) return 'R&B/Soul';
-            // High energy + high tempo + high danceability -> Electronic
+            
+            // Very acoustic -> Folk/Singer-Songwriter
+            if (acousticness > 0.7 && tempo < 110) return 'Folk';
+            
+            // High instrumentalness -> Instrumental/Ambient
+            if (instrumentalness > 0.6) return 'Instrumental';
+            
+            // High energy + high tempo + high danceability -> Dance/Electronic
             if (energy > 0.7 && danceability > 0.7 && tempo > 120) return 'Electronic';
-            // High energy + high tempo -> Hard Rock
-            if (energy > 0.7 && tempo > 130) return 'Hard Rock';
-            // High energy mid-tempo -> Alternative
-            if (energy > 0.6 && tempo > 100) return 'Alternative';
-            // High danceability -> Pop
-            if (danceability > 0.7 && energy > 0.5) return 'Pop';
-            // Slow + acoustic + low valence -> R&B/Soul
+            
+            // High energy + high tempo -> Rock
+            if (energy > 0.7 && tempo > 130) return 'Rock/Alternative';
+            
+            // High danceability -> Pop/Dance
+            if (danceability > 0.7 && energy > 0.5) return 'Pop/Dance';
+            
+            // High valence (positive) + mid tempo -> Pop
+            if (valence > 0.7 && danceability > 0.5) return 'Pop';
+            
+            // Slow + acoustic + low valence -> Blues/Soul
             if (tempo < 100 && acousticness > 0.4 && valence < 0.4) return 'R&B/Soul';
+            
+            // Default based on energy
+            if (energy > 0.6) return 'Pop';
+            if (energy < 0.3) return 'Singer-Songwriter';
+            
             return 'Pop';
         }
 
@@ -1686,47 +1791,16 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return corrections;
         }
 
-        const COMPILATION_KEYWORDS = ['deluxe', 'remaster', 'live', 'rarities', 'greatest', '#1 hits',
-            'compilation', 'best of', 'anthology', 'super', 'expanded', 'absolute hits',
-            'complete works', 'collection', 'hits', 'essentials', 'definitive', 'platinum'];
-
-        function isCompilationAlbum(albumName) {
-            if (!albumName) return false;
-            const a = albumName.toLowerCase();
-            return COMPILATION_KEYWORDS.some(kw => a.includes(kw));
-        }
-
-        // Query MusicBrainz for the earliest known release year of a recording
-        async function fetchOriginalReleaseYear(artist, title) {
-            try {
-                const q = encodeURIComponent(`artist:"${artist}" AND recording:"${title}"`);
-                const url = `https://musicbrainz.org/ws/2/recording?query=${q}&fmt=json&limit=5`;
-                const res = await fetch(url, { headers: { 'User-Agent': 'MixmasterApp/1.0 (rwinjum@hotmail.com)' } });
-                if (!res.ok) return null;
-                const data = await res.json();
-                const recordings = data?.recordings || [];
-                let earliest = null;
-                for (const rec of recordings) {
-                    for (const rel of (rec.releases || [])) {
-                        const dateStr = rel.date || rel['release-events']?.[0]?.date || '';
-                        const year = parseInt(dateStr.slice(0, 4));
-                        if (year > 1920 && year < 2030) {
-                            if (!earliest || year < earliest) earliest = year;
-                        }
-                    }
-                }
-                return earliest;
-            } catch { return null; }
-        }
-
         // Detect potential compilation album issues for user review
         function detectPotentialCompilationIssues(songs) {
             const potentialIssues = [];
-            const compilationKeywords = COMPILATION_KEYWORDS;
+            const compilationKeywords = ['deluxe', 'remaster', 'live', 'rarities', 'greatest', '#1 hits', 
+                                        'compilation', 'best of', 'anthology', 'super', 'expanded', 'absolute hits', 
+                                        'complete works', 'collection', 'hits', 'essentials'];
             
             songs.forEach((song, idx) => {
                 const album = song.album ? song.album.toLowerCase() : '';
-                const releaseYear = song.releaseDate ? song.releaseDate.split('-')[0] : '';
+                const releaseYear = (song.releaseDate || '').toString().split('-')[0];
                 const titleLower = song.title.toLowerCase();
                 
                 // Check if we have a correction for this song (with more precise matching)
@@ -1775,7 +1849,35 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return potentialIssues;
         }
 
+        // Show data quality modal when compilation date fixes are available
+        function showDataQualityCheckIfNeeded() {
+            const potentialIssues = detectPotentialCompilationIssues(loadedSongs);
+            if (potentialIssues.length > 0) {
+                console.log(`Detected ${potentialIssues.length} potential compilation album issues`);
+                showCompilationFixModal(potentialIssues);
+            }
+        }
+
         // Show modal with detected compilation issues
+        function layoutCompilationFixModal() {
+            const modal = document.getElementById('compilationFixModal');
+            const scroll = document.getElementById('modalIssuesScroll');
+            if (!modal || !scroll) return;
+
+            // Fixed pixel height — avoids flex/grid scroll bugs in Edge
+            const scrollHeight = Math.max(220, Math.min(Math.floor(window.innerHeight * 0.45), 420));
+            scroll.style.setProperty('height', scrollHeight + 'px', 'important');
+            scroll.style.setProperty('max-height', scrollHeight + 'px', 'important');
+            scroll.style.setProperty('overflow-y', 'scroll', 'important');
+
+            const scrollHint = document.getElementById('modalScrollHint');
+            const issueCount = window.pendingCompilationIssues?.length || 0;
+            if (scrollHint) {
+                const needsScroll = scroll.scrollHeight > scroll.clientHeight + 2;
+                scrollHint.classList.toggle('visible', issueCount > 3 || needsScroll);
+            }
+        }
+
         function showCompilationFixModal(issues) {
             if (issues.length === 0) {
                 return; // No issues, don't show modal
@@ -1826,6 +1928,18 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             
             // Show modal
             modal.classList.remove('hidden');
+
+            const runLayout = () => {
+                layoutCompilationFixModal();
+                const scrollEl = document.getElementById('modalIssuesScroll');
+                if (scrollEl) scrollEl.scrollTop = 0;
+            };
+
+            requestAnimationFrame(() => {
+                runLayout();
+                requestAnimationFrame(runLayout);
+            });
+            setTimeout(runLayout, 50);
         }
 
         // Apply selected compilation fixes
@@ -1871,48 +1985,16 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             }
         }
 
-        // Genre → expected pace when no audio features available
-        const GENRE_PACE_MAP = {
-            'Metal':'High','Punk':'High','Hair Metal':'High','Grunge':'High','Hard Rock':'High',
-            'Post-Grunge':'Medium','Alternative':'Medium','Classic Rock':'Medium',
-            'Progressive Rock':'Medium','Indie Rock':'Medium','Post-Punk/New Wave':'Medium',
-            'Electronic':'High','Pop':'Medium','Hip Hop/Rap':'Medium',
-            'R&B/Soul':'Low','Country':'Medium','Jazz':'Low','Classical':'Low'
-        };
-
-        // Genre transition compatibility (which genres flow well into each other)
-        const GENRE_COMPAT = {
-            'Grunge':           ['Post-Grunge','Alternative','Hard Rock'],
-            'Post-Grunge':      ['Grunge','Alternative','Hard Rock','Metal'],
-            'Classic Rock':     ['Hard Rock','Progressive Rock','Hair Metal'],
-            'Hard Rock':        ['Classic Rock','Hair Metal','Metal','Post-Grunge'],
-            'Hair Metal':       ['Hard Rock','Classic Rock','Metal'],
-            'Post-Punk/New Wave':['Alternative','Punk','Indie Rock'],
-            'Alternative':      ['Grunge','Post-Grunge','Indie Rock','Post-Punk/New Wave'],
-            'Indie Rock':       ['Alternative','Post-Punk/New Wave','Pop'],
-            'Punk':             ['Post-Punk/New Wave','Alternative','Hard Rock'],
-            'Metal':            ['Hard Rock','Post-Grunge','Grunge'],
-            'Progressive Rock': ['Classic Rock','Hard Rock'],
-            'Electronic':       ['Pop','Indie Rock'],
-            'Pop':              ['Electronic','Indie Rock','R&B/Soul'],
-            'R&B/Soul':         ['Pop','Hip Hop/Rap'],
-            'Hip Hop/Rap':      ['R&B/Soul','Electronic','Pop'],
-        };
-
-        function getPaceFromFeatures(energy, tempo, danceability, genre) {
-            // If real audio features present, use them
-            if (energy > 0.05) {
-                const overallPace = (energy + Math.min(1, (tempo || 120) / 140) + (danceability || 0.5)) / 3;
-                if (overallPace > 0.67) return 'High';
-                if (overallPace > 0.4) return 'Medium';
-                return 'Low';
-            }
-            // Derive from genre when no audio data
-            if (genre && GENRE_PACE_MAP[genre]) return GENRE_PACE_MAP[genre];
-            // Fall back to BPM
-            if ((tempo || 0) > 130) return 'High';
-            if ((tempo || 0) > 105) return 'Medium';
-            return 'Medium'; // neutral default
+        function getPaceFromFeatures(energy, tempo, danceability) {
+            const energyScore = energy || 0.5;
+            const tempoScore = Math.min(1, (tempo || 120) / 140);
+            const danceScore = danceability || 0.5;
+            
+            const overallPace = (energyScore + tempoScore + danceScore) / 3;
+            
+            if (overallPace > 0.7) return 'High';
+            if (overallPace > 0.4) return 'Medium';
+            return 'Low';
         }
 
         function getKeyName(keyNum) {
@@ -1926,6 +2008,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
             return `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
 
+        // CSV Parsing Function
         function parseCSV(csvText) {
             const lines = csvText.split('\n');
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
@@ -2084,7 +2167,7 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
                 
                 song.era = getEraFromDate(song.releaseDate);
                 song.genre = getPrimaryGenre(song.genres);
-                song.pace = getPaceFromFeatures(song.energy, song.tempo, song.danceability, song.genre);
+                song.pace = getPaceFromFeatures(song.energy, song.tempo, song.danceability);
                 song.keyName = getKeyName(song.key);
                 song.durationFormatted = formatDuration(song.duration);
                 
@@ -2194,102 +2277,26 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
 ${songDescriptions}`;
 
             const response = await callOllama(prompt);
-            if (!response) return algorithmicCompatScore(songs);
+            if (!response) return { compatibility_score: 5, reason: 'Algorithmic grouping' };
 
             try {
                 // Parse simple format: "SCORE: 8/10 REASON: good tempo progression"
                 const scoreMatch = response.match(/SCORE:\s*(\d+)/i);
                 const reasonMatch = response.match(/REASON:\s*(.+?)(?:\n|$)/i);
-                const score = scoreMatch ? parseInt(scoreMatch[1]) : null;
+                
+                const score = scoreMatch ? parseInt(scoreMatch[1]) : 5;
                 const reason = reasonMatch ? reasonMatch[1].trim() : 'Good compatibility';
-                if (!score) return algorithmicCompatScore(songs);
-                return {
+                
+                return { 
                     compatibility_score: Math.min(10, Math.max(1, score)),
                     reason: reason.substring(0, 100)
                 };
             } catch {
-                return algorithmicCompatScore(songs);
+                return { compatibility_score: 5, reason: 'Algorithmic grouping' };
             }
-        }
-
-        function algorithmicCompatScore(songs) {
-            if (!songs || songs.length < 2) return { compatibility_score: 6, reason: 'Single song group' };
-            let score = 10;
-            const reasons = [];
-
-            // BPM spread (ideal: within 15 BPM)
-            const tempos = songs.map(s => s.tempo || 120);
-            const bpmSpread = Math.max(...tempos) - Math.min(...tempos);
-            if (bpmSpread <= 8)       { reasons.push('tight BPM match'); }
-            else if (bpmSpread <= 20) { score -= 1; reasons.push('close BPM'); }
-            else                      { score -= 3; reasons.push(`${bpmSpread} BPM spread`); }
-
-            // Genre consistency
-            const genres = [...new Set(songs.map(s => s.genre))];
-            if (genres.length === 1)                                                  { reasons.push('same genre'); }
-            else if (genres.every(g => GENRE_COMPAT[genres[0]]?.includes(g)))        { score -= 1; reasons.push('compatible genres'); }
-            else                                                                       { score -= 2; reasons.push('mixed genres'); }
-
-            // Era consistency
-            const eras = [...new Set(songs.map(s => s.era))];
-            if (eras.length === 1)      { reasons.push('same era'); }
-            else if (eras.length === 2) { score -= 1; reasons.push('adjacent eras'); }
-            else                        { score -= 2; reasons.push('mixed eras'); }
-
-            // Pace consistency
-            const paces = [...new Set(songs.map(s => s.pace))];
-            if (paces.length > 1) score -= 1;
-
-            score = Math.min(10, Math.max(4, score));
-            return { compatibility_score: score, reason: reasons.join(', ') || 'Algorithmic match' };
         }
 
         // AI-enhanced grouping that shows results fast, then updates with AI in background
-        // Score how smoothly group B follows group A in a DJ set
-        function scoreGroupTransition(groupA, groupB) {
-            const lastA = groupA.songs[groupA.songs.length - 1];
-            const firstB = groupB.songs[0];
-            let score = 0;
-
-            // BPM proximity (0–40 pts: lose 1 pt per BPM difference over 40)
-            const bpmDiff = Math.abs((lastA.tempo || 120) - (firstB.tempo || 120));
-            score += Math.max(0, 40 - bpmDiff);
-
-            // Era proximity (0–25 pts)
-            const ERA_ORDER = ['Classic','60s','70s','80s','90s','2000s','2010s','2020s'];
-            const eraIdxA = ERA_ORDER.indexOf(lastA.era);
-            const eraIdxB = ERA_ORDER.indexOf(firstB.era);
-            const eraDiff = (eraIdxA >= 0 && eraIdxB >= 0) ? Math.abs(eraIdxA - eraIdxB) : 3;
-            score += Math.max(0, 25 - eraDiff * 8);
-
-            // Genre compatibility (0–25 pts)
-            const gA = lastA.genre, gB = firstB.genre;
-            if (gA === gB) score += 25;
-            else if (GENRE_COMPAT[gA]?.includes(gB)) score += 15;
-
-            // Pace match (0–10 pts)
-            if (lastA.pace === firstB.pace) score += 10;
-
-            return score;
-        }
-
-        // Reorder groups for smoothest sequential flow using greedy nearest-neighbor
-        function optimizeGroupOrder(groups) {
-            if (groups.length <= 2) return groups;
-            const ordered = [groups[0]];
-            const remaining = groups.slice(1);
-            while (remaining.length > 0) {
-                const current = ordered[ordered.length - 1];
-                let bestScore = -Infinity, bestIdx = 0;
-                for (let i = 0; i < remaining.length; i++) {
-                    const s = scoreGroupTransition(current, remaining[i]);
-                    if (s > bestScore) { bestScore = s; bestIdx = i; }
-                }
-                ordered.push(remaining.splice(bestIdx, 1)[0]);
-            }
-            return ordered;
-        }
-
         async function groupSongsByRulesWithAI(songs, rules, avoidSameArtist) {
             // First, create groups using the existing algorithm (fast)
             const initialGroups = groupSongsByRules(songs, rules, avoidSameArtist);
@@ -2493,23 +2500,7 @@ ${songDescriptions}`;
                 });
             }
             
-            // Post-pass: fix same-artist at group boundaries
-            if (avoidSameArtist && groups.length > 1) {
-                for (let i = 0; i < groups.length - 1; i++) {
-                    const lastSong = groups[i].songs[groups[i].songs.length - 1];
-                    const firstSong = groups[i + 1].songs[0];
-                    if (lastSong.artist === firstSong.artist) {
-                        const nextGroup = groups[i + 1].songs;
-                        const swapIdx = nextGroup.findIndex((s, idx) => idx > 0 && s.artist !== lastSong.artist);
-                        if (swapIdx !== -1) [nextGroup[0], nextGroup[swapIdx]] = [nextGroup[swapIdx], nextGroup[0]];
-                    }
-                }
-            }
-
-            // Reorder groups for smoothest transitions (greedy nearest-neighbor)
-            const ordered = optimizeGroupOrder(groups);
-            ordered.forEach((g, i) => g.id = i + 1);
-            return ordered;
+            return groups;
         }
 
         // Calculate transition score between two songs based on musical properties
@@ -2636,18 +2627,13 @@ ${songDescriptions}`;
             const statusElement = document.getElementById('uploadStatus');
             const rulesSection = document.getElementById('rulesSection');
             
-            const enrichBtn = document.getElementById('enrichBtn');
-            const enrichStatus = document.getElementById('enrichStatus');
             if (loadedSongs.length > 0) {
                 countElement.textContent = `${loadedSongs.length} tracks loaded`;
                 statusElement.classList.remove('hidden');
                 rulesSection.classList.remove('hidden');
-                enrichBtn.classList.remove('hidden');
             } else {
                 statusElement.classList.add('hidden');
                 rulesSection.classList.add('hidden');
-                enrichBtn.classList.add('hidden');
-                enrichStatus.classList.add('hidden');
             }
         }
 
@@ -2914,10 +2900,6 @@ ${songDescriptions}`;
         }
 
         // Modal Functions
-        function escHtml(str) {
-            return String(str ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-        }
-
         function createModal(title, content, footer = '') {
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
@@ -2931,16 +2913,14 @@ ${songDescriptions}`;
                     ${footer ? `<div class="modal-footer">${footer}</div>` : ''}
                 </div>
             `;
-
+            
             // Close on overlay click
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     closeModal(modal.querySelector('.modal-close'));
                 }
             });
-
-            // Lock body scroll and force modal to viewport center
-            document.body.style.overflow = 'hidden';
+            
             document.body.appendChild(modal);
             return modal;
         }
@@ -2948,10 +2928,6 @@ ${songDescriptions}`;
         function closeModal(closeBtn) {
             const modal = closeBtn.closest('.modal-overlay');
             modal.remove();
-            // Restore body scroll if no other modals open
-            if (!document.querySelector('.modal-overlay')) {
-                document.body.style.overflow = '';
-            }
         }
 
         // Song Management Functions
@@ -2960,37 +2936,28 @@ ${songDescriptions}`;
             const content = `
                 <div class="form-group">
                     <label class="form-label">Song title</label>
-                    <input type="text" class="form-input" id="editTitle" value="${escHtml(song.title)}">
+                    <input type="text" class="form-input" id="editTitle" value="${song.title}">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Artist name</label>
-                    <input type="text" class="form-input" id="editArtist" value="${escHtml(song.artist)}">
+                    <input type="text" class="form-input" id="editArtist" value="${song.artist}">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Album name</label>
-                    <input type="text" class="form-input" id="editAlbum" value="${escHtml(song.album || '')}">
+                    <input type="text" class="form-input" id="editAlbum" value="${song.album || ''}">
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Genre</label>
                         <select class="form-select" id="editGenre">
-                            <option value="Classic Rock" ${song.genre === 'Classic Rock' ? 'selected' : ''}>Classic Rock</option>
-                            <option value="Hard Rock" ${song.genre === 'Hard Rock' ? 'selected' : ''}>Hard Rock</option>
-                            <option value="Progressive Rock" ${song.genre === 'Progressive Rock' ? 'selected' : ''}>Progressive Rock</option>
-                            <option value="Hair Metal" ${song.genre === 'Hair Metal' ? 'selected' : ''}>Hair Metal</option>
-                            <option value="Post-Punk/New Wave" ${song.genre === 'Post-Punk/New Wave' ? 'selected' : ''}>Post-Punk / New Wave</option>
-                            <option value="Punk" ${song.genre === 'Punk' ? 'selected' : ''}>Punk</option>
-                            <option value="Grunge" ${song.genre === 'Grunge' ? 'selected' : ''}>Grunge</option>
-                            <option value="Post-Grunge" ${song.genre === 'Post-Grunge' ? 'selected' : ''}>Post-Grunge</option>
-                            <option value="Alternative" ${song.genre === 'Alternative' ? 'selected' : ''}>Alternative</option>
-                            <option value="Indie Rock" ${song.genre === 'Indie Rock' ? 'selected' : ''}>Indie Rock</option>
-                            <option value="Metal" ${song.genre === 'Metal' ? 'selected' : ''}>Metal</option>
+                            <option value="Pop/Dance" ${song.genre === 'Pop/Dance' ? 'selected' : ''}>Pop/Dance</option>
+                            <option value="Rock/Alternative" ${song.genre === 'Rock/Alternative' ? 'selected' : ''}>Rock/Alternative</option>
+                            <option value="Hip Hop/Rap" ${song.genre === 'Hip Hop/Rap' ? 'selected' : ''}>Hip Hop/Rap</option>
                             <option value="Electronic" ${song.genre === 'Electronic' ? 'selected' : ''}>Electronic</option>
-                            <option value="Pop" ${song.genre === 'Pop' ? 'selected' : ''}${song.genre === 'Pop/Dance' ? 'selected' : ''}>Pop</option>
-                            <option value="Hip Hop/Rap" ${song.genre === 'Hip Hop/Rap' ? 'selected' : ''}>Hip Hop / Rap</option>
-                            <option value="R&B/Soul" ${song.genre === 'R&B/Soul' ? 'selected' : ''}>R&amp;B / Soul</option>
+                            <option value="R&B/Soul" ${song.genre === 'R&B/Soul' ? 'selected' : ''}>R&B/Soul</option>
                             <option value="Country" ${song.genre === 'Country' ? 'selected' : ''}>Country</option>
                             <option value="Jazz" ${song.genre === 'Jazz' ? 'selected' : ''}>Jazz</option>
+                            <option value="Classical" ${song.genre === 'Classical' ? 'selected' : ''}>Classical</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -3188,15 +3155,13 @@ ${suggestions.map((suggestion, index) => {
             
             modal.querySelector('.modal-body').innerHTML = content;
 
-            // Add footer if it doesn't exist
-            if (!modal.querySelector('.modal-footer')) {
-                const footerEl = document.createElement('div');
+            let footerEl = modal.querySelector('.modal-footer');
+            if (!footerEl) {
+                footerEl = document.createElement('div');
                 footerEl.className = 'modal-footer';
-                footerEl.innerHTML = footer;
                 modal.querySelector('.modal').appendChild(footerEl);
-            } else {
-                modal.querySelector('.modal-footer').innerHTML = footer;
             }
+            footerEl.innerHTML = footer;
         }
 
         function generateMockSuggestions(baseSong, group) {
@@ -3356,7 +3321,7 @@ ${suggestions.map((suggestion, index) => {
             URL.revokeObjectURL(url);
         }
 
-        // File Upload Handler
+        // File Upload Handlers
         function handleFileUpload(file) {
             if (!file) return;
             
@@ -3376,15 +3341,6 @@ ${suggestions.map((suggestion, index) => {
                     
                     // Fill empty genres using audio features
                     loadedSongs = fillEmptyGenres(loadedSongs);
-                    
-                    // Auto-detect and fix compilation album dates
-                    const compilationFixes = detectAndFixCompilationDates(loadedSongs);
-                    if (compilationFixes.length > 0) {
-                        console.log(`🔧 Fixed ${compilationFixes.length} compilation album dates:`);
-                        compilationFixes.forEach(fix => {
-                            console.log(`   ${fix.track}: ${fix.oldDate.split('-')[0]} → ${fix.newDate.split('-')[0]}`);
-                        });
-                    }
                     
                     // Validate CSV data quality
                     const validation = validateCSVData(loadedSongs);
@@ -3411,11 +3367,7 @@ ${suggestions.map((suggestion, index) => {
                     }
                     
                     // Detect potential compilation issues for user review
-                    const potentialIssues = detectPotentialCompilationIssues(loadedSongs);
-                    if (potentialIssues.length > 0) {
-                        console.log(`Detected ${potentialIssues.length} potential compilation album issues`);
-                        showCompilationFixModal(potentialIssues);
-                    }
+                    showDataQualityCheckIfNeeded();
                     
                     updateSongCount();
                 } catch (error) {
@@ -3542,7 +3494,7 @@ ${suggestions.map((suggestion, index) => {
         }
         
         function remixPlaylist() {
-            if (organizedGroups.length === 0) return;
+            if (loadedSongs.length === 0 || selectedRules.length === 0) return;
             
             isProcessing = true;
             const remixBtn = document.getElementById('remixBtn');
@@ -3551,7 +3503,6 @@ ${suggestions.map((suggestion, index) => {
             
             setTimeout(async () => {
                 organizedGroups = await groupSongsByRulesWithAI(loadedSongs, selectedRules, avoidSameArtist);
-                // Optimize group order for smooth transitions
                 organizedGroups = optimizeGroupOrder(organizedGroups);
                 renderGroups();
                 isProcessing = false;
@@ -3607,6 +3558,8 @@ ${suggestions.map((suggestion, index) => {
                 // Convert the fetched data to CSV format and parse
                 const csvData = data.csv_data;
                 loadedSongs = parseCSV(csvData);
+                loadedSongs = fillEmptyGenres(loadedSongs);
+                showDataQualityCheckIfNeeded();
                 
                 spinner.style.display = 'none';
                 statusText.textContent = `✅ Loaded ${loadedSongs.length} songs from Spotify!`;
@@ -3636,305 +3589,6 @@ ${suggestions.map((suggestion, index) => {
             }
         }
         
-        // ─── Metadata Enrichment ───────────────────────────────────────────────
-
-        // Hardcoded artist→genre map (rock/alt/metal focus, case-insensitive keys)
-        const ARTIST_GENRE_MAP = {
-            // Classic Rock (60s–70s: Beatles era, British Invasion, singer-songwriters)
-            'led zeppelin':'Classic Rock','pink floyd':'Classic Rock','the rolling stones':'Classic Rock',
-            'rolling stones':'Classic Rock','the who':'Classic Rock','the doors':'Classic Rock',
-            'cream':'Classic Rock','deep purple':'Classic Rock','jimi hendrix':'Classic Rock',
-            'the beatles':'Classic Rock','beatles':'Classic Rock','the kinks':'Classic Rock',
-            'the animals':'Classic Rock','creedence clearwater revival':'Classic Rock',
-            'ccr':'Classic Rock','the band':'Classic Rock','lynyrd skynyrd':'Classic Rock',
-            'fleetwood mac':'Classic Rock','eagles':'Classic Rock','tom petty and the heartbreakers':'Classic Rock',
-            'tom petty':'Classic Rock','the heartbreakers':'Classic Rock','zz top':'Classic Rock',
-            'queen':'Classic Rock','bruce springsteen':'Classic Rock',
-            'john mellencamp':'Classic Rock','the guess who':'Classic Rock','guess who':'Classic Rock',
-            'bachman-turner overdrive':'Classic Rock','bto':'Classic Rock','trooper':'Classic Rock',
-            'the dave matthews band':'Classic Rock','dave matthews band':'Classic Rock',
-            'counting crows':'Classic Rock','collective soul':'Classic Rock',
-            'hootie & the blowfish':'Classic Rock','the wallflowers':'Classic Rock','wallflowers':'Classic Rock',
-            // Hard Rock (70s–80s: loud, riff-driven, arena rock)
-            'ac/dc':'Hard Rock','acdc':'Hard Rock','aerosmith':'Hard Rock','van halen':'Hard Rock',
-            'kiss':'Hard Rock','black sabbath':'Hard Rock','ozzy osbourne':'Hard Rock',
-            'heart':'Hard Rock','pat benatar':'Hard Rock','stevie nicks':'Hard Rock',
-            'boston':'Hard Rock','foreigner':'Hard Rock','journey':'Hard Rock',
-            'styx':'Hard Rock','the outfield':'Hard Rock','outfield':'Hard Rock',
-            // Progressive Rock
-            'rush':'Progressive Rock','kansas':'Progressive Rock','yes':'Progressive Rock',
-            'genesis':'Progressive Rock','emerson lake & palmer':'Progressive Rock',
-            'elp':'Progressive Rock','jethro tull':'Progressive Rock',
-            // Hair Metal (80s glam)
-            'def leppard':'Hair Metal','guns n roses':'Hair Metal',"guns n' roses":'Hair Metal',
-            'bon jovi':'Hair Metal','whitesnake':'Hair Metal','motley crue':'Hair Metal',
-            'mötley crüe':'Hair Metal','poison':'Hair Metal','warrant':'Hair Metal',
-            'cinderella':'Hair Metal','skid row':'Hair Metal','winger':'Hair Metal',
-            'tesla':'Hair Metal','great white':'Hair Metal','ratt':'Hair Metal',
-            'dokken':'Hair Metal','twisted sister':'Hair Metal','quiet riot':'Hair Metal',
-            // Post-Punk / New Wave (late 70s–80s)
-            'the cure':'Post-Punk/New Wave','joy division':'Post-Punk/New Wave',
-            'new order':'Post-Punk/New Wave','the smiths':'Post-Punk/New Wave',
-            'morrissey':'Post-Punk/New Wave','depeche mode':'Post-Punk/New Wave',
-            'talking heads':'Post-Punk/New Wave','blondie':'Post-Punk/New Wave',
-            'devo':'Post-Punk/New Wave','the cars':'Post-Punk/New Wave','cars':'Post-Punk/New Wave',
-            'the police':'Post-Punk/New Wave','sting':'Post-Punk/New Wave',
-            'u2':'Post-Punk/New Wave','david bowie':'Post-Punk/New Wave',
-            'echo & the bunnymen':'Post-Punk/New Wave','the psychedelic furs':'Post-Punk/New Wave',
-            'psychedelic furs':'Post-Punk/New Wave','siouxsie and the banshees':'Post-Punk/New Wave',
-            'the chameleons':'Post-Punk/New Wave','bauhaus':'Post-Punk/New Wave',
-            // Punk
-            'the ramones':'Punk','ramones':'Punk','the clash':'Punk','clash':'Punk',
-            'sex pistols':'Punk','bad religion':'Punk','nofx':'Punk',
-            'social distortion':'Punk','rancid':'Punk','the bouncing souls':'Punk',
-            'green day':'Punk','blink-182':'Punk','blink 182':'Punk',
-            'sum 41':'Punk','simple plan':'Punk','the offspring':'Punk','offspring':'Punk',
-            // Grunge (Seattle 90s)
-            'nirvana':'Grunge','pearl jam':'Grunge','soundgarden':'Grunge',
-            'alice in chains':'Grunge','stone temple pilots':'Grunge',
-            'mudhoney':'Grunge','screaming trees':'Grunge','the melvins':'Grunge','melvins':'Grunge',
-            // Post-Grunge (mid-90s–2000s)
-            'bush':'Post-Grunge','candlebox':'Post-Grunge','live':'Post-Grunge',
-            'three doors down':'Post-Grunge','creed':'Post-Grunge','nickelback':'Post-Grunge',
-            'puddle of mudd':'Post-Grunge','seether':'Post-Grunge','breaking benjamin':'Post-Grunge',
-            'staind':'Post-Grunge','fuel':'Post-Grunge','matchbox twenty':'Post-Grunge',
-            'matchbox 20':'Post-Grunge','lifehouse':'Post-Grunge','audioslave':'Post-Grunge',
-            'foo fighters':'Post-Grunge','dave grohl':'Post-Grunge',
-            'incubus':'Post-Grunge','311':'Post-Grunge','sublime':'Post-Grunge',
-            'no doubt':'Post-Grunge','garbage':'Post-Grunge','hole':'Post-Grunge',
-            'alanis morissette':'Post-Grunge','sheryl crow':'Post-Grunge',
-            'the cranberries':'Post-Grunge','cranberries':'Post-Grunge',
-            'third eye blind':'Post-Grunge','goo goo dolls':'Post-Grunge',
-            // Alternative / College Rock (80s–90s)
-            'r.e.m.':'Alternative','rem':'Alternative','the smashing pumpkins':'Alternative',
-            'smashing pumpkins':'Alternative','weezer':'Alternative','radiohead':'Alternative',
-            'beck':'Alternative','the pixies':'Alternative','pixies':'Alternative',
-            'sonic youth':'Alternative','dinosaur jr':'Alternative','the replacements':'Alternative',
-            'husker du':'Alternative','hüsker dü':'Alternative',
-            'the smithereens':'Alternative','smithereens':'Alternative',
-            'local h':'Alternative','the tragically hip':'Alternative','tragically hip':'Alternative',
-            'the trews':'Alternative','trews':'Alternative','big wreck':'Alternative',
-            'the tea party':'Alternative','tea party':'Alternative',
-            'queens of the stone age':'Alternative','qotsa':'Alternative',
-            // Indie Rock (2000s–2010s)
-            'the strokes':'Indie Rock','strokes':'Indie Rock','the white stripes':'Indie Rock',
-            'white stripes':'Indie Rock','jack white':'Indie Rock','the black keys':'Indie Rock',
-            'black keys':'Indie Rock','arctic monkeys':'Indie Rock','franz ferdinand':'Indie Rock',
-            'kaiser chiefs':'Indie Rock','the killers':'Indie Rock','killers':'Indie Rock',
-            'bloc party':'Indie Rock','modest mouse':'Indie Rock','death cab for cutie':'Indie Rock',
-            'the shins':'Indie Rock','arcade fire':'Indie Rock','interpol':'Indie Rock',
-            'the national':'Indie Rock','vampire weekend':'Indie Rock','foster the people':'Indie Rock',
-            'imagine dragons':'Indie Rock','the 1975':'Indie Rock','1975':'Indie Rock',
-            'twenty one pilots':'Indie Rock','alt-j':'Indie Rock','alt j':'Indie Rock',
-            'glass animals':'Indie Rock','tame impala':'Indie Rock','kings of leon':'Indie Rock',
-            'three days grace':'Indie Rock','billy talent':'Indie Rock',
-            // Metal (Heavy / Thrash / Nu-Metal)
-            'metallica':'Metal','slayer':'Metal','megadeth':'Metal','anthrax':'Metal',
-            'iron maiden':'Metal','judas priest':'Metal','pantera':'Metal','slipknot':'Metal',
-            'system of a down':'Metal','tool':'Metal','a perfect circle':'Metal',
-            'rage against the machine':'Metal','ratm':'Metal','korn':'Metal','deftones':'Metal',
-            'disturbed':'Metal','godsmack':'Metal','five finger death punch':'Metal',
-            'ffdp':'Metal','lamb of god':'Metal','trivium':'Metal','volbeat':'Metal',
-            'halestorm':'Metal','evanescence':'Metal',
-            // Electronic
-            'lcd soundsystem':'Electronic','kraftwerk':'Electronic','orbital':'Electronic',
-            'aphex twin':'Electronic','the chemical brothers':'Electronic','chemical brothers':'Electronic',
-            'the prodigy':'Electronic','prodigy':'Electronic','daft punk':'Electronic',
-            'deadmau5':'Electronic','skrillex':'Electronic','nine inch nails':'Electronic',
-            'ministry':'Electronic','marilyn manson':'Electronic',
-            // Pop
-            'michael jackson':'Pop','madonna':'Pop','prince':'Pop',
-            'elton john':'Pop','billy joel':'Pop','bruce hornsby':'Pop',
-            'cyndi lauper':'Pop','taylor swift':'Pop','ed sheeran':'Pop','adele':'Pop',
-            'the weeknd':'Pop','bruno mars':'Pop','harry styles':'Pop',
-            'onerepublic':'Pop','maroon 5':'Pop','avril lavigne':'Pop',
-            'the fray':'Pop','fray':'Pop','augustana':'Pop',
-            // Hip Hop
-            'eminem':'Hip Hop/Rap','jay-z':'Hip Hop/Rap','kanye west':'Hip Hop/Rap',
-            'kendrick lamar':'Hip Hop/Rap','drake':'Hip Hop/Rap','nas':'Hip Hop/Rap',
-            'biggie':'Hip Hop/Rap','notorious b.i.g.':'Hip Hop/Rap','tupac':'Hip Hop/Rap',
-            '2pac':'Hip Hop/Rap','snoop dogg':'Hip Hop/Rap','dr. dre':'Hip Hop/Rap',
-            'outkast':'Hip Hop/Rap','the roots':'Hip Hop/Rap','a tribe called quest':'Hip Hop/Rap',
-            // R&B / Soul
-            'stevie wonder':'R&B/Soul','marvin gaye':'R&B/Soul','aretha franklin':'R&B/Soul',
-            'otis redding':'R&B/Soul','sam cooke':'R&B/Soul','ray charles':'R&B/Soul',
-            'james brown':'R&B/Soul','barry white':'R&B/Soul','al green':'R&B/Soul',
-        };
-
-        // BPM estimates by era (rough midpoints for common rock)
-        const ERA_BPM_MAP = { 'Classic':108,'60s':115,'70s':118,'80s':122,'90s':124,'2000s':126,'2010s':124,'2020s':122 };
-
-        // Genre+era BPM estimates — more accurate than era-only
-        const GENRE_ERA_BPM = {
-            'Metal':       { default:155, '80s':145, '90s':160, '2000s':160 },
-            'Punk':        { default:175, '70s':165, '80s':180, '90s':170 },
-            'Hair Metal':  { default:132, '80s':132, '90s':128 },
-            'Grunge':      { default:112, '90s':112, '2000s':115 },
-            'Post-Grunge': { default:118, '90s':116, '2000s':120, '2010s':122 },
-            'Hard Rock':   { default:128, '70s':122, '80s':130, '90s':128 },
-            'Classic Rock':{ default:116, 'Classic':108, '60s':114, '70s':116, '80s':118 },
-            'Progressive Rock':{ default:112, '70s':110, '80s':114 },
-            'Post-Punk/New Wave':{ default:130, '80s':132, '90s':128 },
-            'Alternative': { default:120, '80s':118, '90s':122, '2000s':124 },
-            'Indie Rock':  { default:122, '2000s':120, '2010s':124, '2020s':122 },
-            'Electronic':  { default:128, '80s':118, '90s':130, '2000s':132, '2010s':128 },
-            'Pop':         { default:118, '80s':112, '90s':116, '2000s':120, '2010s':122, '2020s':120 },
-            'Hip Hop/Rap': { default:95,  '90s':92,  '2000s':96, '2010s':98, '2020s':100 },
-            'R&B/Soul':    { default:88,  'Classic':82, '60s':84, '70s':88, '80s':92 },
-            'Country':     { default:110, '70s':106, '80s':110, '90s':114 },
-            'Jazz':        { default:130, 'Classic':128, '60s':132 },
-        };
-
-        function lookupGenreByArtist(artistName) {
-            if (!artistName) return null;
-            const key = artistName.toLowerCase().trim();
-            if (ARTIST_GENRE_MAP[key]) return ARTIST_GENRE_MAP[key];
-            // Try partial match (e.g. "The Killers" → "killers")
-            for (const [mapKey, genre] of Object.entries(ARTIST_GENRE_MAP)) {
-                if (key.includes(mapKey) || mapKey.includes(key)) return genre;
-            }
-            return null;
-        }
-
-        async function fetchLastFmGenre(artist, track, apiKey) {
-            try {
-                const url = `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${apiKey}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}&format=json&autocorrect=1`;
-                const res = await fetch(url);
-                if (!res.ok) return null;
-                const data = await res.json();
-                const tags = data?.track?.toptags?.tag;
-                if (!tags || tags.length === 0) return null;
-                const tagStr = tags.map(t => t.name).join(' ');
-                return getPrimaryGenre(tagStr);
-            } catch { return null; }
-        }
-
-        async function fetchSongBPM(artist, title) {
-            try {
-                const q = encodeURIComponent(`artist:"${artist}" track:"${title}"`);
-                const url = `https://api.deezer.com/search?q=${q}&limit=1`;
-                const res = await fetch(url);
-                if (!res.ok) return null;
-                const data = await res.json();
-                const track = data?.data?.[0];
-                if (!track) return null;
-                const bpm = track.bpm ? parseFloat(track.bpm) : null;
-                // Also grab release year from Deezer for era correction
-                const releaseYear = track.album?.release_date
-                    ? parseInt(track.album.release_date.slice(0, 4))
-                    : null;
-                return {
-                    tempo: (bpm && bpm > 0) ? bpm : null,
-                    releaseYear: (releaseYear && releaseYear > 1920 && releaseYear < 2030) ? releaseYear : null
-                };
-            } catch { return null; }
-        }
-
-        async function enrichSongsMetadata() {
-            const lastFmKey = localStorage.getItem('lastfm_api_key') || '';
-            const bpmKey = true; // Deezer API requires no key
-            const enrichBtn = document.getElementById('enrichBtn');
-            const enrichStatus = document.getElementById('enrichStatus');
-            enrichBtn.disabled = true;
-            enrichBtn.innerHTML = '⏳ Enriching...';
-            enrichStatus.classList.remove('hidden');
-
-            let enriched = 0;
-
-            for (let i = 0; i < loadedSongs.length; i++) {
-                const song = loadedSongs[i];
-                enrichStatus.textContent = `Enriching ${i + 1} / ${loadedSongs.length}...`;
-
-                // Genre: hardcoded map first, then Last.fm
-                if (!song.genre || song.genre === 'Pop') {
-                    const mapped = lookupGenreByArtist(song.artist);
-                    if (mapped) {
-                        song.genre = mapped;
-                        enriched++;
-                    } else if (lastFmKey) {
-                        const lfmGenre = await fetchLastFmGenre(song.artist, song.title, lastFmKey);
-                        if (lfmGenre) { song.genre = lfmGenre; enriched++; }
-                        await new Promise(r => setTimeout(r, 200));
-                    }
-                }
-
-                // Original release year: fix compilation/greatest-hits era
-                if (isCompilationAlbum(song.album)) {
-                    const origCacheKey = `origyr|${song.artist.toLowerCase()}|${song.title.toLowerCase()}`;
-                    const cachedYr = localStorage.getItem(origCacheKey);
-                    if (cachedYr) {
-                        const yr = parseInt(cachedYr);
-                        if (yr) { song.era = getEraFromDate(String(yr)); }
-                    } else {
-                        const yr = await fetchOriginalReleaseYear(song.artist, song.title);
-                        if (yr) {
-                            song.era = getEraFromDate(String(yr));
-                            localStorage.setItem(origCacheKey, String(yr));
-                            enriched++;
-                        }
-                        await new Promise(r => setTimeout(r, 300)); // MusicBrainz rate limit
-                    }
-                }
-
-                // BPM + key: check localStorage cache first, only hit API for new songs
-                if (!song.tempo || song.tempo === 120 || !song.energy) {
-                    const cacheKey = `bpmcache|${song.artist.toLowerCase()}|${song.title.toLowerCase()}`;
-                    const cached = localStorage.getItem(cacheKey);
-                    if (cached) {
-                        const { tempo, key, releaseYear } = JSON.parse(cached);
-                        if (tempo) song.tempo = tempo;
-                        if (key != null) song.key = key;
-                        if (releaseYear) {
-                            const currentEraYear = { 'Classic': 1950, '60s': 1965, '70s': 1975, '80s': 1985, '90s': 1995, '2000s': 2005, '2010s': 2015, '2020s': 2022 }[song.era] || 2020;
-                            if (releaseYear < currentEraYear - 3) song.era = getEraFromDate(String(releaseYear));
-                        }
-                    } else if (bpmKey) {
-                        const bpmData = await fetchSongBPM(song.artist, song.title);
-                        const entry = {};
-                        if (bpmData?.tempo) { song.tempo = bpmData.tempo; entry.tempo = bpmData.tempo; enriched++; }
-                        if (bpmData?.releaseYear) {
-                            // Only update era if Deezer year is older than what we have
-                            const currentEraYear = { 'Classic': 1950, '60s': 1965, '70s': 1975, '80s': 1985, '90s': 1995, '2000s': 2005, '2010s': 2015, '2020s': 2022 }[song.era] || 2020;
-                            if (bpmData.releaseYear < currentEraYear - 3) {
-                                song.era = getEraFromDate(String(bpmData.releaseYear));
-                                entry.releaseYear = bpmData.releaseYear;
-                            }
-                        }
-                        if (Object.keys(entry).length) localStorage.setItem(cacheKey, JSON.stringify(entry));
-                        await new Promise(r => setTimeout(r, 250));
-                    }
-                }
-
-                // Fallback BPM from genre+era if still missing
-                if (!song.tempo || song.tempo === 120) {
-                    const genreMap = GENRE_ERA_BPM[song.genre];
-                    const base = genreMap
-                        ? (genreMap[song.era] || genreMap.default)
-                        : (ERA_BPM_MAP[song.era] || 120);
-                    // ±8 BPM variation per song so same-genre groups aren't identical
-                    song.tempo = base + Math.floor((song.id % 17) - 8);
-                }
-
-                // Re-derive pace
-                song.pace = getPaceFromFeatures(song.energy || 0, song.tempo, song.danceability || 0, song.genre);
-            }
-
-            const unenrichedCount = loadedSongs.filter(s => !s.genre || s.genre === 'Pop').length;
-            enrichStatus.textContent = `✅ Enriched ${enriched} songs — ${unenrichedCount} still showing Pop. Click Start the mix to apply.`;
-            enrichBtn.innerHTML = '🔍 Enrich metadata';
-            enrichBtn.disabled = false;
-            updateSongCount();
-            if (organizedGroups.length > 0 && selectedRules.length > 0) organizePlaylist();
-
-            // Prompt for missing API keys
-            if (unenrichedCount > 5 && !lastFmKey) {
-                const key = prompt(`${unenrichedCount} songs still have unknown genre.\n\nEnter a free Last.fm API key (last.fm/api):\n\nLeave blank to skip.`);
-                if (key?.trim()) { localStorage.setItem('lastfm_api_key', key.trim()); enrichBtn.click(); return; }
-            }
-        }
-
-        // ─── End Metadata Enrichment ───────────────────────────────────────────
-
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
             const uploadZone = document.getElementById('uploadZone');
@@ -3954,7 +3608,7 @@ ${suggestions.map((suggestion, index) => {
             const modalCloseBtn = document.getElementById('modalCloseBtn');
             const modalSkipBtn = document.getElementById('modalSkipBtn');
             const modalApplyBtn = document.getElementById('modalApplyBtn');
-            const modalOverlay = compilationFixModal.querySelector('.compilation-overlay');
+            const modalOverlay = compilationFixModal.querySelector('.modal-overlay');
 
             modalCloseBtn.addEventListener('click', () => {
                 compilationFixModal.classList.add('hidden');
@@ -3970,6 +3624,12 @@ ${suggestions.map((suggestion, index) => {
 
             modalOverlay.addEventListener('click', () => {
                 compilationFixModal.classList.add('hidden');
+            });
+
+            window.addEventListener('resize', () => {
+                if (!compilationFixModal.classList.contains('hidden')) {
+                    layoutCompilationFixModal();
+                }
             });
 
             // Upload zone handlers
@@ -4010,7 +3670,6 @@ ${suggestions.map((suggestion, index) => {
             });
 
             // Button handlers
-            document.getElementById('enrichBtn').addEventListener('click', enrichSongsMetadata);
             sampleBtn.addEventListener('click', loadSampleData);
             organizeBtn.addEventListener('click', organizePlaylist);
             remixBtn.addEventListener('click', remixPlaylist);
@@ -4042,10 +3701,5 @@ ${suggestions.map((suggestion, index) => {
             updateRuleSelection();
         });
     </script>
-    <footer style="text-align:center; padding: 1.5rem; color: rgba(255,255,255,0.4); font-size: 0.8rem;">
-        BPM data provided by <a href="https://deezer.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.5);">Deezer</a>
-        &nbsp;·&nbsp; Genre data from <a href="https://www.last.fm" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.5);">Last.fm</a>
-        &nbsp;·&nbsp; AI scoring by <a href="https://ollama.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.5);">Ollama</a>
-    </footer>
 </body>
 </html>
