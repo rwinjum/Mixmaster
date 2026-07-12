@@ -1880,10 +1880,11 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         // Genre → expected pace when no audio features available
         const GENRE_PACE_MAP = {
             'Metal':'High','Punk':'High','Hair Metal':'High','Grunge':'High','Hard Rock':'High',
+            'Post-Punk/New Wave':'High','Electronic':'High',
             'Post-Grunge':'Medium','Alternative':'Medium','Classic Rock':'Medium',
-            'Progressive Rock':'Medium','Indie Rock':'Medium','Post-Punk/New Wave':'Medium',
-            'Electronic':'High','Pop':'Medium','Hip Hop/Rap':'Medium',
-            'R&B/Soul':'Low','Country':'Medium','Jazz':'Low','Classical':'Low'
+            'Progressive Rock':'Low','Indie Rock':'Medium','Pop':'Medium',
+            'Hip Hop/Rap':'Medium','Country':'Medium',
+            'R&B/Soul':'Low','Jazz':'Low','Classical':'Low'
         };
 
         // Genre transition compatibility (which genres flow well into each other)
@@ -1906,24 +1907,18 @@ Return JSON format: [{"title": "Song Title", "artist": "Artist Name", "reason": 
         };
 
         function getPaceFromFeatures(energy, tempo, danceability, genre) {
-            // If real audio features present, use them
+            // If real Spotify audio features present, use them
             if (energy > 0.05) {
                 const overallPace = (energy + Math.min(1, (tempo || 120) / 140) + (danceability || 0.5)) / 3;
                 if (overallPace > 0.67) return 'High';
                 if (overallPace > 0.4) return 'Medium';
                 return 'Low';
             }
-            // Use real BPM from Deezer when available (tempo !== 120 means it was actually fetched)
-            const t = tempo || 0;
-            if (t > 0 && t !== 120) {
-                if (t > 128) return 'High';
-                if (t < 90) return 'Low';
-                // 90-128: let genre refine
-            }
-            // Derive from genre
+            // Genre is the most reliable signal when audio features are missing
             if (genre && GENRE_PACE_MAP[genre]) return GENRE_PACE_MAP[genre];
-            // Final BPM fallback
-            if (t > 128) return 'High';
+            // BPM fallback (only useful if real BPM was fetched, not estimated)
+            const t = tempo || 0;
+            if (t > 140) return 'High';
             if (t < 85) return 'Low';
             return 'Medium';
         }
@@ -2287,21 +2282,7 @@ ${songDescriptions}`;
         }
 
         // Reorder groups for smoothest sequential flow using greedy nearest-neighbor
-        function optimizeGroupOrder(groups) {
-            if (groups.length <= 2) return groups;
-            const ordered = [groups[0]];
-            const remaining = groups.slice(1);
-            while (remaining.length > 0) {
-                const current = ordered[ordered.length - 1];
-                let bestScore = -Infinity, bestIdx = 0;
-                for (let i = 0; i < remaining.length; i++) {
-                    const s = scoreGroupTransition(current, remaining[i]);
-                    if (s > bestScore) { bestScore = s; bestIdx = i; }
-                }
-                ordered.push(remaining.splice(bestIdx, 1)[0]);
-            }
-            return ordered;
-        }
+        // (unified below — see optimizeGroupOrder at bottom of scoring section)
 
         async function groupSongsByRulesWithAI(songs, rules, avoidSameArtist) {
             // First, create groups using the existing algorithm (fast)
@@ -2558,37 +2539,62 @@ ${songDescriptions}`;
         // Optimize group order for smooth transitions between groups
         function optimizeGroupOrder(groups) {
             if (groups.length <= 1) return groups;
-            
+
+            const getGroupGenre = g => g.songs[0]?.genre || '';
+            const getGroupEra   = g => g.songs[0]?.era   || '';
+
             const optimized = [];
             const remaining = [...groups];
-            
-            // Start with the first group
+
             optimized.push(remaining.shift());
-            
-            // Greedy algorithm: always pick the group with best transition
+
             while (remaining.length > 0) {
                 const lastGroup = optimized[optimized.length - 1];
-                const lastSong = lastGroup.songs[lastGroup.songs.length - 1];
-                
+                const lastSong  = lastGroup.songs[lastGroup.songs.length - 1]; // song #3 of current group
+                const lastGenre = getGroupGenre(lastGroup);
+                const lastEra   = getGroupEra(lastGroup);
+
+                // Diversity window: last 4 groups
+                const recentGenres = optimized.slice(-4).map(getGroupGenre);
+                const recentEras   = optimized.slice(-3).map(getGroupEra);
+                const recentGenreCounts = {};
+                recentGenres.forEach(g => { recentGenreCounts[g] = (recentGenreCounts[g] || 0) + 1; });
+                const recentEraCounts = {};
+                recentEras.forEach(e => { recentEraCounts[e] = (recentEraCounts[e] || 0) + 1; });
+
                 let bestIndex = 0;
                 let bestScore = -Infinity;
-                
-                // Find the remaining group with the best first song transition
+
                 for (let i = 0; i < remaining.length; i++) {
                     const nextGroup = remaining[i];
-                    const firstSong = nextGroup.songs[0];
-                    const transitionScore = calculateTransitionScore(lastSong, firstSong);
-                    
-                    if (transitionScore > bestScore) {
-                        bestScore = transitionScore;
+                    const firstSong = nextGroup.songs[0]; // song #1 of next group
+                    // Base score: BPM proximity + era proximity + genre compat + pace match
+                    let score = scoreGroupTransition(lastGroup, nextGroup);
+
+                    // Genre diversity penalties
+                    const nextGenre = getGroupGenre(nextGroup);
+                    if (nextGenre === lastGenre) score -= 80;
+                    else if (recentGenreCounts[nextGenre] >= 2) score -= 40;
+                    else if (recentGenreCounts[nextGenre] === 1) score -= 15;
+
+                    // Era clustering penalty (avoid same era 3x in a row)
+                    const nextEra = getGroupEra(nextGroup);
+                    if (nextEra === lastEra && recentEraCounts[nextEra] >= 2) score -= 30;
+                    else if (nextEra === lastEra) score -= 10;
+
+                    // Artist boundary penalty: penalize same artist ending one group and starting the next
+                    if (lastSong.artist && firstSong.artist &&
+                        lastSong.artist.toLowerCase() === firstSong.artist.toLowerCase()) score -= 50;
+
+                    if (score > bestScore) {
+                        bestScore = score;
                         bestIndex = i;
                     }
                 }
-                
-                // Add the best matching group
+
                 optimized.push(remaining.splice(bestIndex, 1)[0]);
             }
-            
+
             return optimized;
         }
 
